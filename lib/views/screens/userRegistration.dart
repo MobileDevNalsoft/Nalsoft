@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:mess_management/providers/login_provider.dart';
 import 'package:mess_management/providers/userProvider.dart';
 import 'package:mess_management/services/auth/user_authentication.dart';
 import 'package:mess_management/utils/constants.dart';
 import 'package:mess_management/views/screens/route_management.dart';
+import 'package:mess_management/views/widgets/CutomTextField.dart';
 import 'package:mess_management/views/widgets/resuableWidgets.dart';
 import 'package:provider/provider.dart';
 // import 'login_view.dart';
@@ -91,19 +93,45 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
                               SizedBox(
                                 height: 15,
                               ),
-                              reusableWidgets.fieldElevation(
-                                child: reusableWidgets.textFormField(
-                                    cont: _createPasswordController,
-                                    hntTxt: '  create password'),
-                              ),
+                              Consumer<LoginProvider>(
+                                          builder: (context, provider, _) {
+                                            return CustomTextField(hintText: 'create password',
+                                              controller: _createPasswordController,
+                                              prefixIcon: const Icon(Icons.lock),
+                                              obscureText: provider.obscurePassword,
+                                              obscureChar: '*',
+                                              suffixIcon: IconButton(
+                                                iconSize: 20,
+                                                onPressed: () =>
+                                                {
+                                                  provider.obscureToggle(),
+                                                },
+                                                icon: provider.obscurePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                                              ),
+                                            );
+                                          }
+                                      ),
                               SizedBox(
                                 height: 15,
                               ),
-                              reusableWidgets.fieldElevation(
-                                child: reusableWidgets.textFormField(
-                                    cont: _confirmPasswordController,
-                                    hntTxt: '  confirm password'),
-                              ),
+                               Consumer<LoginProvider>(
+                                          builder: (context, provider, _) {
+                                            return CustomTextField(hintText: 'confirm password',
+                                              controller: _confirmPasswordController,
+                                              prefixIcon: const Icon(Icons.lock),
+                                              obscureText: provider.obscurePassword,
+                                              obscureChar: '*',
+                                              suffixIcon: IconButton(
+                                                iconSize: 20,
+                                                onPressed: () =>
+                                                {
+                                                  provider.obscureToggle(),
+                                                },
+                                                icon: provider.obscurePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                                              ),
+                                            );
+                                          }
+                                      ),
                             ],
                           )),
                     ),
@@ -180,7 +208,7 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
     String password = _createPasswordController.text.trim();
     print("${email}${password}");
     User? user = await _auth.signUpWithEmailAndPassword(email, password);
-    print(user);
+    print("${user}user");
     if (user != null) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('You have successfully registered')));
@@ -189,6 +217,10 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
 
       // _db.createUser(user);
       Navigator.pushNamed(context, RouteManagement.homePage);
+    }
+    else{
+       ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('User already exists'), action: SnackBarAction(label: "Login", onPressed: (){Navigator.pop(context);})));
     }
   }
 }

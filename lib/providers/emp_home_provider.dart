@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 
-class HomePageModel extends ChangeNotifier{
-  String _userName = 'Username';
-  DateTime? _selectedDate;
+class HomePageProvider extends ChangeNotifier{
+  String _userName = '';
+  late DateTime _selectedDate;
   int _radioValue = 1;
   bool _reasonEmpty = false;
   String? _optionStatus;

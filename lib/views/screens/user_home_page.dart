@@ -1,12 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// import 'package:mess_management/screens/user_home_page_provider.dart';
 import 'package:mess_management/providers/emp_home_provider.dart';
 import 'package:mess_management/views/screens/route_management.dart';
+import 'package:mess_management/views/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
-// import 'package:screenshot/screenshot.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class UserHomePage extends StatelessWidget{
 
@@ -44,7 +43,7 @@ class UserHomePage extends StatelessWidget{
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 25, top: 15),
-                          child: Text('Hi,\n${Provider.of<HomePageModel>(context, listen: false).getUserName}',
+                          child: Text('Hi,\n${Provider.of<HomePageProvider>(context, listen: false).getUserName}',
                             style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold
@@ -88,52 +87,31 @@ class UserHomePage extends StatelessWidget{
                             ),
                           ),
                           Divider(),
-                          Consumer<HomePageModel>(
+                           Consumer<HomePageProvider>(
                             builder: (context, provider, child) {
-                              return TableCalendar(
-                                rowHeight: 35,
-                                focusedDay: now,
-                                firstDay: DateTime(2023),
-                                lastDay: DateTime(2025),
-                                headerStyle: HeaderStyle(
-                                  formatButtonVisible: false,
-                                  titleTextStyle: TextStyle(fontSize: 14),
-                                  headerPadding: EdgeInsets.symmetric(
-                                      vertical: 0),
-                                ),
-                                daysOfWeekStyle: DaysOfWeekStyle(
-                                    weekdayStyle: TextStyle(
-                                        color: Colors.black),
-                                    weekendStyle: TextStyle(
-                                        color: Colors.black45)
-                                ),
-                                calendarStyle: CalendarStyle(
-                                  todayTextStyle: TextStyle(color: Colors.black),
-                                  todayDecoration: BoxDecoration(
-                                    color: provider.getOptions == 'not opted' ? Colors.orange.shade200
-                                                                                    : provider.getOptions == 'opted' ? Colors.green.shade200
-                                                                                        : provider.getOptions == 'ignored' ? Colors.grey.shade300
-                                                                                            : Color.fromARGB(100, 179, 110, 234),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  outsideDaysVisible: false,
-                                  weekendTextStyle: const TextStyle(
-                                      color: const Color(0xFF5A5A5A),
-                                      fontStyle: FontStyle.italic),
-                                  weekendDecoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red.shade100),
-                                ),
-                                selectedDayPredicate: (day) =>
-                                day == provider.getSelectedDate,
-                                onDaySelected: (selectedDay, focusedDay) {
-                                  if(now.day == selectedDay.day && now.month == selectedDay.month && now.year == selectedDay.year){
-                                    notOptController.clear();
+                              return SfDateRangePicker(
+                                showActionButtons: true,
+                                allowViewNavigation: false,
+                                selectionMode: DateRangePickerSelectionMode.single,
+                                showNavigationArrow: true,
+                                onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                                  showDialog(context: context, builder: (context) {
+                                   return AlertDialog(content: Text("opt for lunch"),actions: [TextButton(onPressed: (){},child: Text("cancel"),)],);
+                                  },);
+                                  
+                                },
+                                onSubmit: (date) {
+                                  if(date == null || date.toString().substring(0,10) != now.toString().substring(0,10)){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('please select today''s date'))
+                                    );
+                                  }
+                                  else{
                                     showDialog(
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                            content: Consumer<HomePageModel>(
+                                            content: Consumer<HomePageProvider>(
                                               builder: (context, value, child) {
                                                 return SizedBox(
                                                   width: size.width * 0.6,
@@ -164,38 +142,24 @@ class UserHomePage extends StatelessWidget{
                                                             }
                                                           },
                                                         ),
-                                                      SizedBox(height: 12,),
+                                                      const SizedBox(height: 12,),
                                                       Row(
                                                         mainAxisAlignment: MainAxisAlignment
                                                             .end,
                                                         children: [
-                                                          ElevatedButton(
-                                                            child: Text(
+                                                          CustomButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: const Text(
                                                               'Cancel',
                                                               style: TextStyle(
-                                                                  color: Colors
-                                                                      .black),
+                                                                  color: Colors.black),
                                                             ),
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            style: ButtonStyle(
-                                                                minimumSize: MaterialStateProperty
-                                                                    .all(Size(
-                                                                    50, 35)),
-                                                                backgroundColor: MaterialStatePropertyAll(
-                                                                    Colors
-                                                                        .white),
-                                                                elevation: MaterialStatePropertyAll(
-                                                                    5)
-                                                            ),
+                                                            color: const MaterialStatePropertyAll(Colors.white),
                                                           ),
-                                                          SizedBox(width: 5,),
-                                                          ElevatedButton(
-                                                            child: Text(
-                                                              'Proceed',
-                                                              style: TextStyle(color: Colors.white),),
+                                                          const SizedBox(width: 5,),
+                                                          CustomButton(
                                                             onPressed: () {
                                                               provider.setOptions('not opted');
 
@@ -210,18 +174,11 @@ class UserHomePage extends StatelessWidget{
                                                                 Navigator.pop(context);
                                                               }
                                                             },
-                                                            style: ButtonStyle(
-                                                                minimumSize: MaterialStateProperty
-                                                                    .all(Size(
-                                                                    50, 35)),
-                                                                backgroundColor: MaterialStatePropertyAll(
-                                                                    Colors
-                                                                        .deepPurpleAccent
-                                                                        .shade200),
-                                                                elevation: MaterialStatePropertyAll(
-                                                                    5)
-                                                            ),
-                                                          )
+                                                            child: const Text(
+                                                              'Proceed',
+                                                              style: TextStyle(color: Colors.white),),
+                                                            color: MaterialStatePropertyAll(Colors.deepPurpleAccent.shade200),
+                                                          ),
                                                         ],
                                                       )
                                                     ],
@@ -241,7 +198,7 @@ class UserHomePage extends StatelessWidget{
                       ),
                     ),
                   ),
-                  Expanded(child: SizedBox()),
+                  // Expanded(child: SizedBox()),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -254,13 +211,16 @@ class UserHomePage extends StatelessWidget{
                       ],
                     ),
                   ),
-                  Image.asset(
-                    'assets/images/food.png',
-                    fit: BoxFit.fill, // Fill the width of the screen
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                  SizedBox(
+                    height: size.height*0.1,
+                    child: Image.asset(
+                      'assets/images/food.png',
+                      fit: BoxFit.fill, // Fill the width of the screen
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
+                    ),
                   ),
                 ],
               ),

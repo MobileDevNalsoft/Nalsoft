@@ -13,7 +13,7 @@ class FirebaseAuthService {
       return credential.user;
     } on FirebaseAuthException catch (e) {
 
-      if (e.code == 'email-already-in-use') {
+      if (e.code == 'email-already-in-use') { 
         print( 'The email address is already in use.');
       } else {
         print( 'An error occurred: ${e.code}');

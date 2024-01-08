@@ -96,7 +96,7 @@ class UpdateStatusCalender extends StatelessWidget {
               ),
             ),
             Divider(),
-            Consumer<HomePageModel>(
+            Consumer<HomePageProvider>(
               builder: (context, provider, child) {
                 return TableCalendar(
                   rowHeight: 35,

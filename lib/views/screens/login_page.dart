@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_management/providers/login_provider.dart';
 import 'package:mess_management/services/auth/user_authentication.dart';
+import 'package:mess_management/views/screens/route_management.dart';
 import 'package:mess_management/views/widgets/CutomTextField.dart';
 import 'package:mess_management/views/widgets/custom_button.dart';
 import 'package:mess_management/views/widgets/custom_snackBar.dart';
@@ -32,11 +33,15 @@ class LoginPage extends StatelessWidget{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: 20,),
+                // SizedBox(height: 20,),
                 Expanded(
                   flex: 3,
-                  child: Image.asset('assets/images/food.png'),
+                child: RotatedBox(
+              quarterTurns: 2,
+              child: Image.asset('assets/images/food.png'),
+            ),
                 ),
+                SizedBox(height: 32,),
                 Padding(
                   padding: const EdgeInsets.only(right : 60.0, left: 70),
                   child: Image.asset('assets/images/nalsoft_logo.png'),
@@ -86,7 +91,7 @@ class LoginPage extends StatelessWidget{
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/register');
+                                      Navigator.pushNamed(context, RouteManagement.userRegistration);
                                     },
                                     child: const Text('Register',
                                       style: TextStyle(color: Colors.black87),
@@ -156,7 +161,7 @@ class LoginPage extends StatelessWidget{
     User? user = await _auth.signInWithEmailAndPassword(email, password);
 
     if(user!=null){
-      Navigator.pushNamed(context, '/emp_homepage');
+      Navigator.pushNamed(context, RouteManagement.homePage);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login Successful'))
       );

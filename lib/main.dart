@@ -12,13 +12,13 @@ import 'package:provider/provider.dart';
 void main() async{
    WidgetsFlutterBinding.ensureInitialized();
    await Firebase.initializeApp(
-      options: FirebaseOptions(apiKey: "AIzaSyBuP6IMcXszCFZjCHHcjp87RXLUkOzFjq0", appId: "1:885666560200:android:06660e323321d815c0cdfd", messagingSenderId: "885666560200",projectId: "mess-management-1de8c")
+      options: FirebaseOptions(apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE", appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a", messagingSenderId: "1066586839679",projectId: "meals-management-app-37e6a")
   );
   runApp(
   MultiProvider(
     providers: [
       ChangeNotifierProvider<LoginProvider>(create: (context) => LoginProvider()),
-      ChangeNotifierProvider<HomePageModel>(create: (context) => HomePageModel()),
+      ChangeNotifierProvider<HomePageProvider>(create: (context) => HomePageProvider()),
       ChangeNotifierProvider<DownloadProvider>(create: (context) => DownloadProvider()),
     ],
     child: SafeArea(
