@@ -94,44 +94,46 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
                                 height: 15,
                               ),
                               Consumer<LoginProvider>(
-                                          builder: (context, provider, _) {
-                                            return CustomTextField(hintText: 'create password',
-                                              controller: _createPasswordController,
-                                              prefixIcon: const Icon(Icons.lock),
-                                              obscureText: provider.obscurePassword,
-                                              obscureChar: '*',
-                                              suffixIcon: IconButton(
-                                                iconSize: 20,
-                                                onPressed: () =>
-                                                {
-                                                  provider.obscureToggle(),
-                                                },
-                                                icon: provider.obscurePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
-                                              ),
-                                            );
-                                          }
-                                      ),
+                                  builder: (context, provider, _) {
+                                return CustomTextField(
+                                  hintText: 'create password',
+                                  controller: _createPasswordController,
+                                  prefixIcon: const Icon(Icons.lock),
+                                  obscureText: provider.obscurePassword,
+                                  obscureChar: '*',
+                                  suffixIcon: IconButton(
+                                    iconSize: 20,
+                                    onPressed: () => {
+                                      provider.obscureToggle(),
+                                    },
+                                    icon: provider.obscurePassword
+                                        ? const Icon(Icons.visibility_off)
+                                        : const Icon(Icons.visibility),
+                                  ),
+                                );
+                              }),
                               SizedBox(
                                 height: 15,
                               ),
-                               Consumer<LoginProvider>(
-                                          builder: (context, provider, _) {
-                                            return CustomTextField(hintText: 'confirm password',
-                                              controller: _confirmPasswordController,
-                                              prefixIcon: const Icon(Icons.lock),
-                                              obscureText: provider.obscurePassword,
-                                              obscureChar: '*',
-                                              suffixIcon: IconButton(
-                                                iconSize: 20,
-                                                onPressed: () =>
-                                                {
-                                                  provider.obscureToggle(),
-                                                },
-                                                icon: provider.obscurePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
-                                              ),
-                                            );
-                                          }
-                                      ),
+                              Consumer<LoginProvider>(
+                                  builder: (context, provider, _) {
+                                return CustomTextField(
+                                  hintText: 'confirm password',
+                                  controller: _confirmPasswordController,
+                                  prefixIcon: const Icon(Icons.lock),
+                                  obscureText: provider.obscurePassword,
+                                  obscureChar: '*',
+                                  suffixIcon: IconButton(
+                                    iconSize: 20,
+                                    onPressed: () => {
+                                      provider.obscureToggle(),
+                                    },
+                                    icon: provider.obscurePassword
+                                        ? const Icon(Icons.visibility_off)
+                                        : const Icon(Icons.visibility),
+                                  ),
+                                );
+                              }),
                             ],
                           )),
                     ),
@@ -161,26 +163,30 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
                     onPressed: () {
                       if (_emailController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('email cannot be empty')));
+                            const SnackBar(
+                                content: Text('email cannot be empty')));
                       } else if (_emailController.text.length < 5 &&
                           !_emailController.text.contains('@')) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('email must contain @')));
+                            const SnackBar(
+                                content: Text('email must contain @')));
                       } else if (_empIdController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('employee id cannot be empty')));                            
-                      } 
-                      else if (_deptController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('department cannot be empty')));
-                      } 
-                      else if (_createPasswordController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('password cannot be empty')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('employee id cannot be empty')));
+                      } else if (_deptController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('department cannot be empty')));
+                      } else if (_createPasswordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('password cannot be empty')));
                       } else if (_createPasswordController.text.length < 10) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text(
-                                'password must be atleast 10 characters')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'password must be atleast 10 characters')));
                       } else if (!Constants.regex
                           .hasMatch(_createPasswordController.text)) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -189,7 +195,8 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
                       } else if (_createPasswordController.text !=
                           _confirmPasswordController.text) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('passwords must match')));
+                            const SnackBar(
+                                content: Text('passwords must match')));
                       } else {
                         _signUp(context);
                       }
@@ -212,15 +219,21 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
     if (user != null) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('You have successfully registered')));
-      final user = UserModel(
-          email, password, _deptController.text, _floorController.text);
-
+      final user = UserProvider(
+          email, _empIdController.text,password, _deptController.text, _floorController.text);
+      // Consumer<UserProvider>(builder: (context, provider, child) {
+     user.createUserDb();
+      // },);
       // _db.createUser(user);
       Navigator.pushNamed(context, RouteManagement.homePage);
-    }
-    else{
-       ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('User already exists'), action: SnackBarAction(label: "Login", onPressed: (){Navigator.pop(context);})));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('User already exists'),
+          action: SnackBarAction(
+              label: "Login",
+              onPressed: () {
+                Navigator.pop(context);
+              })));
     }
   }
 }

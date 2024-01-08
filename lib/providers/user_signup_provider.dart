@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 
-class UserRegistrationModel extends ChangeNotifier {
+class signUpProvider extends ChangeNotifier {
   String _email = '';
   String _name = '';
   int _empId = 0;
@@ -8,7 +8,7 @@ class UserRegistrationModel extends ChangeNotifier {
   int _floor = 0;
   String _password = '';
 
-  UserRegistrationModel();
+  signUpProvider();
 
   set setEmail(String email) {
     _email = email;
@@ -41,5 +41,9 @@ class UserRegistrationModel extends ChangeNotifier {
   int get floor => _floor;
   String get password => _password;
 
-  void registerUser() {}
+  void addUserDetails() {
+    
+  }
+
+  static void createUserDb() {}
 }
