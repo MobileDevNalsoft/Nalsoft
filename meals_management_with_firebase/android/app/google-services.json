@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510917770454",
+    "project_id": "meals-management-5441b",
+    "storage_bucket": "meals-management-5441b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510917770454:android:0830bc879ebe006fee1d77",
+        "android_client_info": {
+          "package_name": "com.example.meals_management_with_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6V3jGDNvk_v1Vz6TjCxK_4493ynW5Zt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
