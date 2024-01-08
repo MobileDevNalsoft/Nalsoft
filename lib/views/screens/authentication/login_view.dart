@@ -43,97 +43,94 @@ class LoginView extends StatelessWidget{
                 ),
                 Expanded(
                   flex: 5,
-                  child: Form(
-                        key: _formKey,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 15,),
-                              CustomTextFormField(hintText: 'email',
-                                controller: _emailController,
-                                prefixIcon: Icon(Icons.person),
-                              ),
-                              const SizedBox(height: 15,),
-                              Consumer<LoginProvider>(
-                                    builder: (context, provider, _) {
-                                      return CustomTextFormField(hintText: 'password',
-                                        controller: _passwordController,
-                                        prefixIcon: const Icon(Icons.lock),
-                                        obscureText: provider.obscurePassword,
-                                        obscureChar: '*',
-                                        suffixIcon: IconButton(
-                                          iconSize: 20,
-                                          onPressed: () =>
-                                          {
-                                            provider.obscureToggle(),
-                                          },
-                                          icon: provider.obscurePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
-                                        ),
-                                      );
-                                    }
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const TextButton(
-                                    onPressed: null,
-                                    child: Text('forgot password?',
-                                      style: TextStyle(color: Colors.black87),
+                  child: SingleChildScrollView(
+                    child: Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 15,),
+                                CustomTextFormField(hintText: 'email',
+                                  controller: _emailController,
+                                  prefixIcon: Icon(Icons.person),
+                                ),
+                                const SizedBox(height: 15,),
+                                Consumer<LoginProvider>(
+                                      builder: (context, provider, _) {
+                                        return CustomTextFormField(hintText: 'password',
+                                          controller: _passwordController,
+                                          prefixIcon: const Icon(Icons.lock),
+                                          obscureText: provider.obscurePassword,
+                                          obscureChar: '*',
+                                          suffixIcon: IconButton(
+                                            iconSize: 20,
+                                            onPressed: () =>
+                                            {
+                                              provider.obscureToggle(),
+                                            },
+                                            icon: provider.obscurePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                                          ),
+                                        );
+                                      }
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const TextButton(
+                                      onPressed: null,
+                                      child: Text('forgot password?',
+                                        style: TextStyle(color: Colors.black87),
+                                      ),
                                     ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/register');
-                                    },
-                                    child: const Text('Register',
-                                      style: TextStyle(color: Colors.black87),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 15,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomButton(
-                                    child: const Text('Login',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    onPressed: () {
-                                      if(_emailController.text.isEmpty){
-                                        CustomSnackBar.showSnackBar(context, 'email cannot be empty');
-                                      }
-                                      else if(!_emailController.text.contains('@')){
-                                        CustomSnackBar.showSnackBar(context, 'email must contain @');
-                                      }
-                                      else if(_passwordController.text.isEmpty){
-                                        CustomSnackBar.showSnackBar(context, 'password cannot be empty');
-                                      }
-                                      else if(_passwordController.text.length<10){
-                                        CustomSnackBar.showSnackBar(context, 'password must be atleast 10 characters');
-                                      }
-                                      else if(!Constants.regex.hasMatch(_passwordController.text)){
-                                        CustomSnackBar.showSnackBar(context, 'password must include atleast one special symbol, lowercase and uppercase letter');
-                                      }
-                                      else{
-                                        if(_emailController.text == 'admin'){
-                                          Navigator.pushNamed(context, '/admin_homepage');
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(context, '/register');
+                                      },
+                                      child: const Text('Register',
+                                        style: TextStyle(color: Colors.black87),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 15,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CustomButton(
+                                      child: const Text('Login',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {
+                                        if(_emailController.text.isEmpty){
+                                          CustomSnackBar.showSnackBar(context, 'email cannot be empty');
+                                        }
+                                        else if(!_emailController.text.contains('@nalsoft.net')){
+                                          CustomSnackBar.showSnackBar(context, 'email must contain @nalsoft.net');
+                                        }
+                                        else if(_passwordController.text.isEmpty){
+                                          CustomSnackBar.showSnackBar(context, 'password cannot be empty');
+                                        }
+                                        else if(_passwordController.text.length<10){
+                                          CustomSnackBar.showSnackBar(context, 'password must be atleast 10 characters');
+                                        }
+                                        else if(!Constants.regex.hasMatch(_passwordController.text)){
+                                          CustomSnackBar.showSnackBar(context, 'password must include atleast one special symbol, lowercase and uppercase letter');
                                         }
                                         else{
                                           _signIn(context);
                                         }
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
-                            ],
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      )
+                  )
                 ),
                 Expanded(
                   flex: 2,

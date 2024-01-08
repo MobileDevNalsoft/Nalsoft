@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 
 class SignupProvider extends ChangeNotifier {
-  String _dept = 'Unassigned';
-  String _floor = '8';
+  String _dept = 'Department';
+  String _floor = 'Floor';
 
   void setDept(String dept) {
     _dept = dept;

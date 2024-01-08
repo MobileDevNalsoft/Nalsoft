@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: FirebaseOptions(apiKey: "AIzaSyC6V3jGDNvk_v1Vz6TjCxK_4493ynW5Zt8", appId: "1:510917770454:android:0830bc879ebe006fee1d77", messagingSenderId: '510917770454', projectId: "meals-management-5441b")
+      options: FirebaseOptions(apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE", appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a", messagingSenderId: '1066586839679', projectId: "meals-management-app-37e6a")
   );
   runApp(
       MultiProvider(

@@ -34,7 +34,6 @@ class SignPage extends StatelessWidget{
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(width: 2),
-                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Signature(
                   controller: signatureController,

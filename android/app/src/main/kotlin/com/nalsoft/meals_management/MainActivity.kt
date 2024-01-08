@@ -1,4 +1,4 @@
-package com.example.meals_management_with_firebase
+package com.nalsoft.meals_management
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -190,15 +190,14 @@ class UserHomePage extends StatelessWidget{
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _options(color: Colors.green.shade200, text: const Text('Signed', style: TextStyle(fontSize: 13),)),
-                        _options(color: Colors.grey.shade300, text: const Text('Not Signed', style: TextStyle(fontSize: 13),)),
-                        _options(color: Colors.orange.shade200, text: const Text('Not Opted', style: TextStyle(fontSize: 13),)),
-                        _options(color: Colors.red.shade100, text: const Text('Holiday', style: TextStyle(fontSize: 13),)),
+                        _options(color: Colors.green.shade200, text: const Text('Signed', style: TextStyle(fontSize: 10),)),
+                        _options(color: Colors.grey.shade300, text: const Text('Not Signed', style: TextStyle(fontSize: 10),)),
+                        _options(color: Colors.orange.shade200, text: const Text('Not Opted', style: TextStyle(fontSize: 10),)),
+                        _options(color: Colors.red.shade100, text: const Text('Holiday', style: TextStyle(fontSize: 10),)),
                       ],
                     ),
                   ),
@@ -212,11 +211,12 @@ class UserHomePage extends StatelessWidget{
                 right: 0,
                 child: Row(
                   children: [
-                    const SizedBox(width: 40,),
+                    SizedBox(width: size.width*0.07,),
                     Expanded(
+                      flex: 1,
                       child: SizedBox(
                         height: size.height * 0.12,
-                        child: const Card(
+                        child: Card(
                           color: Color.fromARGB(255, 234, 221, 255),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(
@@ -231,7 +231,7 @@ class UserHomePage extends StatelessWidget{
                                 children: [
                                   Icon(Icons.access_time_sharp),
                                   SizedBox(width: 5),
-                                  Text('Lunch Timings')
+                                  Text('Lunch Timings',style: TextStyle(fontSize: 12),)
                                 ],
                               ),
                               SizedBox(height: 6),
@@ -239,22 +239,30 @@ class UserHomePage extends StatelessWidget{
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('Start time:',
+                                      Text('Start time',
                                         style: TextStyle(fontSize: 12),
                                       ),
-                                      Text('End time:',
+                                      Text('End time',
                                         style: TextStyle(fontSize: 12),
                                       ),
                                     ],
                                   ),
                                   SizedBox(width: 5),
                                   Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('12:30 pm'),
-                                      Text('01:30 pm')
+                                      Text(':'),
+                                      Text(':'),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('12:30 pm',style: TextStyle(fontSize: 12),),
+                                      Text('01:30 pm',style: TextStyle(fontSize: 12),)
                                     ],
                                   )
                                 ],
@@ -264,8 +272,9 @@ class UserHomePage extends StatelessWidget{
                         ),
                       ),
                     ),
-                    const SizedBox(width: 15,),
+                    SizedBox(width: size.width*0.01,),
                     Expanded(
+                      flex: 1,
                       child: SizedBox(
                         height: size.height * 0.12,
                         child: Card(
@@ -286,7 +295,7 @@ class UserHomePage extends StatelessWidget{
                         ),
                       ),
                     ),
-                    const SizedBox(width: 40,),
+                    SizedBox(width: size.width*0.07,),
                   ],
                 ),
               ),
