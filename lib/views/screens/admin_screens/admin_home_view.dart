@@ -1,4 +1,8 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+
+import "../../../providers/employee_home_provider.dart";
+import "../../../services/firebase_auth_services.dart";
 
 class AdminHomePage extends StatelessWidget {
   var size, height, width;
@@ -13,6 +17,60 @@ class AdminHomePage extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         body: Column(crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Container(
+              width: double.infinity,
+              height: size.height * 0.13,
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(100, 179, 110, 234),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(50),
+                    bottomRight: Radius.circular(50),
+                  )
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25, top: 15),
+                    child: Text('Hi,\n${Provider.of<HomePageProvider>(context, listen: false).getUserName}',
+                      style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+                  Expanded(child: SizedBox()),
+                  Switch(
+                    value: true,
+                    onChanged: (value) {
+                      Navigator.pushReplacementNamed(context, '/emp_homepage');
+                    },
+                    activeColor: Color.fromARGB(255, 181, 129, 248),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: PopupMenuButton(
+                      itemBuilder: (BuildContext context) {
+                        return [PopupMenuItem(
+                          child: Text('Sign Out'),
+                          value: 'Sign Out',
+                          height: 10,
+                        )];
+                      },
+                      child: Icon(Icons.power_settings_new_sharp),
+                      onSelected: (value) {
+                        print(value);
+                        if(value == 'Sign Out'){
+                          FirebaseAuthServices().signOutNow();
+                          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                        }
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(

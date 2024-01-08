@@ -21,7 +21,7 @@ class RouteManagement{
       case '/admin_homepage' :
                   return MaterialPageRoute(builder: (_) => AdminHomePage());
       case '/emp_homepage' :
-                  return MaterialPageRoute(builder: (_) => UserHomePage());
+                  return MaterialPageRoute(builder: (_) => EmployeeHomeView());
       case '/download_csv' :
                   return MaterialPageRoute(builder: (_) => Download());
       case '/admin_employees' :
@@ -33,7 +33,7 @@ class RouteManagement{
       case '/update_upcoming_status' :
                   return MaterialPageRoute(builder: (_) => UpdateLunchStatus());
       case '/sign' :
-                  return MaterialPageRoute(builder: (_) => SignPage());
+                  return MaterialPageRoute(builder: (_) => DigitalSignView());
       case '/preview' :
                   return MaterialPageRoute(builder: (_) => Preview());
       default :

@@ -7,13 +7,22 @@ import 'package:meals_management_with_firebase/services/database_services.dart';
 import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
 import 'package:meals_management_with_firebase/utils/constants.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
-import 'package:meals_management_with_firebase/views/screens/authentication/login_view.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/login_provider.dart';
 import '../../custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_snackbar.dart';
 
-class SignUpView extends StatelessWidget {
+class SignUpView extends StatefulWidget {
+
+  SignUpView({super.key});
+
+  @override
+  State<SignUpView> createState() => _SignUpViewState();
+}
+
+class _SignUpViewState extends State<SignUpView> {
+
+  List<String> deptList = [];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -22,13 +31,29 @@ class SignUpView extends StatelessWidget {
   FirebaseAuthServices _auth = FirebaseAuthServices();
 
   final _emailController = TextEditingController();
+
   final _empIdController =TextEditingController();
+
   final _createPasswordController = TextEditingController();
+
   final _confirmPasswordController = TextEditingController();
+
   String department = 'Department';
+
   String floor = 'Floor';
 
-  SignUpView({super.key});
+  @override
+  initState(){
+    super.initState();
+    getDeptList();
+  }
+
+  Future<void> getDeptList() async{
+    final depts = await _db.getDepartments();
+    setState(() {
+      depts[0].forEach((key, value) => deptList.add(value));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +138,7 @@ class SignUpView extends StatelessWidget {
                                                     department = newValue!;
                                                     provider.setDept(newValue!);
                                                   },
-                                                  items: <String>['Department','Technical','980-Administration','Senior Management','152-SCM-CLOUD-MS','151-SCM-EBS-MS','161-MFG-EBS-MS','112-HCM-CLOUD-MS','121-FIN-EBS-MS','211-DEV EBS','172-WMS-CLOUD-MS','182-OTM-CLOUD-MS','201-DBA','122-FIN-CLOUD-MS','221-REP-EBS-FIN','132-EPM-CLOUD=MS','111-HCM-EBS-MS','222-REP-EBS-SCM','142-PPM-CLOUD-MS','162-MFG-CLOUD-MS','990-Human Resources','970-Finance & Accounts','999-Management','202-Network & PCs','113-HCM-CLOUD-PROJ','133-EPM-CLOUD-PROJ','143-PPM-CLOUD-PROJ','153-SCM-CLOUD-PROJ','163-MFG-CLOUD-PROJ','183-OTM-CLOUD-PROJ','173-WMS-CLOUD-PROJ','213-INT-MIDDLEWARE','223-REP-CLOUD-FIN','224-REP-CLOUD-SCM','212-DEV-ADF','123-FIN-CLOUD-PROJ','193-CX','225-REP-CLOUD-HCM','141-PPM-EBS-MS','203-DEV MOBILE']
-                                                      .map<DropdownMenuItem<String>>(
+                                                  items: deptList.map<DropdownMenuItem<String>>(
                                                         (String value) => DropdownMenuItem<String>(
                                                       value: value,
                                                       child: Text(value,),

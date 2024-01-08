@@ -7,6 +7,7 @@ class HomePageProvider extends ChangeNotifier{
   int _radioValue = 1;
   bool _reasonEmpty = false;
   String? _optionStatus;
+  bool _isToggled = false;
 
   void setSelectedDate(DateTime date){
     _selectedDate = date;
@@ -28,10 +29,16 @@ class HomePageProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void setIsToggled(bool value) {
+    _isToggled = value;
+    notifyListeners();
+  }
+
   String get getUserName => _userName;
   DateTime? get getSelectedDate => _selectedDate;
   int get getRadioValue => _radioValue;
   bool get getReasonEmpty => _reasonEmpty;
-  String?get getOptions => _optionStatus;
+  String? get getOptions => _optionStatus;
+  bool get getIsToggled => _isToggled;
 
 }

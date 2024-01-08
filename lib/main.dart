@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management_with_firebase/providers/admin_download_csv_provider.dart';
@@ -7,9 +8,11 @@ import 'package:meals_management_with_firebase/providers/login_provider.dart';
 import 'package:meals_management_with_firebase/providers/signup_provider.dart';
 import 'package:meals_management_with_firebase/route_management/route_management.dart';
 import 'package:meals_management_with_firebase/views/screens/authentication/login_view.dart';
+import 'package:meals_management_with_firebase/views/screens/emp_screens/employee_home_view.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options: FirebaseOptions(apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE", appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a", messagingSenderId: '1066586839679', projectId: "meals-management-app-37e6a")
@@ -28,7 +31,17 @@ Future<void> main() async {
               debugShowCheckedModeBanner: false,
               initialRoute: '/',
               onGenerateRoute: RouteManagement.generateRoute,
-              home: LoginView()
+              home: FutureBuilder(
+                future: Future.value(FirebaseAuth.instance.currentUser),
+                builder: (context, snapshot) {
+                  if(snapshot.hasData){
+                    return EmployeeHomeView();
+                  }
+                  else{
+                    return LoginView();
+                  }
+                },
+              )
           ),
         ),
       )

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import '../../custom_widgets/custom_button.dart';
 
-class SignPage extends StatelessWidget{
+class DigitalSignView extends StatelessWidget{
 
   SignatureController signatureController = SignatureController();
 

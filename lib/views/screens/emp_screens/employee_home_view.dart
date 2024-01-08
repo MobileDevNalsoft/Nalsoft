@@ -2,13 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
+import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class UserHomePage extends StatelessWidget{
+class EmployeeHomeView extends StatelessWidget{
 
-  UserHomePage({super.key});
+  EmployeeHomeView({super.key});
 
   DateTime now = DateTime.now();
 
@@ -39,7 +40,7 @@ class UserHomePage extends StatelessWidget{
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 25, top: 15),
@@ -50,10 +51,32 @@ class UserHomePage extends StatelessWidget{
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(right: 25, top: 25),
-                          child: Icon(Icons.account_circle_sharp,
-                            size: 40,
+                        Expanded(child: SizedBox()),
+                        Switch(
+                              value: false,
+                              onChanged: (value) {
+                                Navigator.pushReplacementNamed(context, '/admin_homepage');
+                              },
+                              activeColor: Color.fromARGB(255, 181, 129, 248),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: PopupMenuButton(
+                            itemBuilder: (BuildContext context) {
+                              return [PopupMenuItem(
+                                child: Text('Sign Out'),
+                                value: 'Sign Out',
+                                height: 10,
+                              )];
+                            },
+                            child: Icon(Icons.power_settings_new_sharp),
+                            onSelected: (value) {
+                              print(value);
+                              if(value == 'Sign Out'){
+                                FirebaseAuthServices().signOutNow();
+                                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                              }
+                            },
                           ),
                         )
                       ],
@@ -99,6 +122,7 @@ class UserHomePage extends StatelessWidget{
                                     );
                                   }
                                   else{
+                                    notOptController.clear();
                                     showDialog(
                                       context: context,
                                       builder: (context) {

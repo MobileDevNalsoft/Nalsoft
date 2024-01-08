@@ -16,4 +16,12 @@ class DatebaseServices{
     => querySnapshot.docs.map((e)
     => UserModel.fromSnapshot(e)).toList());
   }
+
+  Future<List<Map<String,dynamic>>> getDepartments() async{
+    QuerySnapshot snapshot = await _db.collection('departments').get();
+
+    List<Map<String,dynamic>> deptList = snapshot.docs.map((doc) => doc.data() as Map<String,dynamic>).toList();
+
+    return deptList;
+  }
 }
