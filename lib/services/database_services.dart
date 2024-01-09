@@ -2,14 +2,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 
-class DatebaseServices{
+class DatabaseServices{
   final _db = FirebaseFirestore.instance;
 
-  createUser(UserModel user) async {
-    await _db.collection('Employees').doc("1").set(user.toJson());
-  }
-
-  Stream<List<UserModel>> _readData(){
+  Stream<List<UserModel>> readData(){
     final userCollection = FirebaseFirestore.instance.collection("Employees");
 
     return userCollection.snapshots().map((querySnapshot)
@@ -17,11 +13,31 @@ class DatebaseServices{
     => UserModel.fromSnapshot(e)).toList());
   }
 
-  Future<List<Map<String,dynamic>>> getDepartments() async{
-    QuerySnapshot snapshot = await _db.collection('departments').get();
-
-    List<Map<String,dynamic>> deptList = snapshot.docs.map((doc) => doc.data() as Map<String,dynamic>).toList();
-
-    return deptList;
+  readDepartments() async {
+    final depts = await _db.collection('departments').doc('departments_nalsoft').get();
+    return depts.data();
   }
+
+  readFloors() async {
+    final snapshot = await _db.collection('floors').get();
+    return snapshot.docs.map((doc) => doc.id).toList();
+  }
+
+  void pushEmployeeData(String docID, userData) {
+    _db.collection('employees').doc(docID).set(userData.toJson());
+  }
+
+  // void _updateData(UserModel userModel){
+  //   final userCollection = FirebaseFirestore.instance.collection("employees");
+  //
+  //   final newData = UserModel(_userName, _email, _employee_id, _password, _department, _floor, _isAdmin).toJson();
+  //
+  //   userCollection.doc(userModel._email).update(newData);
+  // }
+  //
+  // void _deleteData(String id){
+  //   final userCollection = FirebaseFirestore.instance.collection("employees");
+  //
+  //   userCollection.doc(id).delete();
+  // }
 }

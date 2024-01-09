@@ -10,10 +10,12 @@ import 'package:meals_management_with_firebase/route_management/route_management
 import 'package:meals_management_with_firebase/views/screens/authentication/login_view.dart';
 import 'package:meals_management_with_firebase/views/screens/emp_screens/employee_home_view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences? sharedPreferences= await SharedPreferences.getInstance();
   await Firebase.initializeApp(
       options: FirebaseOptions(apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE", appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a", messagingSenderId: '1066586839679', projectId: "meals-management-app-37e6a")
   );
@@ -29,22 +31,12 @@ Future<void> main() async {
         child: SafeArea(
           child: MaterialApp(
               debugShowCheckedModeBanner: false,
-              initialRoute: '/',
               onGenerateRoute: RouteManagement.generateRoute,
-              home: FutureBuilder(
-                future: Future.value(FirebaseAuth.instance.currentUser),
-                builder: (context, snapshot) {
-                  if(snapshot.hasData){
-                    return EmployeeHomeView();
-                  }
-                  else{
-                    return LoginView();
-                  }
-                },
-              )
-          ),
-        ),
-      )
-  );
+              home:sharedPreferences!.getString("islogged") == "true"?EmployeeHomeView():LoginView()
+              ),
+          ),)
+        );
+
+
 }
 

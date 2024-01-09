@@ -6,20 +6,40 @@ import 'package:meals_management_with_firebase/views/custom_widgets/custom_butto
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/constants.dart';
 
-class LoginView extends StatelessWidget{
+class LoginView extends StatefulWidget{
 
-  final GlobalKey _formKey = GlobalKey<FormState>();
-
-  FirebaseAuthServices _auth = FirebaseAuthServices();
-
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
 
   LoginView({super.key});
 
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+
+class _LoginViewState extends State<LoginView> {
+  final GlobalKey _formKey = GlobalKey<FormState>();
+
+
+  SharedPreferences? sharedPreferences;
+  FirebaseAuthServices _auth = FirebaseAuthServices();
+
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initiat();
+  }
+  initiat() async{
+     sharedPreferences = await SharedPreferences.getInstance();
+
+  }
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -123,6 +143,7 @@ class LoginView extends StatelessWidget{
                                           _signIn(context);
                                         }
                                       },
+                                      color: MaterialStatePropertyAll(Colors.grey.shade300),
                                     )
                                   ],
                                 ),
@@ -153,6 +174,7 @@ class LoginView extends StatelessWidget{
     User? user = await _auth.signInwithEmailandPassword(email, password);
 
     if(user!=null){
+      sharedPreferences!.setString("islogged", "true");
       Navigator.pushNamed(context, '/emp_homepage');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login Successful'))

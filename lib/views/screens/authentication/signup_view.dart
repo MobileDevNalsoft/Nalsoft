@@ -2,10 +2,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:meals_management_with_firebase/models/user_model.dart';
+import 'package:meals_management_with_firebase/providers/events_provider.dart';
 import 'package:meals_management_with_firebase/providers/signup_provider.dart';
 import 'package:meals_management_with_firebase/services/database_services.dart';
 import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
 import 'package:meals_management_with_firebase/utils/constants.dart';
+import 'package:meals_management_with_firebase/views/custom_widgets/custom_dropdown.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/login_provider.dart';
@@ -22,36 +24,32 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
 
-  List<String> deptList = [];
+  List<dynamic> deptList = [];
+  List<String> floorList = [];
 
   final _formKey = GlobalKey<FormState>();
 
-  DatebaseServices _db = DatebaseServices();
-
+  DatabaseServices _db = DatabaseServices();
   FirebaseAuthServices _auth = FirebaseAuthServices();
 
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
-
   final _empIdController =TextEditingController();
-
   final _createPasswordController = TextEditingController();
-
   final _confirmPasswordController = TextEditingController();
-
-  String department = 'Department';
-
-  String floor = 'Floor';
 
   @override
   initState(){
     super.initState();
-    getDeptList();
+    getDeptandFloorsList();
   }
 
-  Future<void> getDeptList() async{
-    final depts = await _db.getDepartments();
+  getDeptandFloorsList() async {
+    final depts = await _db.readDepartments();
+    final floors = await _db.readFloors();
     setState(() {
-      depts[0].forEach((key, value) => deptList.add(value));
+      deptList = depts.values.toList();
+      floorList = floors;
     });
   }
 
@@ -78,17 +76,19 @@ class _SignUpViewState extends State<SignUpView> {
                       width: size.width,
                       child: Column(
                           children: [
-                            SizedBox(height: 30,),
+                            SizedBox(height: size.height*0.02,),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 30),
                               child: Form(
                                 key: _formKey,
                                   child: Column(
                                     children: [
+                                      CustomTextFormField(controller: _usernameController,hintText: 'username', prefixIcon: Icon(Icons.person),),
+                                      SizedBox(height: size.height*0.018,),
                                       CustomTextFormField(controller: _emailController,hintText: 'email', prefixIcon: Icon(Icons.person),),
-                                      SizedBox(height: 15,),
+                                      SizedBox(height: size.height*0.018,),
                                       CustomTextFormField(controller: _empIdController,hintText: 'employee id', prefixIcon: Icon(Icons.person),),
-                                      SizedBox(height: 15,),
+                                      SizedBox(height: size.height*0.018,),
                                       Consumer<LoginProvider>(
                                           builder: (context, provider, _) {
                                             return CustomTextFormField(hintText: 'create password',
@@ -107,7 +107,7 @@ class _SignUpViewState extends State<SignUpView> {
                                             );
                                           }
                                       ),
-                                      SizedBox(height: 15,),
+                                      SizedBox(height: size.height*0.018,),
                                       Consumer<LoginProvider>(
                                           builder: (context, provider, _) {
                                             return CustomTextFormField(hintText: 'confirm password',
@@ -126,49 +126,49 @@ class _SignUpViewState extends State<SignUpView> {
                                             );
                                           }
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(height: size.height*0.018,),
                                       Row(
                                         children: [
                                           Consumer<SignupProvider>(
                                             builder: (context, provider, child) {
                                               return Expanded(
-                                                child: DropdownButton<String>(
+                                                child: CustomDropDown(
+                                                  hint: Text('Department',),
                                                   value: provider.getDept,
-                                                  onChanged: (String? newValue) {
-                                                    department = newValue!;
-                                                    provider.setDept(newValue!);
-                                                  },
                                                   items: deptList.map<DropdownMenuItem<String>>(
-                                                        (String value) => DropdownMenuItem<String>(
+                                                        (value) => DropdownMenuItem<String>(
                                                       value: value,
-                                                      child: Text(value,),
+                                                      child: Text(value,style: TextStyle(fontSize: 12),),
                                                     ),
                                                   ).toList(),
-                                                  alignment: Alignment.center,
+                                                  onChanged: (String? newValue) {
+                                                    provider.setDept(newValue!);
+                                                  },
+                                                  menuMaxHeight: size.height*0.5,
                                                 ),
                                               );
                                             },
                                           ),
-                                          SizedBox(width: size.width*0.05,),
+                                          SizedBox(width: size.width*0.02,),
                                           Consumer<SignupProvider>(
                                             builder: (context, provider, child) {
-                                              return DropdownButton<String>(
+                                              return CustomDropDown(
+                                                hint: Text('Floor',),
                                                 value: provider.getFloor,
-                                                  onChanged: (String? newValue) {
-                                                  floor = newValue!;
-                                                  provider.setFloor(newValue!);
-                                                },
-                                                items: <String>['Floor','8', '9', '1']
-                                                    .map<DropdownMenuItem<String>>(
-                                                      (String value) => DropdownMenuItem<String>(
+                                                items: floorList.map<DropdownMenuItem<String>>(
+                                                      (value) => DropdownMenuItem<String>(
                                                     value: value,
-                                                    child: Text(value),
+                                                    child: Text(value,style: TextStyle(fontSize: 12),),
+                                                    alignment: Alignment.center,
                                                   ),
                                                 ).toList(),
-                                                alignment: Alignment.centerLeft,
+                                                onChanged: (String? newValue) {
+                                                  provider.setFloor(newValue!);
+                                                },
+                                                menuMaxHeight: size.height*0.5,
                                               );
                                             },
-                                          )
+                                          ),
                                         ],
                                       )
                                     ],
@@ -184,7 +184,10 @@ class _SignUpViewState extends State<SignUpView> {
             MediaQuery.of(context).viewInsets.bottom == 0 ? CustomButton(
               child: const Text('Register', style: TextStyle(color: Colors.black),),
               onPressed: () async {
-                if(_emailController.text.isEmpty){
+                if(_usernameController.text.isEmpty){
+                  CustomSnackBar.showSnackBar(context, 'username cannot be empty');
+                }
+                else if(_emailController.text.isEmpty){
                   CustomSnackBar.showSnackBar(context, 'email cannot be empty');
                 }
                 else if(_emailController.text.length < 5 && !_emailController.text.contains('@nalsoft.net')){
@@ -208,34 +211,26 @@ class _SignUpViewState extends State<SignUpView> {
                 else if(_createPasswordController.text != _confirmPasswordController.text){
                   CustomSnackBar.showSnackBar(context, 'passwords must match');
                 }
-                else if(department == 'Select Department' || floor == 'Select Floor'){
+                else if(Provider.of<SignupProvider>(context, listen: false).getDept == null || Provider.of<SignupProvider>(context, listen: false).getFloor == null){
                   CustomSnackBar.showSnackBar(context, 'please select your department and floor');
                 }
-                else{
-                  _signUp(context);
+                else {
+                  var isSuccess = await Provider.of<SignupProvider>(context, listen: false).signUp(_usernameController.text, _empIdController.text.trim(), _empIdController.text.trim(), _confirmPasswordController.text);
+                  if(isSuccess){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('You have successfully registered'))
+                    );
+                    Navigator.pushNamed(context, '/emp_homepage');
+                  }else{
+                    print('some error occurred');
+                  }
                 }
               },
+              color: MaterialStatePropertyAll(Colors.grey.shade300),
             ) : const SizedBox(),
             MediaQuery.of(context).viewInsets.bottom == 0 ? Image.asset('assets/images/food_png.png') : SizedBox(),
           ],
         )
     );
-  }
-
-  void _signUp(context) async{
-
-    String email = _emailController.text.trim().toLowerCase();
-    String password = _confirmPasswordController.text.trim();
-
-    User? user = await _auth.signUpwithEmailandPassword(email, password);
-
-    if(user!=null){
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('You have successfully registered'))
-      );
-      final user = UserModel(email, _empIdController.text.trim(), password, department, floor);
-      _db.createUser(user);
-      Navigator.pushNamed(context, '/emp_homepage');
-    }
   }
 }

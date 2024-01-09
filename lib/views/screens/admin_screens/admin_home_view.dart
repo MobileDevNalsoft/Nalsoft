@@ -44,7 +44,7 @@ class AdminHomePage extends StatelessWidget {
                   Switch(
                     value: true,
                     onChanged: (value) {
-                      Navigator.pushReplacementNamed(context, '/emp_homepage');
+                      Navigator.pushNamedAndRemoveUntil(context, '/emp_homepage', (route) => false);
                     },
                     activeColor: Color.fromARGB(255, 181, 129, 248),
                   ),
@@ -63,7 +63,7 @@ class AdminHomePage extends StatelessWidget {
                         print(value);
                         if(value == 'Sign Out'){
                           FirebaseAuthServices().signOutNow();
-                          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                          Navigator.pushReplacementNamed(context, '/');
                         }
                       },
                     ),
