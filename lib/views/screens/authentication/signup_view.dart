@@ -215,7 +215,7 @@ class _SignUpViewState extends State<SignUpView> {
                   CustomSnackBar.showSnackBar(context, 'please select your department and floor');
                 }
                 else {
-                  var isSuccess = await Provider.of<SignupProvider>(context, listen: false).signUp(_usernameController.text, _empIdController.text.trim(), _empIdController.text.trim(), _confirmPasswordController.text);
+                  var isSuccess = await Provider.of<SignupProvider>(context, listen: false).signUp(_usernameController.text, _emailController.text.trim(), _empIdController.text.trim(), _confirmPasswordController.text);
                   if(isSuccess){
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('You have successfully registered'))

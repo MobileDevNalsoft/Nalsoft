@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management_with_firebase/providers/admin_download_csv_provider.dart';
@@ -32,7 +31,18 @@ Future<void> main() async {
           child: MaterialApp(
               debugShowCheckedModeBanner: false,
               onGenerateRoute: RouteManagement.generateRoute,
-              home:sharedPreferences!.getString("islogged") == "true"?EmployeeHomeView():LoginView()
+              // routes : {
+              //   '/' : (context) => LoginView(),
+              //   '/admin_homepage' : (context) => AdminHomePage(),
+              //   '/admin_employees' : (context) => Employees(),
+              //   '/employee_lunch_status' : (context) => EmployeeLunchStatus(),
+              //   '/download_csv' : (context) => Download(),
+              //   '/emp_homepage' : (context) => EmployeeHomeView(),
+              //   '/update_upcoming_status' : (context) => UpdateLunchStatus(),
+              //   '/sign' : (context) => DigitalSignView(),
+              //   '/preview' : (context) => Preview(),
+              // },
+              home: sharedPreferences!.getString("islogged") == "true" ? EmployeeHomeView() : LoginView(),
               ),
           ),)
         );

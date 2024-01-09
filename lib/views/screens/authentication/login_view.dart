@@ -7,7 +7,6 @@ import 'package:meals_management_with_firebase/views/custom_widgets/custom_snack
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../utils/constants.dart';
 
 class LoginView extends StatefulWidget{
@@ -30,16 +29,18 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initiat();
+    initiate();
   }
-  initiat() async{
-     sharedPreferences = await SharedPreferences.getInstance();
 
+  initiate() async{
+     sharedPreferences = await SharedPreferences.getInstance();
   }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(

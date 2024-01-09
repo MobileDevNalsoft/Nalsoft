@@ -10,7 +10,7 @@ class UserModel{
   String _department;
   String _floor;
   bool _isAdmin = false;
-  UserEvents _events;
+  Map<String,dynamic> _events;
 
   UserModel(
     this._userName,
@@ -51,8 +51,8 @@ class UserModel{
 
 }
 
-class UserEvents{
-  List<DateTime> optedDates = [];
-  List<DateTime> notOptedDates = [];
-  List<DateTime> unSignedDates = [];
-}
+// class UserEvents{
+//   List<DateTime> optedDates = [];
+//   List<DateTime> notOptedDates = [];
+//   List<DateTime> unSignedDates = [];
+// }

@@ -26,10 +26,11 @@ class SignupProvider extends ChangeNotifier {
   String? get getFloor => _floor;
 
   Future<bool> signUp(String userName,String email,String employee_id,String password) async{
+    
     User? user = await _auth.signUpwithEmailandPassword(email, password);
 
     if(user!=null){
-      final userData = UserModel(userName, email, employee_id, password, _dept!, _floor!, false, UserEvents());
+      final userData = UserModel(userName, email, employee_id, password, _dept!, _floor!, false, {'optedDates' : [], 'notOptedDates' : [], 'unSignedDates' : []});
       _db.pushEmployeeData(user.uid, userData);
       return true;
     }

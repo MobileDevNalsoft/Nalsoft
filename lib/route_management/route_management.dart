@@ -16,7 +16,7 @@ class RouteManagement{
 
   static Route<dynamic>? generateRoute(RouteSettings settings){
     switch(settings.name){
-      case '/' :
+      case '/login_page' :
                   return MaterialPageRoute(builder: (_) => LoginView());
       case '/admin_homepage' :
                   return MaterialPageRoute(builder: (_) => AdminHomePage());

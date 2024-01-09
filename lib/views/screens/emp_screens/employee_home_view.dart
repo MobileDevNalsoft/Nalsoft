@@ -67,16 +67,13 @@ class EmployeeHomeView extends StatelessWidget{
                                 child: Text('Sign Out'),
                                 value: 'Sign Out',
                                 height: 10,
+                                onTap: () {
+                                  FirebaseAuthServices().signOutNow().then((value) => Navigator.pushNamedAndRemoveUntil(context, "/login_page", (route) => false));
+                                  print('navigated to login page');
+                                }
                               )];
                             },
                             child: Icon(Icons.power_settings_new_sharp),
-                            onSelected: (value) {
-                              if(value == 'Sign Out'){
-                                FirebaseAuthServices().signOutNow().then((value) => Navigator.pushNamed(context, "/"));
-                               print("need to navigate");
-
-                              }
-                            },
                           ),
                         )
                       ],

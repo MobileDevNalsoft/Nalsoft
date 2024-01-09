@@ -56,16 +56,13 @@ class AdminHomePage extends StatelessWidget {
                           child: Text('Sign Out'),
                           value: 'Sign Out',
                           height: 10,
+                          onTap: () {
+                            FirebaseAuthServices().signOutNow().then((value) => Navigator.pushNamedAndRemoveUntil(context, "/login_page", (route) => false));
+                            print('navigated to login page');
+                          }
                         )];
                       },
                       child: Icon(Icons.power_settings_new_sharp),
-                      onSelected: (value) {
-                        print(value);
-                        if(value == 'Sign Out'){
-                          FirebaseAuthServices().signOutNow();
-                          Navigator.pushReplacementNamed(context, '/');
-                        }
-                      },
                     ),
                   )
                 ],

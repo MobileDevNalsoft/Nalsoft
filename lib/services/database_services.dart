@@ -23,7 +23,8 @@ class DatabaseServices{
     return snapshot.docs.map((doc) => doc.id).toList();
   }
 
-  void pushEmployeeData(String docID, userData) {
+  void pushEmployeeData(String docID,UserModel userData) {
+    print('pushing data');
     _db.collection('employees').doc(docID).set(userData.toJson());
   }
 
