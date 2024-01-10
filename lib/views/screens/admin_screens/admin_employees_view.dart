@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
+import 'package:meals_management_with_firebase/providers/admin_home_provider.dart';
+import 'package:meals_management_with_firebase/providers/universal_data_provider.dart';
 import 'package:meals_management_with_firebase/services/database_services.dart';
+import 'package:provider/provider.dart';
 
 class Employees extends StatelessWidget {
   var size, height, width;
-  List empList = [
-    "Emp1",
-    "Emp2",
-    "Emp3",
-    "Emp4",
-    "Emp5",
-    "Emp6",
-    "Emp7",
-    "Emp8",
-    "Emp9",
-    "Emp10",
-    "Emp11",
-    "Emp12"
-  ];
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<AdminEmployeesProvider>(context, listen: false).setEmpList(
+        Provider.of<UniversalDataProvider>(context, listen: false)
+            .getDDeptNameforEmployeesPage!);
+
     size = MediaQuery.of(context).size;
     height = size.height;
     width = size.width;
@@ -60,7 +54,7 @@ class Employees extends StatelessWidget {
             SizedBox(
               height: 16.0,
             ),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
@@ -74,7 +68,8 @@ class Employees extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(right: 16.0),
                   child: Text(
-                    "Dept1",
+                    Provider.of<UniversalDataProvider>(context)
+                        .getDDeptNameforEmployeesPage!,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 )
@@ -95,36 +90,39 @@ class Employees extends StatelessWidget {
                 ),
               ],
             ),
-            Expanded(
-              child: Scrollbar(
-                child: ListView(
-                  children: empList
-                      .map((item) => Container(
-                            // color: Colors.amber,
-                            margin: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, bottom: 4.0),
-
-                            height: height * 0.1,
-                            child: Card(
-                              elevation: 3,
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, '/employee_lunch_status');
-                                },
-                                style: TextButton.styleFrom(
-                                    alignment: Alignment.centerLeft),
-                                child: Text(
-                                  item,
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black87),
+            Consumer<AdminEmployeesProvider>(
+              builder: (context, provider, child) {
+                return Expanded(
+                  child: Scrollbar(
+                    child: ListView(
+                      children: provider.getEmpList
+                          .map((item) => Container(
+                                // color: Colors.amber,
+                                margin: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0, bottom: 4.0),
+                                height: height * 0.1,
+                                child: Card(
+                                  elevation: 3,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, '/employee_lunch_status');
+                                    },
+                                    style: TextButton.styleFrom(
+                                        alignment: Alignment.centerLeft),
+                                    child: Text(
+                                      item,
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black87),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                );
+              },
             ),
             ElevatedButton(onPressed: () {}, child: const Text("Generate CSV")),
             Image.asset("assets/images/food_png.png")

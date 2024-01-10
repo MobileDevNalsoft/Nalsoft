@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
   String userName;
-  String _email;
-  String _employee_id;
-  String _department;
+  String email;
+  String employee_id;
+  String department;
   String floor;
-  bool _isAdmin = false;
+  bool isAdmin;
 
-  UserModel(this.userName, this._email, this._employee_id, this._department,
-      this.floor, this._isAdmin);
+  UserModel(this.userName, this.email, this.employee_id, this.department,
+      this.floor, this.isAdmin);
 
   static UserModel fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -25,11 +25,11 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       'username': userName,
-      'email': _email,
-      'employee_id': _employee_id,
-      'department': _department,
+      'email': email,
+      'employee_id': employee_id,
+      'department': department,
       'floor': floor,
-      'isAdmin': _isAdmin,
+      'isAdmin': isAdmin,
     };
   }
 }

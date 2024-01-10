@@ -7,6 +7,7 @@ import 'package:meals_management_with_firebase/providers/employee_home_provider.
 import 'package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart';
 import 'package:meals_management_with_firebase/providers/login_provider.dart';
 import 'package:meals_management_with_firebase/providers/signup_provider.dart';
+import 'package:meals_management_with_firebase/providers/universal_data_provider.dart';
 import 'package:meals_management_with_firebase/route_management/route_management.dart';
 import 'package:meals_management_with_firebase/views/screens/authentication/login_view.dart';
 import 'package:meals_management_with_firebase/views/screens/emp_screens/employee_home_view.dart';
@@ -38,6 +39,8 @@ Future<void> main() async {
           create: (context) => AdminHomeProvider()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
           create: (context) => AdminEmployeesProvider()),
+      ChangeNotifierProvider<UniversalDataProvider>(
+          create: (context) => UniversalDataProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(

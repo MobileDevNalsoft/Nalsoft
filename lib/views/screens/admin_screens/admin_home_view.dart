@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:meals_management_with_firebase/models/user_model.dart";
 import "package:meals_management_with_firebase/providers/admin_home_provider.dart";
+import "package:meals_management_with_firebase/providers/universal_data_provider.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
@@ -15,17 +16,13 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   late SharedPreferences sharedPreferences;
 
-  ScrollController listViewController = ScrollController();
-
-  UserModel? user;
-
   initiate() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<HomePageProvider>(context, listen: false).setUserName();
+    Provider.of<HomePageProvider>(context, listen: false).setUser();
     Provider.of<AdminHomeProvider>(context, listen: false).setDeptList();
 
     var size = MediaQuery.of(context).size;
@@ -54,22 +51,33 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 25, top: 15),
-                          child: Text(
-                            'Hi,\n${Provider.of<HomePageProvider>(context, listen: true).getUserName}',
-                            style: const TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.bold),
-                          ),
+                        Consumer<HomePageProvider>(
+                          builder: (context, provider, child) {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 25, top: 15),
+                              child: Text(
+                                'Hi,\n${provider.getUser!.userName}',
+                                style: const TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          },
                         ),
                         Expanded(child: SizedBox()),
-                        Switch(
-                          value: true,
-                          onChanged: (value) {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/emp_homepage', (route) => false);
+                        Consumer<HomePageProvider>(
+                          builder: (context, provider, child) {
+                            return provider.getUser!.isAdmin
+                                ? Switch(
+                                    value: true,
+                                    onChanged: (value) {
+                                      Navigator.pushReplacementNamed(
+                                          context, '/emp_homepage');
+                                    },
+                                    activeColor:
+                                        Color.fromARGB(255, 181, 129, 248),
+                                  )
+                                : SizedBox();
                           },
-                          activeColor: Color.fromARGB(255, 181, 129, 248),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -147,19 +155,21 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       return Expanded(
                         child: Scrollbar(
                           child: ListView(
-                            controller: listViewController,
                             children: provider.deptList
                                 .map((item) => Container(
                                       // color: Colors.amber,
                                       margin: const EdgeInsets.only(
                                           left: 10.0, right: 10.0, bottom: 4.0),
-
                                       height: size.height * 0.1,
                                       child: Card(
                                         elevation: 3,
                                         child: TextButton(
                                           onPressed: () {
-                                            print(listViewController.position);
+                                            Provider.of<UniversalDataProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .setDeptNameforEmployeesPage(
+                                                    item);
                                             Navigator.pushNamed(
                                                 context, '/admin_employees');
                                           },

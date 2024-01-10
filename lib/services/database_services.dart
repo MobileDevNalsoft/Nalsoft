@@ -8,21 +8,20 @@ class DatabaseServices {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  readData() async {
+  Future<UserModel> readData() async {
     final userCollection =
         await _db.collection("employees").doc(_auth.currentUser!.uid).get();
     return UserModel.fromSnapshot(userCollection);
   }
 
-  readEmployees() async {
-    final employeesCollection =
-        _db.collection('employees').get().then((querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.map((doc) => doc.data()).toList();
-      } else {
-        print('no documents available');
-      }
-    });
+  readEmployees(String deptName) async {
+    final employeesCollection = _db
+        .collection('employees')
+        .where('department', isEqualTo: deptName)
+        .get()
+        .then((querySnapshot) =>
+            querySnapshot.docs.map((doc) => doc.data()).toList());
+    return employeesCollection;
   }
 
   readDepartments() async {

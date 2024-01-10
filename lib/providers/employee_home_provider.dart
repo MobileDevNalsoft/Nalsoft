@@ -5,7 +5,7 @@ import 'package:meals_management_with_firebase/services/database_services.dart';
 class HomePageProvider extends ChangeNotifier {
   final DatabaseServices _db = DatabaseServices();
 
-  String _userName = 'Username';
+  UserModel? _user;
   Map<String, dynamic> floorDetails = {'start_time': ' ', 'end_time': ' '};
   DateTime? _selectedDate;
   int _radioValue = 1;
@@ -13,9 +13,8 @@ class HomePageProvider extends ChangeNotifier {
   String? _optionStatus;
   bool _isToggled = false;
 
-  void setUserName() async {
-    UserModel user = await _db.readData();
-    _userName = user.userName;
+  void setUser() async {
+    _user = await _db.readData();
     notifyListeners();
   }
 
@@ -50,7 +49,7 @@ class HomePageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get getUserName => _userName;
+  UserModel? get getUser => _user;
   DateTime? get getSelectedDate => _selectedDate;
   int get getRadioValue => _radioValue;
   bool get getReasonEmpty => _reasonEmpty;

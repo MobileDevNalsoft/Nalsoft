@@ -38,12 +38,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    Provider.of<HomePageProvider>(context, listen: false).setUserName();
+    Provider.of<HomePageProvider>(context, listen: false).setUser();
     Provider.of<HomePageProvider>(context, listen: false).setFloorDetails();
 
-    return Provider.of<HomePageProvider>(context, listen: false)
-            .getFloorDetails
-            .isEmpty
+    return Provider.of<HomePageProvider>(context, listen: true)
+                .getFloorDetails
+                .isEmpty ||
+            Provider.of<HomePageProvider>(context, listen: false).getUser ==
+                null
         ? Center(
             child: CircularProgressIndicator(),
           )
@@ -68,24 +70,35 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 25, top: 15),
-                                child: Text(
-                                  'Hi,\n${Provider.of<HomePageProvider>(context, listen: true).getUserName}',
-                                  style: const TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                              Consumer<HomePageProvider>(
+                                builder: (context, provider, child) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 25, top: 15),
+                                    child: Text(
+                                      'Hi,\n${provider.getUser!.userName}',
+                                      style: const TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  );
+                                },
                               ),
                               Expanded(child: SizedBox()),
-                              Switch(
-                                value: false,
-                                onChanged: (value) {
-                                  Navigator.pushReplacementNamed(
-                                      context, '/admin_homepage');
+                              Consumer<HomePageProvider>(
+                                builder: (context, provider, child) {
+                                  return provider.getUser!.isAdmin
+                                      ? Switch(
+                                          value: false,
+                                          onChanged: (value) {
+                                            Navigator.pushReplacementNamed(
+                                                context, '/admin_homepage');
+                                          },
+                                          activeColor: Color.fromARGB(
+                                              255, 181, 129, 248),
+                                        )
+                                      : SizedBox();
                                 },
-                                activeColor: Color.fromARGB(255, 181, 129, 248),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
