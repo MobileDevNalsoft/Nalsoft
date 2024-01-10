@@ -1,21 +1,34 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
 import '../models/user_model.dart';
 
-class DatabaseServices{
+class DatabaseServices {
   final _db = FirebaseFirestore.instance;
 
-  Stream<List<UserModel>> readData(){
-    final userCollection = FirebaseFirestore.instance.collection("Employees");
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
-    return userCollection.snapshots().map((querySnapshot)
-    => querySnapshot.docs.map((e)
-    => UserModel.fromSnapshot(e)).toList());
+  readData() async {
+    final userCollection =
+        await _db.collection("employees").doc(_auth.currentUser!.uid).get();
+    return UserModel.fromSnapshot(userCollection);
+  }
+
+  readEmployees() async {
+    final employeesCollection =
+        _db.collection('employees').get().then((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.map((doc) => doc.data()).toList();
+      } else {
+        print('no documents available');
+      }
+    });
   }
 
   readDepartments() async {
-    final depts = await _db.collection('departments').doc('departments_nalsoft').get();
-    return depts.data();
+    final depts =
+        await _db.collection('departments').doc('departments_nalsoft').get();
+    return depts.data()!.values.toList();
   }
 
   readFloors() async {
@@ -23,8 +36,12 @@ class DatabaseServices{
     return snapshot.docs.map((doc) => doc.id).toList();
   }
 
-  void pushEmployeeData(String docID,UserModel userData) {
-    print('pushing data');
+  readFloorDetails(String id) async {
+    final snapshot = await _db.collection('floors').doc(id).get();
+    return snapshot.data();
+  }
+
+  void pushEmployeeData(String docID, UserModel userData) {
     _db.collection('employees').doc(docID).set(userData.toJson());
   }
 

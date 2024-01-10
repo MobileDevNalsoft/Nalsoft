@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 
-class StatusProvider extends ChangeNotifier{
+class StatusProvider extends ChangeNotifier {
+  String _selectedReason = 'Single day';
 
-  String _selectedReason = 'Single day leave';
-
-  void setReason(String value){
+  void setReason(String value) {
     _selectedReason = value;
     notifyListeners();
   }
