@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mess_management/providers/emp_home_provider.dart';
-import 'package:mess_management/views/screens/route_management.dart';
-import 'package:mess_management/views/widgets/custom_button.dart';
+import 'package:meals_management/providers/emp_home_provider.dart';
+import 'package:meals_management/views/screens/route_management.dart';
+import 'package:meals_management/views/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -50,8 +50,8 @@ class UserHomePage extends StatelessWidget{
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 25, top: 25),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 25, top: 25),
                           child: Icon(Icons.account_circle_sharp,
                             size: 40,
                           ),
@@ -63,7 +63,7 @@ class UserHomePage extends StatelessWidget{
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: Card(
-                      shape: RoundedRectangleBorder(
+                      shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20))
                       ),
                       elevation: 8,
@@ -71,8 +71,8 @@ class UserHomePage extends StatelessWidget{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10,),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0, top: 4),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 18.0, top: 4),
                             child: Text('Lunch Calendar'),
                           ),
                           Padding(

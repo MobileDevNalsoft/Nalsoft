@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:mess_management/providers/downloadProvider.dart';
+import 'package:meals_management/providers/download_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {

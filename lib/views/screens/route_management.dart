@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mess_management/views/screens/adminHomePage.dart';
-import 'package:mess_management/views/screens/digital_sign_page.dart';
-import 'package:mess_management/views/screens/download.dart';
-import 'package:mess_management/views/screens/employeeLunchStatus.dart';
-import 'package:mess_management/views/screens/employees.dart';
-import 'package:mess_management/views/screens/login_page.dart';
-import 'package:mess_management/views/screens/preview_page.dart';
-import 'package:mess_management/views/screens/updateUpcomingStatus.dart';
-import 'package:mess_management/views/screens/userRegistration.dart';
-import 'package:mess_management/views/screens/user_home_page.dart';
+import 'package:meals_management/views/screens/admin_home_page.dart';
+import 'package:meals_management/views/screens/digital_sign_page.dart';
+import 'package:meals_management/views/screens/download.dart';
+import 'package:meals_management/views/screens/employee_lunch_status.dart';
+import 'package:meals_management/views/screens/employees.dart';
+import 'package:meals_management/views/screens/login_page.dart';
+import 'package:meals_management/views/screens/preview_page.dart';
+import 'package:meals_management/views/screens/update_upcoming_status.dart';
+import 'package:meals_management/views/screens/user_registration.dart';
+import 'package:meals_management/views/screens/user_home_page.dart';
 
 class RouteManagement {
   RouteManagement._();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mess_management/views/screens/route_management.dart';
-import 'package:mess_management/views/widgets/infoCard.dart';
+import 'package:meals_management/views/screens/route_management.dart';
+import 'package:meals_management/views/widgets/info_card.dart';
 
 void main(){
   runApp(MaterialApp(home: Employees(),));

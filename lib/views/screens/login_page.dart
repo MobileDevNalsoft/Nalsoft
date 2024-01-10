@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mess_management/providers/login_provider.dart';
-import 'package:mess_management/services/auth/user_authentication.dart';
-import 'package:mess_management/views/screens/route_management.dart';
-import 'package:mess_management/views/widgets/CutomTextField.dart';
-import 'package:mess_management/views/widgets/custom_button.dart';
-import 'package:mess_management/views/widgets/custom_snackBar.dart';
+import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/services/user_authentication.dart';
+import 'package:meals_management/views/screens/route_management.dart';
+import 'package:meals_management/views/widgets/cutom_textField.dart';
+import 'package:meals_management/views/widgets/custom_button.dart';
+import 'package:meals_management/views/widgets/custom_snackBar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/constants.dart';
@@ -20,6 +20,8 @@ class LoginPage extends StatelessWidget{
   final TextEditingController _passwordController = TextEditingController();
 
   LoginPage({super.key});
+  
+  
 
   @override
   Widget build(BuildContext context){
@@ -34,14 +36,11 @@ class LoginPage extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // SizedBox(height: 20,),
-                Expanded(
-                  flex: 3,
-                child: RotatedBox(
-              quarterTurns: 2,
-              child: Image.asset('assets/images/food.png'),
-            ),
-                ),
-                SizedBox(height: 32,),
+                RotatedBox(
+                              quarterTurns: 2,
+                              child: Image.asset('assets/images/food.png'),
+                            ),
+                // SizedBox(height: 32,),
                 Padding(
                   padding: const EdgeInsets.only(right : 60.0, left: 70),
                   child: Image.asset('assets/images/nalsoft_logo.png'),
@@ -103,7 +102,8 @@ class LoginPage extends StatelessWidget{
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CustomButton(
+                               Consumer<LoginProvider>(builder: (context, provider, child) {
+                                 return    CustomButton(
                                     child: const Text('Login',
                                       style: TextStyle(color: Colors.black),
                                     ),
@@ -128,25 +128,23 @@ class LoginPage extends StatelessWidget{
                                           Navigator.pushNamed(context, '/admin_homepage');
                                         }
                                         else{
-                                          _signIn(context);
+                                          _signIn(context,provider);
                                         }
                                       }
                                     },
-                                  )
-                                ],
+                                  );
+                                
+                               },)],
                               ),
                             ],
                           ),
                         ),
                       )
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Image.asset(
-                    'assets/images/food.png',
-                    fit: BoxFit.fill, // Fill the width of the screen
-                    width: MediaQuery.of(context).size.width,
-                  ),
+                Image.asset(
+                  'assets/images/food.png',
+                  fit: BoxFit.fill, // Fill the width of the screen
+                  width: MediaQuery.of(context).size.width,
                 ),
               ],
             ),
@@ -154,14 +152,17 @@ class LoginPage extends StatelessWidget{
     );
   }
 
-  void _signIn(context) async {
+  void _signIn(context,provider) async {
     String email = _emailController.text.trim().toLowerCase();
     String password = _passwordController.text.trim();
+    bool onSuccessfulLogin=await provider.loginUser(email,password);
+    // User? user = await _auth.signInWithEmailAndPassword(email, password);
 
-    User? user = await _auth.signInWithEmailAndPassword(email, password);
-
-    if(user!=null){
+    if(onSuccessfulLogin){
+      // UserProvider employee=UserProvider();
+      // employee.getUser(user.uid);
       Navigator.pushNamed(context, RouteManagement.homePage);
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login Successful'))
       );

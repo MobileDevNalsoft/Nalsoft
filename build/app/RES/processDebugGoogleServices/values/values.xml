@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">1066586839679</string>
+    <string name="google_api_key" translatable="false">AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE</string>
+    <string name="google_app_id" translatable="false">1:1066586839679:android:8f9eea5ae77f7472dd7d4a</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE</string>
+    <string name="google_storage_bucket" translatable="false">meals-management-app-37e6a.appspot.com</string>
+    <string name="project_id" translatable="false">meals-management-app-37e6a</string>
+</resources>

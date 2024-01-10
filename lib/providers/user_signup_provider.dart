@@ -1,49 +1,46 @@
 import "package:flutter/material.dart";
+import "package:meals_management/services/database_service.dart";
+import "package:meals_management/services/user_authentication.dart";
+import "package:meals_management/views/modals/user_model.dart";
 
-class signUpProvider extends ChangeNotifier {
-  String _email = '';
-  String _name = '';
-  int _empId = 0;
-  String _dept = '';
-  int _floor = 0;
-  String _password = '';
+class SignUpProvider extends ChangeNotifier {
+  UserModel? _user;
+  FirebaseAuthService _auth = FirebaseAuthService();
+  DatebaseServices _db = DatebaseServices();
 
-  signUpProvider();
+  bool _obscurePassword = true;
+  int _errTxt = 0;
+  int _passErrTxt = 0;
+  bool get obscurePassword => _obscurePassword;
 
-  set setEmail(String email) {
-    _email = email;
+  void obscureToggle() {
+    _obscurePassword = !_obscurePassword;
+    notifyListeners();
   }
 
-  // set setName(String name) {
-  //   _name = name;
-  // }
-
-  set setEmpId(int empId) {
-    _empId = empId;
+  void setErrTxt(int value) {
+    _errTxt = value;
+    notifyListeners();
   }
 
-  set setDept(String dept) {
-    _dept = dept;
+  void setPassErrTxt(int value) {
+    _passErrTxt = value;
+    notifyListeners();
   }
 
-  set setFloor(int floor) {
-    _floor = floor;
+  UserModel? get user => _user;
+
+  Future<bool> signUpUser(String email, String empId, String password,
+      String department, String floor) async {
+    final user = await _auth.signUpWithEmailAndPassword(email, password);
+    if (user != null) {
+      _user = UserModel(email, empId, password, department, floor);
+      _db.createUser(_user!, user.uid);
+      return true;
+    } else {
+      return false;
+    }
+
   }
 
-  set setPassword(String password) {
-    _password = password;
-  }
-
-  String get email => _email;
-  // String get name => _name;
-  int get empId => _empId;
-  String get dept => _dept;
-  int get floor => _floor;
-  String get password => _password;
-
-  void addUserDetails() {
-    
-  }
-
-  static void createUserDb() {}
 }

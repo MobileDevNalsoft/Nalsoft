@@ -1,0 +1,239 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import "package:flutter/material.dart";
+import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/providers/user_signup_provider.dart';
+import 'package:meals_management/services/database_service.dart';
+import 'package:meals_management/services/user_authentication.dart';
+import 'package:meals_management/utils/constants.dart';
+import 'package:meals_management/views/modals/user_model.dart';
+import 'package:meals_management/views/screens/route_management.dart';
+import 'package:meals_management/views/widgets/cutom_textField.dart';
+import 'package:meals_management/views/widgets/resuable_widgets.dart';
+import 'package:provider/provider.dart';
+// import 'login_view.dart';
+
+class UserRegistrationView extends StatefulWidget {
+  @override
+  State<UserRegistrationView> createState() => _UserRegistrationViewState();
+}
+
+class _UserRegistrationViewState extends State<UserRegistrationView> {
+  Widgets reusableWidgets = Widgets();
+  FirebaseAuthService _auth = FirebaseAuthService();
+  DatebaseServices _dbservice= DatebaseServices();
+
+  final _formKey = GlobalKey<FormState>();
+
+  final _emailController = TextEditingController();
+
+  final _empIdController = TextEditingController();
+
+  final _deptController = TextEditingController();
+
+  final _floorController = TextEditingController();
+
+  final _createPasswordController = TextEditingController();
+
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
+    return Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            RotatedBox(
+              quarterTurns: 2,
+              child: Image.asset('assets/images/food.png'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Image.asset('assets/images/nalsoft_logo.png'),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  width: size.width,
+                  child: Column(children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              reusableWidgets.fieldElevation(
+                                child: reusableWidgets.textFormField(
+                                    cont: _emailController,
+                                    hntTxt: '  username or email'),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              reusableWidgets.fieldElevation(
+                                child: reusableWidgets.textFormField(
+                                    cont: _empIdController,
+                                    hntTxt: '  employee id'),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              reusableWidgets.fieldElevation(
+                                child: reusableWidgets.textFormField(
+                                    cont: _deptController,
+                                    hntTxt: '  department'),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              reusableWidgets.fieldElevation(
+                                child: reusableWidgets.textFormField(
+                                    cont: _floorController, hntTxt: '  floor'),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Consumer<SignUpProvider>(
+                                  builder: (context, provider, _) {
+                                return CustomTextField(
+                                  hintText: 'create password',
+                                  controller: _createPasswordController,
+                                  prefixIcon: const Icon(Icons.lock),
+                                  obscureText: provider.obscurePassword,
+                                  obscureChar: '*',
+                                  suffixIcon: IconButton(
+                                    iconSize: 20,
+                                    onPressed: () => {
+                                      provider.obscureToggle(),
+                                    },
+                                    icon: provider.obscurePassword
+                                        ? const Icon(Icons.visibility_off)
+                                        : const Icon(Icons.visibility),
+                                  ),
+                                );
+                              }),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Consumer<SignUpProvider>(
+                                  builder: (context, provider, _) {
+                                return CustomTextField(
+                                  hintText: 'confirm password',
+                                  controller: _confirmPasswordController,
+                                  prefixIcon: const Icon(Icons.lock),
+                                  obscureText: provider.obscurePassword,
+                                  obscureChar: '*',
+                                  suffixIcon: IconButton(
+                                    iconSize: 20,
+                                    onPressed: () => {
+                                      provider.obscureToggle(),
+                                    },
+                                    icon: provider.obscurePassword
+                                        ? const Icon(Icons.visibility_off)
+                                        : const Icon(Icons.visibility),
+                                  ),
+                                );
+                              }),
+                            ],
+                          )),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            MediaQuery.of(context).viewInsets.bottom == 0
+                ? Consumer<SignUpProvider>(builder: (context, provider, child) {
+                  return ElevatedButton(
+                    child: Text(
+                      'Register',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(
+                                      color: Colors.black,
+                                    ))),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey.shade300)),
+                    onPressed: () {
+                      if (_emailController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('email cannot be empty')));
+                      } else if (_emailController.text.length < 5 &&
+                          !_emailController.text.contains('@')) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('email must contain @')));
+                      } else if (_empIdController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('employee id cannot be empty')));
+                      } else if (_deptController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('department cannot be empty')));
+                      } else if (_createPasswordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('password cannot be empty')));
+                      } else if (_createPasswordController.text.length < 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'password must be atleast 10 characters')));
+                      } else if (!Constants.regex
+                          .hasMatch(_createPasswordController.text)) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text(
+                                'password must include atleast one special symbol, lowercase and uppercase letter')));
+                      } else if (_createPasswordController.text !=
+                          _confirmPasswordController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('passwords must match')));
+                      } else {
+                        _signUp(context,provider);
+                      }
+                    },
+                  );
+                
+                },): SizedBox(),
+            MediaQuery.of(context).viewInsets.bottom == 0
+                ? Image.asset('assets/images/food.png')
+                : SizedBox(),
+          ],
+        ));
+  }
+
+  void _signUp(context,provider) async {
+    String email = _emailController.text.trim();
+    String password = _createPasswordController.text.trim();
+    print("${email}${password}");
+      bool onSuccessfulRegistration =await provider.signUpUser(email, _empIdController.text.trim(), password, _deptController.text, _floorController.text); 
+      
+    if (onSuccessfulRegistration){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('You have successfully registered')));
+      Navigator.pushNamed(context, RouteManagement.homePage);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('User already exists'),
+          action: SnackBarAction(
+              label: "Login",
+              onPressed: () {
+                Navigator.pop(context);
+              })));
+    }
+  }
+}

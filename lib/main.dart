@@ -2,11 +2,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mess_management/providers/downloadProvider.dart';
-import 'package:mess_management/providers/emp_home_provider.dart';
-import 'package:mess_management/providers/login_provider.dart';
-import 'package:mess_management/views/screens/login_page.dart';
-import 'package:mess_management/views/screens/route_management.dart';
+import 'package:meals_management/providers/download_provider.dart';
+import 'package:meals_management/providers/emp_home_provider.dart';
+import 'package:meals_management/providers/events_provider.dart';
+import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/providers/update_upcoming_status_provider.dart';
+import 'package:meals_management/providers/user_signup_provider.dart';
+import 'package:meals_management/views/screens/login_page.dart';  
+import 'package:meals_management/views/screens/route_management.dart';
 import 'package:provider/provider.dart';
 
 void main() async{
@@ -20,17 +23,19 @@ void main() async{
       ChangeNotifierProvider<LoginProvider>(create: (context) => LoginProvider()),
       ChangeNotifierProvider<HomePageProvider>(create: (context) => HomePageProvider()),
       ChangeNotifierProvider<DownloadProvider>(create: (context) => DownloadProvider()),
+      ChangeNotifierProvider<StatusProvider>(create: (context) => StatusProvider()),
+      // ChangeNotifierProvider<EventsProvider>(create: (context) => EventsProvider()),
+        ChangeNotifierProvider<SignUpProvider>(create: (context) => SignUpProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
-        onGenerateRoute: RouteManagement.generateRoute,
+        onGenerateRoute: RouteManagement.generateRoute, 
         home: LoginPage()
       ),
     ),
   )
 );
-
 }
 
