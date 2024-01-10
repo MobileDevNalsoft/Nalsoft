@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management_with_firebase/models/events_model.dart';
 import 'package:meals_management_with_firebase/models/user_model.dart';
 import 'package:meals_management_with_firebase/services/database_services.dart';
 
@@ -48,6 +49,10 @@ class HomePageProvider extends ChangeNotifier {
     _isToggled = value;
     notifyListeners();
   }
+
+  // void pushEvents(EventsModel events){
+  //   _db.pushEventDates(events);
+  // }
 
   UserModel? get getUser => _user;
   DateTime? get getSelectedDate => _selectedDate;

@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
+import 'package:meals_management_with_firebase/models/events_model.dart';
 import '../models/user_model.dart';
 
 class DatabaseServices {
   final _db = FirebaseFirestore.instance;
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<UserModel> readData() async {
     final userCollection =
@@ -15,13 +15,13 @@ class DatabaseServices {
   }
 
   readEmployees(String deptName) async {
-    final employeesCollection = _db
+
+    return await _db
         .collection('employees')
         .where('department', isEqualTo: deptName)
         .get()
         .then((querySnapshot) =>
             querySnapshot.docs.map((doc) => doc.data()).toList());
-    return employeesCollection;
   }
 
   readDepartments() async {
@@ -43,6 +43,10 @@ class DatabaseServices {
   void pushEmployeeData(String docID, UserModel userData) {
     _db.collection('employees').doc(docID).set(userData.toJson());
   }
+
+  // void pushEventDates(EventsModel events){
+  //   _db.collection('employees').doc(_auth.currentUser!.uid).collection(_auth.currentUser!.uid).doc('events').set(events.toJson());
+  // }
 
   // void _updateData(UserModel userModel){
   //   final userCollection = FirebaseFirestore.instance.collection("employees");

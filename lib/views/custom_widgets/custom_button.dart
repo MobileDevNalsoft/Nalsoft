@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CustomButton extends StatelessWidget{
 
   Function()? onPressed;
@@ -10,12 +11,12 @@ class CustomButton extends StatelessWidget{
   CustomButton({super.key, required this.child, required this.onPressed, this.color});
 
   @override
-  Widget build(BuildContext){
+  Widget build(BuildContext context){
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
           backgroundColor: color,
-        elevation: MaterialStatePropertyAll(5),
+        elevation: const MaterialStatePropertyAll(5),
       ),
       child: child,
     );

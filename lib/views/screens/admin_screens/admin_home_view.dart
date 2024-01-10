@@ -1,14 +1,14 @@
 import "package:flutter/material.dart";
-import "package:meals_management_with_firebase/models/user_model.dart";
 import "package:meals_management_with_firebase/providers/admin_home_provider.dart";
 import "package:meals_management_with_firebase/providers/universal_data_provider.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
-
 import "../../../providers/employee_home_provider.dart";
 import "../../../services/firebase_auth_services.dart";
 
 class AdminHomePage extends StatefulWidget {
+  const AdminHomePage({super.key});
+
   @override
   State<AdminHomePage> createState() => _AdminHomePageState();
 }
@@ -22,15 +22,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     Provider.of<HomePageProvider>(context, listen: false).setUser();
     Provider.of<AdminHomeProvider>(context, listen: false).setDeptList();
 
     var size = MediaQuery.of(context).size;
+
     return SafeArea(
       child: Provider.of<AdminHomeProvider>(context, listen: true)
               .getDeptList
               .isEmpty
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Scaffold(
@@ -63,7 +65,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             );
                           },
                         ),
-                        Expanded(child: SizedBox()),
+                        const Expanded(child: SizedBox()),
                         Consumer<HomePageProvider>(
                           builder: (context, provider, child) {
                             return provider.getUser!.isAdmin
@@ -74,9 +76,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                           context, '/emp_homepage');
                                     },
                                     activeColor:
-                                        Color.fromARGB(255, 181, 129, 248),
+                                        const Color.fromARGB(255, 181, 129, 248),
                                   )
-                                : SizedBox();
+                                : const SizedBox();
                           },
                         ),
                         Padding(
@@ -85,11 +87,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             itemBuilder: (BuildContext context) {
                               return [
                                 PopupMenuItem(
-                                    child: Text('Sign Out'),
                                     value: 'Sign Out',
                                     height: 10,
-                                    onTap: () {
-                                      FirebaseAuthServices()
+                                    onTap: () => FirebaseAuthServices()
                                           .signOutNow()
                                           .then((value) {
                                         Navigator.pushNamedAndRemoveUntil(
@@ -98,11 +98,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                             (route) => false);
                                         sharedPreferences!
                                             .setString("islogged", 'false');
-                                      });
-                                    })
+                                      }),
+                                    child: const Text('Sign Out'))
                               ];
                             },
-                            child: Icon(Icons.power_settings_new_sharp),
+                            child: const Icon(Icons.power_settings_new_sharp),
                           ),
                         )
                       ],
@@ -113,12 +113,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
-                        color: Color.fromRGBO(236, 230, 240, 100),
+                        color: const Color.fromRGBO(236, 230, 240, 100),
                       ),
                       child: Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.menu),
+                            icon: const Icon(Icons.menu),
                             onPressed: () {},
                           ),
                           const Expanded(
@@ -129,14 +129,14 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.search),
+                            icon: const Icon(Icons.search),
                             onPressed: () {},
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16.0,
                   ),
                   const Row(
@@ -157,7 +157,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           child: ListView(
                             children: provider.deptList
                                 .map((item) => Container(
-                                      // color: Colors.amber,
                                       margin: const EdgeInsets.only(
                                           left: 10.0, right: 10.0, bottom: 4.0),
                                       height: size.height * 0.1,

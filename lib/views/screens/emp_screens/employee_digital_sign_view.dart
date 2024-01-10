@@ -1,22 +1,30 @@
 
 import 'package:flutter/material.dart';
+import 'package:meals_management_with_firebase/models/events_model.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import '../../custom_widgets/custom_button.dart';
 
+// ignore: must_be_immutable
 class DigitalSignView extends StatelessWidget{
+
+  DateTime? data;
 
   SignatureController signatureController = SignatureController();
 
+  DigitalSignView({super.key,this.data});
+
+  @override
   Widget build(BuildContext context){
+    
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 247, 242, 250),
+      backgroundColor: const Color.fromARGB(255, 247, 242, 250),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 247, 242, 250),
-        title: Text('Signature'),
+        backgroundColor: const Color.fromARGB(255, 247, 242, 250),
+        title: const Text('Signature'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_outlined),
+          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -42,38 +50,38 @@ class DigitalSignView extends StatelessWidget{
                   width: 350,
                 ),
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Expanded(child: SizedBox(width: 180,)),
+                  const Expanded(child: SizedBox(width: 180,)),
                   CustomButton(
-                    child: Text('Re-sign',
+                    onPressed: () => signatureController.clear(),
+                    color: const MaterialStatePropertyAll(Colors.white),
+                    child: const Text('Re-sign',
                       style: TextStyle(color: Colors.black),
                     ),
-                    onPressed: () => signatureController.clear(),
-                    color: MaterialStatePropertyAll(Colors.white),
                   ),
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 15,),
                   Padding(
                     padding: const EdgeInsets.only(right: 20.0),
                     child: CustomButton(
-                      child: Text('Save',
-                        style: TextStyle(color: Colors.white),
-                      ),
                       onPressed: () {
-                        Provider.of<HomePageProvider>(context, listen: false).setOptions('opted');
+                        Provider.of<HomePageProvider>(context, listen: false).setOptions('opted');                      
 
                         if(signatureController.isNotEmpty){
                           Navigator.pushNamed(context, '/preview');
                         }
                         else{
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('signature cannot be empty'))
+                            const SnackBar(content: Text('signature cannot be empty'))
                           );
                         }
                       },
                       color: MaterialStatePropertyAll(Colors.deepPurpleAccent.shade200),
+                      child: const Text('Save',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   )
                 ],

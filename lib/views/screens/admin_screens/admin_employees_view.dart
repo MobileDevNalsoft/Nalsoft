@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
-import 'package:meals_management_with_firebase/providers/admin_home_provider.dart';
 import 'package:meals_management_with_firebase/providers/universal_data_provider.dart';
-import 'package:meals_management_with_firebase/services/database_services.dart';
 import 'package:provider/provider.dart';
 
 class Employees extends StatelessWidget {
-  var size, height, width;
+
+  const Employees({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +13,9 @@ class Employees extends StatelessWidget {
         Provider.of<UniversalDataProvider>(context, listen: false)
             .getDDeptNameforEmployeesPage!);
 
-    size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
-    return SafeArea(
+    var size = MediaQuery.of(context).size;
+    
+    return Provider.of<AdminEmployeesProvider>(context,listen: true).getEmpList.isEmpty ? Center(child: CircularProgressIndicator(),) : SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(
@@ -28,12 +26,12 @@ class Employees extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: Color.fromRGBO(236, 230, 240, 100),
+                  color: const Color.fromRGBO(236, 230, 240, 100),
                 ),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.menu),
+                      icon: const Icon(Icons.menu),
                       onPressed: () {},
                     ),
                     const Expanded(
@@ -44,38 +42,38 @@ class Employees extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.search),
+                      icon: const Icon(Icons.search),
                       onPressed: () {},
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 16.0),
                   child: Text(
                     "Department",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
-                Text(':'),
+                const Text(':'),
                 Padding(
-                  padding: EdgeInsets.only(right: 16.0),
+                  padding: const EdgeInsets.only(right: 16.0),
                   child: Text(
                     Provider.of<UniversalDataProvider>(context)
                         .getDDeptNameforEmployeesPage!,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             const Row(
@@ -97,10 +95,9 @@ class Employees extends StatelessWidget {
                     child: ListView(
                       children: provider.getEmpList
                           .map((item) => Container(
-                                // color: Colors.amber,
                                 margin: const EdgeInsets.only(
                                     left: 10.0, right: 10.0, bottom: 4.0),
-                                height: height * 0.1,
+                                height: size.height * 0.1,
                                 child: Card(
                                   elevation: 3,
                                   child: TextButton(
@@ -111,9 +108,7 @@ class Employees extends StatelessWidget {
                                     style: TextButton.styleFrom(
                                         alignment: Alignment.centerLeft),
                                     child: Text(
-                                      item,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black87),
+                                      item['username'],
                                     ),
                                   ),
                                 ),

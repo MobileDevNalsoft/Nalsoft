@@ -40,7 +40,7 @@ class SignupProvider extends ChangeNotifier {
 
     if (user != null) {
       final userData =
-          UserModel(userName, email, employee_id, _dept!, _floor!, false);
+          UserModel(userName, email, employee_id, _dept!, _floor!, false, {'opted' : [], 'notOpted' : [], 'unSigned' : []});
       _db.pushEmployeeData(user.uid, userData);
       return true;
     }

@@ -1,29 +1,30 @@
 import "package:flutter/material.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
-import "package:table_calendar/table_calendar.dart";
 
 class EmployeeLunchStatus extends StatelessWidget {
-  var size, height, width;
+  
+  const EmployeeLunchStatus({super.key});
+
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
+
+    var size = MediaQuery.of(context).size;
+
     return SafeArea(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(onPressed: () {
           Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back)),
+        }, icon: const Icon(Icons.arrow_back)),
         title: const Text("Lunch Status"),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.account_box_rounded))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.account_box_rounded))
         ],
-        backgroundColor: Color.fromRGBO(236, 230, 240, 100),
+        backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
         elevation: 4,
-        shape: ContinuousRectangleBorder(
+        shape: const ContinuousRectangleBorder(
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(25),
                 bottomRight: Radius.circular(25))),
@@ -31,7 +32,7 @@ class EmployeeLunchStatus extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(24.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +103,7 @@ class EmployeeLunchStatus extends StatelessWidget {
           ElevatedButton(
             onPressed: (){
             Navigator.pushNamed(context, '/download_csv');
-          }, child: Text("Generate CSV")),
+          }, child: const Text("Generate CSV")),
           Image.asset("assets/images/food_png.png"),
         ],
       ),

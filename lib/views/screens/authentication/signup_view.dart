@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import 'package:meals_management_with_firebase/providers/signup_provider.dart';
-import 'package:meals_management_with_firebase/services/database_services.dart';
 import 'package:meals_management_with_firebase/utils/constants.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_dropdown.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
@@ -11,16 +10,15 @@ import '../../custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_snackbar.dart';
 
 class SignUpView extends StatefulWidget {
-  SignUpView({super.key});
+  const SignUpView({super.key});
 
   @override
   State<SignUpView> createState() => _SignUpViewState();
 }
 
 class _SignUpViewState extends State<SignUpView> {
-  final _formKey = GlobalKey<FormState>();
 
-  final DatabaseServices _db = DatabaseServices();
+  final GlobalKey formKey = GlobalKey<FormState>();
 
   late SharedPreferences sharedPreferences;
 
@@ -42,6 +40,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   Widget build(BuildContext context) {
+
     var size = MediaQuery.of(context).size;
 
     Provider.of<SignupProvider>(context, listen: false).setDeptandFloorList();
@@ -49,7 +48,7 @@ class _SignUpViewState extends State<SignUpView> {
     return Provider.of<SignupProvider>(context, listen: true)
             .getDeptList
             .isEmpty
-        ? Center(
+        ? const Center(
             child: CircularProgressIndicator(),
           )
         : Scaffold(
@@ -75,13 +74,13 @@ class _SignUpViewState extends State<SignUpView> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Form(
-                              key: _formKey,
+                              key: formKey,
                               child: Column(
                                 children: [
                                   CustomTextFormField(
                                     controller: _usernameController,
                                     hintText: 'username',
-                                    prefixIcon: Icon(Icons.person),
+                                    prefixIcon: const Icon(Icons.person),
                                   ),
                                   SizedBox(
                                     height: size.height * 0.018,
@@ -89,7 +88,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   CustomTextFormField(
                                     controller: _emailController,
                                     hintText: 'email',
-                                    prefixIcon: Icon(Icons.person),
+                                    prefixIcon: const Icon(Icons.person),
                                   ),
                                   SizedBox(
                                     height: size.height * 0.018,
@@ -97,7 +96,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   CustomTextFormField(
                                     controller: _empIdController,
                                     hintText: 'employee id',
-                                    prefixIcon: Icon(Icons.person),
+                                    prefixIcon: const Icon(Icons.person),
                                   ),
                                   SizedBox(
                                     height: size.height * 0.018,
@@ -152,7 +151,7 @@ class _SignUpViewState extends State<SignUpView> {
                                         builder: (context, provider, child) {
                                           return Expanded(
                                             child: CustomDropDown(
-                                              hint: Text(
+                                              hint: const Text(
                                                 'Department',
                                               ),
                                               value: provider.getDept,
@@ -164,7 +163,7 @@ class _SignUpViewState extends State<SignUpView> {
                                                       value: value,
                                                       child: Text(
                                                         value,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 12),
                                                       ),
                                                     ),
@@ -184,7 +183,7 @@ class _SignUpViewState extends State<SignUpView> {
                                       Consumer<SignupProvider>(
                                         builder: (context, provider, child) {
                                           return CustomDropDown(
-                                            hint: Text(
+                                            hint: const Text(
                                               'Floor',
                                             ),
                                             value: provider.getFloor,
@@ -193,12 +192,12 @@ class _SignUpViewState extends State<SignUpView> {
                                                   (value) =>
                                                       DropdownMenuItem<String>(
                                                     value: value,
+                                                    alignment: Alignment.center,
                                                     child: Text(
                                                       value,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
-                                                    alignment: Alignment.center,
                                                   ),
                                                 )
                                                 .toList(),
@@ -223,10 +222,6 @@ class _SignUpViewState extends State<SignUpView> {
                 ),
                 MediaQuery.of(context).viewInsets.bottom == 0
                     ? CustomButton(
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(color: Colors.black),
-                        ),
                         onPressed: () async {
                           if (_usernameController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
@@ -292,6 +287,7 @@ class _SignUpViewState extends State<SignUpView> {
                                           'You have successfully registered')));
                               // ignore: use_build_context_synchronously
                               sharedPreferences.setString('islogged', 'true');
+                              // ignore: use_build_context_synchronously
                               Navigator.pushNamed(context, '/emp_homepage');
                             } else {
                               print('some error occurred');
@@ -299,6 +295,10 @@ class _SignUpViewState extends State<SignUpView> {
                           }
                         },
                         color: MaterialStatePropertyAll(Colors.grey.shade300),
+                        child: const Text(
+                          'Register',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       )
                     : const SizedBox(),
                 MediaQuery.of(context).viewInsets.bottom == 0

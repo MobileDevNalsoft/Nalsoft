@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management_with_firebase/models/user_model.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
-import 'package:meals_management_with_firebase/services/database_services.dart';
 import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class EmployeeHomeView extends StatefulWidget {
-  EmployeeHomeView({super.key});
+  const EmployeeHomeView({super.key});
 
   @override
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
@@ -25,7 +23,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initiate();
   }
@@ -36,6 +33,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    
     final size = MediaQuery.of(context).size;
 
     Provider.of<HomePageProvider>(context, listen: false).setUser();
@@ -43,10 +41,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
     return Provider.of<HomePageProvider>(context, listen: true)
                 .getFloorDetails
-                .isEmpty ||
-            Provider.of<HomePageProvider>(context, listen: false).getUser ==
-                null
-        ? Center(
+                .isEmpty
+        ? const Center(
             child: CircularProgressIndicator(),
           )
         : SafeArea(
@@ -72,6 +68,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             children: [
                               Consumer<HomePageProvider>(
                                 builder: (context, provider, child) {
+                                  print(provider.getUser);
                                   return Padding(
                                     padding: const EdgeInsets.only(
                                         left: 25, top: 15),
@@ -84,7 +81,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   );
                                 },
                               ),
-                              Expanded(child: SizedBox()),
+                              const Expanded(child: SizedBox()),
                               Consumer<HomePageProvider>(
                                 builder: (context, provider, child) {
                                   return provider.getUser!.isAdmin
@@ -94,10 +91,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             Navigator.pushReplacementNamed(
                                                 context, '/admin_homepage');
                                           },
-                                          activeColor: Color.fromARGB(
+                                          activeColor: const Color.fromARGB(
                                               255, 181, 129, 248),
                                         )
-                                      : SizedBox();
+                                      : const SizedBox();
                                 },
                               ),
                               Padding(
@@ -106,7 +103,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   itemBuilder: (BuildContext context) {
                                     return [
                                       PopupMenuItem(
-                                          child: Text('Sign Out'),
                                           value: 'Sign Out',
                                           height: 10,
                                           onTap: () {
@@ -120,11 +116,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                               sharedPreferences.setString(
                                                   'islogged', 'false');
                                             });
+                                            // ignore: avoid_print
                                             print('navigated to login page');
-                                          })
+                                          },
+                                          child: const Text('Sign Out'))
                                     ];
                                   },
-                                  child: Icon(Icons.power_settings_new_sharp),
+                                  child: const Icon(Icons.power_settings_new_sharp),
                                 ),
                               )
                             ],
@@ -216,10 +214,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                 notOptController,
                                                             decoration: InputDecoration(
                                                                 border:
-                                                                    OutlineInputBorder(),
+                                                                    const OutlineInputBorder(),
                                                                 hintText:
                                                                     'reason for not opting...',
-                                                                hintStyle: TextStyle(
+                                                                hintStyle: const TextStyle(
                                                                     color: Colors
                                                                         .black38),
                                                                 errorText: provider
@@ -254,16 +252,16 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                 Navigator.pop(
                                                                     context);
                                                               },
+                                                              color:
+                                                                  const MaterialStatePropertyAll(
+                                                                      Colors
+                                                                          .white),
                                                               child: const Text(
                                                                 'Cancel',
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .black),
                                                               ),
-                                                              color:
-                                                                  const MaterialStatePropertyAll(
-                                                                      Colors
-                                                                          .white),
                                                             ),
                                                             const SizedBox(
                                                               width: 5,
@@ -280,7 +278,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                       context);
                                                                   Navigator.pushNamed(
                                                                       context,
-                                                                      '/sign');
+                                                                      '/sign',);
                                                                 } else if (notOptController
                                                                     .text
                                                                     .isEmpty) {
@@ -292,16 +290,16 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                       context);
                                                                 }
                                                               },
+                                                              color: MaterialStatePropertyAll(
+                                                                  Colors
+                                                                      .deepPurpleAccent
+                                                                      .shade200),
                                                               child: const Text(
                                                                 'Proceed',
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .white),
                                                               ),
-                                                              color: MaterialStatePropertyAll(
-                                                                  Colors
-                                                                      .deepPurpleAccent
-                                                                      .shade200),
                                                             ),
                                                           ],
                                                         )
@@ -370,15 +368,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             child: SizedBox(
                               height: size.height * 0.12,
                               child: Card(
-                                color: Color.fromARGB(255, 234, 221, 255),
-                                shape: RoundedRectangleBorder(
+                                color: const Color.fromARGB(255, 234, 221, 255),
+                                shape: const RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(30))),
                                 elevation: 10,
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 10),
-                                    Row(
+                                    const SizedBox(height: 10),
+                                    const Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
@@ -390,12 +388,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         )
                                       ],
                                     ),
-                                    SizedBox(height: 6),
+                                    const SizedBox(height: 6),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Column(
+                                        const Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           mainAxisAlignment:
@@ -411,8 +409,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(width: 5),
-                                        Column(
+                                        const SizedBox(width: 5),
+                                        const Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -430,14 +428,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           listen: true)
                                                       .getFloorDetails[
                                                   'start_time'],
-                                              style: TextStyle(fontSize: 12),
+                                              style: const TextStyle(fontSize: 12),
                                             ),
                                             Text(
                                               Provider.of<HomePageProvider>(
                                                       context,
                                                       listen: true)
                                                   .getFloorDetails['end_time'],
-                                              style: TextStyle(fontSize: 12),
+                                              style: const TextStyle(fontSize: 12),
                                             )
                                           ],
                                         )

@@ -1,12 +1,14 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/admin_download_csv_provider.dart';
 
+// ignore: must_be_immutable
 class Download extends StatelessWidget {
 
-  var _startDateController = TextEditingController();
-  var _endDateController = TextEditingController();
+  final _startDateController = TextEditingController();
+  final _endDateController = TextEditingController();
+
+  Download({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,24 +17,24 @@ class Download extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(onPressed: () {
           Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back)),
+        }, icon: const Icon(Icons.arrow_back)),
         title: const Text("Lunch Status"),
         centerTitle: true,
         actions: [
           IconButton(onPressed: () {
 
-          }, icon: Icon(Icons.account_circle_rounded))
+          }, icon: const Icon(Icons.account_circle_rounded))
         ],
-        backgroundColor: Color.fromRGBO(236, 230, 240, 100),
+        backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
         elevation: 4,
-        shape: ContinuousRectangleBorder(
+        shape: const ContinuousRectangleBorder(
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(25),
                 bottomRight: Radius.circular(25))),
       ),
       body: Column(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(24.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,26 +81,26 @@ class Download extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 24.0),
+          const SizedBox(height: 24.0),
           dateRangeCalender(_startDateController, _endDateController),
-          SizedBox(height: 24.0),
+          const SizedBox(height: 24.0),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.5,
             child: Consumer<DownloadProvider>(builder: (context, provider, child) {
               return ElevatedButton(
                 onPressed: () {
                   FocusScope.of(context).unfocus();
-                  if (_startDateController.text.length != 0) {
+                  if (_startDateController.text.isNotEmpty) {
                     provider.updateDateRange(startDate:_startDateController.text);
                     ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text("Downloaded")));
+                        .showSnackBar(const SnackBar(content: Text("Downloaded")));
                   }
                   else{
                     ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text("Start date cannot be empty")));
+                        .showSnackBar(const SnackBar(content: Text("Start date cannot be empty")));
                   }
                 },
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(Icons.download),
@@ -111,7 +113,7 @@ class Download extends StatelessWidget {
               );
             }),
           ),
-          Expanded(child: SizedBox()),
+          const Expanded(child: SizedBox()),
           Image.asset("assets/images/food_png.png"),
         ],
       ),
@@ -136,12 +138,12 @@ class dateRangeCalender extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
-            color: Color.fromRGBO(247, 242, 250, 100)),
+            color: const Color.fromRGBO(247, 242, 250, 100)),
         width: width * 0.8,
         height: height * 0.28,
         child: Column(
           children: [
-            Row(
+            const Row(
               children: [
                 SizedBox(
                   width: 16,
@@ -149,10 +151,10 @@ class dateRangeCalender extends StatelessWidget {
                 Text("Select date range"),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 32.0,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
@@ -162,8 +164,8 @@ class dateRangeCalender extends StatelessWidget {
                 Icon(Icons.calendar_month)
               ],
             ),
-            Divider(),
-            SizedBox(
+            const Divider(),
+            const SizedBox(
               height: 16.0,
             ),
             Row(
@@ -178,7 +180,7 @@ class dateRangeCalender extends StatelessWidget {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
                       alignLabelWithHint: true,
-                      label: Text("Start date"),
+                      label: const Text("Start date"),
                     ),
                   ),
                 ),
@@ -191,7 +193,7 @@ class dateRangeCalender extends StatelessWidget {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12)),
                         alignLabelWithHint: true,
-                        label: Text("End date")),
+                        label: const Text("End date")),
                   ),
                 )
               ],

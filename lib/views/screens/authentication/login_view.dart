@@ -12,7 +12,7 @@ import '../../../utils/constants.dart';
 class LoginView extends StatefulWidget{
 
 
-  LoginView({super.key});
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -20,11 +20,12 @@ class LoginView extends StatefulWidget{
 
 
 class _LoginViewState extends State<LoginView> {
+
   final GlobalKey _formKey = GlobalKey<FormState>();
 
-
   SharedPreferences? sharedPreferences;
-  FirebaseAuthServices _auth = FirebaseAuthServices();
+
+  final FirebaseAuthServices _auth = FirebaseAuthServices();
 
   final TextEditingController _emailController = TextEditingController();
 
@@ -32,7 +33,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initiate();
   }
@@ -53,7 +53,7 @@ class _LoginViewState extends State<LoginView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 Expanded(
                   flex: 3,
                   child: Image.asset('assets/images/login_page_img.png'),
@@ -76,7 +76,7 @@ class _LoginViewState extends State<LoginView> {
                                 const SizedBox(height: 15,),
                                 CustomTextFormField(hintText: 'email',
                                   controller: _emailController,
-                                  prefixIcon: Icon(Icons.person),
+                                  prefixIcon: const Icon(Icons.person),
                                 ),
                                 const SizedBox(height: 15,),
                                 Consumer<LoginProvider>(
@@ -121,9 +121,6 @@ class _LoginViewState extends State<LoginView> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CustomButton(
-                                      child: const Text('Login',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
                                       onPressed: () {
                                         if(_emailController.text.isEmpty){
                                           CustomSnackBar.showSnackBar(context, 'email cannot be empty');
@@ -145,6 +142,9 @@ class _LoginViewState extends State<LoginView> {
                                         }
                                       },
                                       color: MaterialStatePropertyAll(Colors.grey.shade300),
+                                      child: const Text('Login',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
                                     )
                                   ],
                                 ),
@@ -178,12 +178,12 @@ class _LoginViewState extends State<LoginView> {
       sharedPreferences!.setString("islogged", "true");
       Navigator.pushNamed(context, '/emp_homepage');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Successful'))
+        const SnackBar(content: Text('Login Successful'))
       );
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Some error has occurred'))
+          const SnackBar(content: Text('Some error has occurred'))
       );
     }
   }

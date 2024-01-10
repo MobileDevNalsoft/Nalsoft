@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
-// import 'package:gallery_saver/gallery_saver.dart';
 
+// ignore: must_be_immutable
 class Preview extends StatelessWidget {
   ScreenshotController screenshotController = ScreenshotController();
 
   final now = DateTime.now();
 
+  Preview({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 247, 242, 250),
+      backgroundColor: const Color.fromARGB(255, 247, 242, 250),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 247, 242, 250),
+        backgroundColor: const Color.fromARGB(255, 247, 242, 250),
         toolbarHeight: 80,
       ),
       body: Column(
@@ -30,13 +31,15 @@ class Preview extends StatelessWidget {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                color: Color.fromARGB(255, 247, 242, 250),
+                color: const Color.fromARGB(255, 247, 242, 250),
                 child: Padding(
                   padding: const EdgeInsets.only(
                       left: 10, right: 10, bottom: 50, top: 50),
                   child: Card(
-                    color: Color.fromARGB(255, 234, 221, 255),
+                    color: const Color.fromARGB(255, 234, 221, 255),
                     elevation: 10,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -48,16 +51,16 @@ class Preview extends StatelessWidget {
                             children: [
                               Text(
                                 '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
-                                style: TextStyle(fontSize: 25),
+                                style: const TextStyle(fontSize: 25),
                               ),
                               Text(
-                                '${DateFormat.jm().format(now)}',
-                                style: TextStyle(fontSize: 25),
+                                DateFormat.jm().format(now),
+                                style: const TextStyle(fontSize: 25),
                               )
                             ],
                           ),
                         ),
-                        Divider(
+                        const Divider(
                           color: Color.fromARGB(255, 247, 242, 250),
                           thickness: 4,
                         ),
@@ -66,7 +69,7 @@ class Preview extends StatelessWidget {
                               top: 20.0, left: 20, right: 20, bottom: 20),
                           child: Row(
                             children: [
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text('Employee Name'),
@@ -74,13 +77,13 @@ class Preview extends StatelessWidget {
                                   Text('Employee Floor no.')
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
-                              Column(
+                              const Column(
                                 children: [Text(':'), Text(':'), Text(':')],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                               Column(
@@ -89,14 +92,14 @@ class Preview extends StatelessWidget {
                                   Text(Provider.of<HomePageProvider>(context)
                                       .getUser!
                                       .userName),
-                                  Text('XXXXXX'),
-                                  Text('08')
+                                  const Text('XXXXXX'),
+                                  const Text('08')
                                 ],
                               )
                             ],
                           ),
                         ),
-                        Text(
+                        const Text(
                           'Successfully Signed\n         for today',
                           style: TextStyle(fontSize: 20),
                         ),
@@ -114,19 +117,17 @@ class Preview extends StatelessWidget {
                                 width: 120,
                                 color: Colors.white,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                       ],
                     ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40)),
                   ),
                 ),
               ),
@@ -141,17 +142,17 @@ class Preview extends StatelessWidget {
                 children: [
                   CustomButton(
                     onPressed: () => null,
-                    child: Text(
+                    color: MaterialStatePropertyAll(Colors.green.shade500),
+                    child: const Text(
                       'Download',
                       style: TextStyle(color: Colors.white),
                     ),
-                    color: MaterialStatePropertyAll(Colors.green.shade500),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 130,
           )
         ],

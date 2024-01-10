@@ -4,8 +4,12 @@ import "package:meals_management_with_firebase/providers/employee_update_upcomin
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
+// ignore: must_be_immutable
 class UpdateLunchStatus extends StatelessWidget {
+  
   DateRangePickerController dateController = DateRangePickerController();
+
+  UpdateLunchStatus({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +24,16 @@ class UpdateLunchStatus extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.arrow_back)),
           // title: const Text("Lunch Status"),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.account_circle_sharp))
+            IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle_sharp))
           ],
-          backgroundColor: Color.fromARGB(100, 179, 110, 234),
+          backgroundColor: const Color.fromARGB(100, 179, 110, 234),
           elevation: 4,
           toolbarHeight: 65,
-          shape: ContinuousRectangleBorder(
+          shape: const ContinuousRectangleBorder(
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(50),
                   bottomRight: Radius.circular(50))),
@@ -42,7 +46,7 @@ class UpdateLunchStatus extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.01,
                 ),
-                Text(
+                const Text(
                   'Select Reason',
                   style: TextStyle(fontSize: 15),
                 ),
@@ -64,24 +68,25 @@ class UpdateLunchStatus extends StatelessWidget {
                 SizedBox(
                   width: size.width * 0.95,
                   child: Card(
+                    // ignore: sort_child_properties_last
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0, top: 4),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 18.0, top: 4),
                           child: Text('Lunch Calendar'),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0, left: 18),
                           child: Text(
                             '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
-                            style: TextStyle(fontSize: 30),
+                            style: const TextStyle(fontSize: 30),
                           ),
                         ),
-                        Divider(),
+                        const Divider(),
                         SfDateRangePicker(
                           controller: dateController,
                           showActionButtons: true,
@@ -95,7 +100,7 @@ class UpdateLunchStatus extends StatelessWidget {
                         )
                       ],
                     ),
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     elevation: 8,
                   ),
