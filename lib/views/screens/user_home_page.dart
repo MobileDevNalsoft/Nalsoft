@@ -38,7 +38,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Widget build(BuildContext context) {
 
     final size = MediaQuery.of(context).size;
-    
+    // sharedPreferences!.setString("isLogged", "true");
     Provider.of<HomePageProvider>(context, listen: false).setUserName();
     Provider.of<HomePageProvider>(context, listen: false).setFloorDetails();
 
@@ -72,7 +72,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 25, top: 15),
-                          child: Text('Hi,\n${Provider.of<HomePageProvider>(context, listen: false).getUserName}',
+                          child: Text('Hi,\n${Provider.of<HomePageProvider>(context, listen: true).getUserName}',
                             style: const TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold
@@ -97,6 +97,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 height: 10,
                                 onTap: () {
                                   FirebaseAuthService().signOutNow().then((value) => Navigator.pushNamedAndRemoveUntil(context, RouteManagement.loginPage, (route) => false));
+                                  sharedPreferences.setString("isLogged","false");
                                   print('navigated to login page');
                                 }
                               )];

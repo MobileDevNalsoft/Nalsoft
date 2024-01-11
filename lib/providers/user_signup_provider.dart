@@ -4,7 +4,7 @@ import "package:meals_management/services/user_authentication.dart";
 import 'package:meals_management/views/models/user_model.dart';
 
 class SignUpProvider extends ChangeNotifier {
-  UserModel? _user;
+  UserModel? _user= UserModel('', '', '', '', '', false);
   FirebaseAuthService _auth = FirebaseAuthService();
   DatebaseServices _db = DatebaseServices();
   String? _dept;

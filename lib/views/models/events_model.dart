@@ -25,14 +25,14 @@ class EventsModel {
             .toList() ??
         [];
   }
-  Map<String, dynamic> toJson(dates) {
+  Map<String, dynamic> toJson(user) {
     print("dates");
     print(opted);
     print(notOpted);
     print(unSigned);
     return {
       'opted': opted!.map((date) => Timestamp.fromDate(date)).toList(),
-      'notOpted': dates!.map((date) => Timestamp.fromDate(date)).toList(),
+      // 'notOpted': dates!.map((date) => Timestamp.fromDate(date)).toList(),
       'unSigned': unSigned!.map((date) => Timestamp.fromDate(date)).toList(),
     };
   }

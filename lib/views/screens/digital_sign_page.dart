@@ -1,12 +1,15 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:meals_management/providers/digital_signature_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
-class SignPage extends StatelessWidget{
-
+class SignPage extends StatelessWidget {
   SignatureController signatureController = SignatureController();
 
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 247, 242, 250),
       appBar: AppBar(
@@ -40,39 +43,55 @@ class SignPage extends StatelessWidget{
                   width: 350,
                 ),
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Expanded(child: SizedBox(width: 180,)),
+                  Expanded(
+                      child: SizedBox(
+                    width: 180,
+                  )),
                   ElevatedButton(
-                    child: Text('Re-sign',
+                    child: Text(
+                      'Re-sign',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => signatureController.clear(),
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.white),
-                        elevation: MaterialStatePropertyAll(5)
-                    ),
+                        elevation: MaterialStatePropertyAll(5)),
                   ),
-                  SizedBox(width: 15,),
+                  SizedBox(
+                    width: 15,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: ElevatedButton(
-                      child: Text('Save',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if(signatureController.isNotEmpty){
-                          Navigator.pushNamed(context, '/preview');
-                        }
-                      },
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(Colors.deepPurpleAccent.shade200),
-                          elevation: MaterialStatePropertyAll(5)
-                      ),
-                    ),
-                  )
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: Consumer<SignatureProvider>(
+                        builder: (context, signatureProvider, child) {
+                          return ElevatedButton(
+                            child: Text(
+                              'Save',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () async {
+                              if (signatureController.isNotEmpty) {
+                                ui.Image? signatureImage =await signatureController.toImage();
+                                ByteData? byteData = await signatureImage?.toByteData(format: ui.ImageByteFormat.png);
+                                Uint8List pngBytes = byteData!.buffer.asUint8List();
+                                signatureProvider.uploadImage(pngBytes);
+                                // print("pngbytes ${pngBytes}");
+                                Navigator.pushNamed(context, '/preview');
+                              }
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Colors.deepPurpleAccent.shade200),
+                                elevation: MaterialStatePropertyAll(5)),
+                          );
+                        },
+                      ))
                 ],
               )
             ],

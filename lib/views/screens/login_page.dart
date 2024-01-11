@@ -25,7 +25,7 @@ class _LoginViewState extends State<LoginView> {
   final GlobalKey _formKey = GlobalKey<FormState>();
 
 
-  SharedPreferences? sharedPreferences;
+  late SharedPreferences sharedPreferences;
   FirebaseAuthService _auth = FirebaseAuthService();
 
   final TextEditingController _emailController = TextEditingController();
@@ -180,9 +180,10 @@ class _LoginViewState extends State<LoginView> {
       // employee.getUser(user.uid);
       // if (provider.user.isAdmin){
         print("userpage");
+        sharedPreferences.setString("isLogged", "true");
           ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login Successful')));
-      Navigator.pushNamed(context, RouteManagement.userHomePage);  
+      Navigator.pushReplacementNamed(context, RouteManagement.userHomePage);  
       // }
       // else{
       // print("userpage");

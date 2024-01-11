@@ -5,8 +5,7 @@ import 'package:meals_management/views/models/user_model.dart';
 class HomePageProvider extends ChangeNotifier {
   String _userName = '';
   bool _isAdmin=false;
-  late UserModel _user;
-
+  late UserModel _user=UserModel('', '', '', '', '', false);
   UserModel get user=>_user;
 
   late DateTime _selectedDate;
