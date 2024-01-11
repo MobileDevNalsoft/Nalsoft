@@ -4,13 +4,13 @@ import 'package:meals_management_with_firebase/services/database_services.dart';
 class AdminEmployeesProvider extends ChangeNotifier {
   final DatabaseServices _db = DatabaseServices();
 
-  List<String> empList = [];
+  List<dynamic> empList = [];
 
-  void setEmpList(String deptName) async {
-    empList = await _db.readEmployees(deptName);
-    print(empList);
+  Future<void> setEmpList() async {
+    var allEmpinfoList = await _db.readEmployees();
+    empList = allEmpinfoList.map((e) => e['username']).toList();
     notifyListeners();
   }
 
-  List<String> get getEmpList => empList;
+  List<dynamic> get getEmpList => empList;
 }

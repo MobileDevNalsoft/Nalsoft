@@ -18,24 +18,23 @@ class DatabaseServices {
     return UserModel.fromSnapshot(userCollection);
   }
 
+  //retrieves list of departments from firestore doc
   Future<List<dynamic>> readDepartments() async {
     final depts =
         await _db.collection('departments').doc('departments_nalsoft').get();
     return depts.data()!.values.toList();
   }
 
+  // retrieves list of floors and its details from firestore
   Future<List<Map<String, Map<String, dynamic>>>> readFloors() async {
     final snapshot = await _db.collection('floors').get();
     return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
   }
 
-  readEmployees(String deptName) async {
-    return await _db
-        .collection('employees')
-        .where('department', isEqualTo: deptName)
-        .get()
-        .then((querySnapshot) =>
-            querySnapshot.docs.map((doc) => doc.data()).toList());
+  // retrieves list of 
+  Future<List<Map<String, dynamic>>> readEmployees() async {
+    final snapshot = await _db.collection('employees').get();
+    return snapshot.docs.map((doc) => {doc.id: doc.data()}).map((e) => e.values.first).toList();
   }
 
   void pushEvents(List<DateTime>? dates) async {
@@ -45,7 +44,7 @@ class DatabaseServices {
         await _db.collection('employees').doc(_auth.currentUser!.uid).get();
     var currentDates = employeeSnapshot['events']['notOpted'];
     currentDates.add(dates);
-    await employeeReference.update({'notOpted': currentDates[1]});
+    await employeeReference.update({'events.notOpted': currentDates[1]});
   }
 
   // void pushEventDates(EventsModel events){

@@ -20,7 +20,8 @@ class EmployeeLunchStatus extends StatelessWidget {
         title: const Text("Lunch Status"),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.account_box_rounded))
+          Icon(Icons.account_circle_sharp, size: 30,),
+          SizedBox(width: 10,)
         ],
         backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
         elevation: 4,

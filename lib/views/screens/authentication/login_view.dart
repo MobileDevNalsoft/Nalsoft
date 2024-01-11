@@ -147,7 +147,7 @@ class _LoginViewState extends State<LoginView> {
                                         'password must include atleast one special symbol, lowercase and uppercase letter');
                                   } else {
                                     var isSuccess = await Provider.of<
-                                            UserDataProvider>(context)
+                                            UserDataProvider>(context, listen: false)
                                         .userLogin(_emailController.text.trim(),
                                             _passwordController.text.trim());
                                     if (isSuccess) {

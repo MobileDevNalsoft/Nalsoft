@@ -133,7 +133,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 10),
+                          horizontal: 15, vertical: 12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
                         color: const Color.fromRGBO(236, 230, 240, 100),
@@ -148,7 +148,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             SizedBox(
                               width: size.width * 0.04,
                             ),
-                            const Expanded(child: Text("Search employee")),
+                            const Expanded(child: Text("Search employee", style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100)))),
                             const Icon(Icons.search),
                           ],
                         ),
