@@ -2,35 +2,64 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
+import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/services/user_authentication.dart';
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class UserHomePage extends StatelessWidget{
+class EmployeeHomeView extends StatefulWidget{
 
+  EmployeeHomeView({super.key});
+
+  @override
+  State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
+}
+
+class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   DateTime now = DateTime.now();
 
   TextEditingController notOptController = TextEditingController();
+  late SharedPreferences sharedPreferences;
+  @override
+   void initState() {
+    super.initState();
+     initiate();
+  }
+  
+  initiate() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+
+    final size = MediaQuery.of(context).size;
+    
+    Provider.of<HomePageProvider>(context, listen: false).setUserName();
+    Provider.of<HomePageProvider>(context, listen: false).setFloorDetails();
 
     return SafeArea(
-      child: Scaffold(
+      child:Provider.of<HomePageProvider>(context, listen: false)
+            .getFloorDetails
+            .isEmpty
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
         resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     width: double.infinity,
-                    height: size.height * 0.22,
-                    decoration: BoxDecoration(
+                    height: size.height * 0.18,
+                    decoration: const BoxDecoration(
                         color: Color.fromARGB(100, 179, 110, 234),
                         borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(50),
@@ -39,29 +68,48 @@ class UserHomePage extends StatelessWidget{
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 25, top: 15),
                           child: Text('Hi,\n${Provider.of<HomePageProvider>(context, listen: false).getUserName}',
-                            style: TextStyle(
-                                fontSize: 30,
+                            style: const TextStyle(
+                                fontSize: 25,
                                 fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(right: 25, top: 25),
-                          child: Icon(Icons.account_circle_sharp,
-                            size: 40,
+                        Expanded(child: SizedBox()),
+                       Provider.of<HomePageProvider>(context, listen: true).user.isAdmin? Switch(
+                              value: false,
+                              onChanged: (value) {
+                                Navigator.pushReplacementNamed(context, RouteManagement.adminHomePage);
+                              },
+                              activeColor: Color.fromARGB(255, 181, 129, 248),
+                        ):SizedBox(),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: PopupMenuButton(
+                            itemBuilder: (BuildContext context) {
+                              return [PopupMenuItem(
+                                child: Text('Sign Out'),
+                                value: 'Sign Out',
+                                height: 10,
+                                onTap: () {
+                                  FirebaseAuthService().signOutNow().then((value) => Navigator.pushNamedAndRemoveUntil(context, RouteManagement.loginPage, (route) => false));
+                                  print('navigated to login page');
+                                }
+                              )];
+                            },
+                            child: Icon(Icons.power_settings_new_sharp),
                           ),
                         )
                       ],
+                    )
                     ),
-                  ),
-                  SizedBox(height: 50,),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  SizedBox(height: size.height*0.1,),
+                  SizedBox(
+                    width: size.width*0.95,
                     child: Card(
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20))
@@ -70,7 +118,7 @@ class UserHomePage extends StatelessWidget{
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 10,),
+                          const SizedBox(height: 10,),
                           const Padding(
                             padding: EdgeInsets.only(left: 18.0, top: 4),
                             child: Text('Lunch Calendar'),
@@ -79,27 +127,19 @@ class UserHomePage extends StatelessWidget{
                             padding: const EdgeInsets.only(
                                 top: 15.0, left: 18),
                             child: Text(
-                              '${DateFormat('EEEE').format(now).substring(
-                                  0, 3)}, ${DateFormat('MMMM')
-                                  .format(now)
-                                  .substring(0, 3)} ${now.day}',
-                              style: TextStyle(fontSize: 30),
+                              '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                              style: const TextStyle(fontSize: 30),
                             ),
                           ),
-                          Divider(),
-                           Consumer<HomePageProvider>(
+                          const Divider(),
+                          Consumer<HomePageProvider>(
                             builder: (context, provider, child) {
                               return SfDateRangePicker(
                                 showActionButtons: true,
-                                allowViewNavigation: false,
+                                allowViewNavigation: true,
                                 selectionMode: DateRangePickerSelectionMode.single,
                                 showNavigationArrow: true,
-                                onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                                  showDialog(context: context, builder: (context) {
-                                   return AlertDialog(content: Text("opt for lunch"),actions: [TextButton(onPressed: (){},child: Text("cancel"),)],);
-                                  },);
-                                  
-                                },
+
                                 onSubmit: (date) {
                                   if(date == null || date.toString().substring(0,10) != now.toString().substring(0,10)){
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -107,6 +147,7 @@ class UserHomePage extends StatelessWidget{
                                     );
                                   }
                                   else{
+                                    notOptController.clear();
                                     showDialog(
                                       context: context,
                                       builder: (context) {
@@ -198,44 +239,39 @@ class UserHomePage extends StatelessWidget{
                       ),
                     ),
                   ),
-                  // Expanded(child: SizedBox()),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _options(color: Colors.green.shade200, text: Text('Signed', style: TextStyle(fontSize: 13),)),
-                        _options(color: Colors.grey.shade300, text: Text('Not Signed', style: TextStyle(fontSize: 13),)),
-                        _options(color: Colors.orange.shade200, text: Text('Not Opted', style: TextStyle(fontSize: 13),)),
-                        _options(color: Colors.red.shade100, text: Text('Holiday', style: TextStyle(fontSize: 13),)),
+                        _options(color: Colors.green.shade200, text: const Text('Signed', style: TextStyle(fontSize: 10),)),
+                        _options(color: Colors.grey.shade300, text: const Text('Not Signed', style: TextStyle(fontSize: 10),)),
+                        _options(color: Colors.orange.shade200, text: const Text('Not Opted', style: TextStyle(fontSize: 10),)),
+                        _options(color: Colors.red.shade100, text: const Text('Holiday', style: TextStyle(fontSize: 10),)),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: size.height*0.1,
-                    child: Image.asset(
-                      'assets/images/food.png',
-                      fit: BoxFit.fill, // Fill the width of the screen
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                    ),
-                  ),
+                  Image.asset('assets/images/food.png'),
                 ],
               ),
               Positioned(
-                top: -450,
+                top: -(size.height*0.56),
                 bottom: 0,
                 left: 0,
                 right: 0,
                 child: Row(
                   children: [
-                    SizedBox(width: 40,),
+                    SizedBox(width: size.width*0.07,),
                     Expanded(
+                      flex: 1,
                       child: SizedBox(
                         height: size.height * 0.12,
                         child: Card(
+                          color: Color.fromARGB(255, 234, 221, 255),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  30))
+                          ),
+                          elevation: 10,
                           child: Column(
                             children: [
                               SizedBox(height: 10),
@@ -244,7 +280,7 @@ class UserHomePage extends StatelessWidget{
                                 children: [
                                   Icon(Icons.access_time_sharp),
                                   SizedBox(width: 5),
-                                  Text('Lunch Timings')
+                                  Text('Lunch Timings',style: TextStyle(fontSize: 12),)
                                 ],
                               ),
                               SizedBox(height: 6),
@@ -252,60 +288,63 @@ class UserHomePage extends StatelessWidget{
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('Start time:',
+                                      Text('Start time',
                                         style: TextStyle(fontSize: 12),
                                       ),
-                                      Text('End time:',
+                                      Text('End time',
                                         style: TextStyle(fontSize: 12),
                                       ),
                                     ],
                                   ),
                                   SizedBox(width: 5),
                                   Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('12:30 pm'),
-                                      Text('01:30 pm')
+                                      Text(':'),
+                                      Text(':'),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('12:30 pm',style: TextStyle(fontSize: 12),),
+                                      Text('01:30 pm',style: TextStyle(fontSize: 12),)
                                     ],
                                   )
                                 ],
                               ),
                             ],
                           ),
-                          color: Color.fromARGB(255, 234, 221, 255),
-                          shape: RoundedRectangleBorder(
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: size.width*0.01,),
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: size.height * 0.12,
+                        child: Card(
+                          color: const Color.fromARGB(255, 234, 221, 255),
+                          shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(
                                   30))
                           ),
                           elevation: 10,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 15,),
-                    Expanded(
-                      child: SizedBox(
-                        height: size.height * 0.12,
-                        child: Card(
                           child: TextButton(
-                            child: Text('Update upcoming\nlunch status',
+                            child: const Text('Update upcoming\nlunch status',
                               style: TextStyle(color: Colors.black,
                                   fontWeight: FontWeight.normal),),
                             onPressed: () {
                               Navigator.pushNamed(context, RouteManagement.updateUpcomingStatus);
                             },
                           ),
-                          color: Color.fromARGB(255, 234, 221, 255),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(
-                                  30))
-                          ),
-                          elevation: 10,
                         ),
                       ),
                     ),
-                    SizedBox(width: 40,),
+                    SizedBox(width: size.width*0.07,),
                   ],
                 ),
               ),

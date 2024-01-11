@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/Repositories/events_repo.dart';
 import 'package:meals_management/Repositories/user_repo.dart';
-import 'package:meals_management/views/modals/events_model.dart';
+import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/views/models/events_model.dart';
 
 
 class EventsProvider extends ChangeNotifier {
@@ -9,7 +10,7 @@ class EventsProvider extends ChangeNotifier {
   late EventsModel _eventModel;
  EventsRepo _eventsRepo= EventsRepo();
 
-  String _reason='single day';
+  String _reason='Single day';
 
   String get reason=> _reason;
   void setReason(String value){
@@ -17,13 +18,14 @@ class EventsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateEvents(dates, String selectedReason,String uid) {
-    
+  void updateEvents(dates, String selectedReason,String uid,LoginProvider loginProvider) {
+    print("inside provider");
     if  (selectedReason!="vacation"){
-      dates.forEach((date){
-          _eventModel.notOpted!.add(date);
-      });
+      print("not vacation");
+      _eventsRepo.updateEvents(dates,uid);
+      print("added");
       _eventsRepo.getEvents(uid);
+      notifyListeners();
   }
 }
 }

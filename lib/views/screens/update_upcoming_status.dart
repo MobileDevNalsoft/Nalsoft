@@ -2,7 +2,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:meals_management/providers/events_provider.dart";
-import "package:meals_management/providers/update_upcoming_status_provider.dart";
+import "package:meals_management/providers/login_provider.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
@@ -17,6 +17,7 @@ class UpdateLunchStatus extends StatelessWidget {
 
     var now = DateTime.now();
     var uid= FirebaseAuth.instance.currentUser?.uid;
+    print("uid${uid}");
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -38,6 +39,7 @@ class UpdateLunchStatus extends StatelessWidget {
       ),
       body: Consumer<EventsProvider>(
         builder: (context, provider, child) {
+          print(provider.reason);
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -60,12 +62,16 @@ class UpdateLunchStatus extends StatelessWidget {
               SizedBox(
                 width: size.width*0.95,
                 child: Card(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                  ),
+                  elevation: 8,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 5,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 18.0, top: 4),
+                      const SizedBox(height: 5,),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 18.0, top: 4),
                         child: Text('Lunch Calendar'),
                       ),
                       Padding(
@@ -80,7 +86,8 @@ class UpdateLunchStatus extends StatelessWidget {
                         ),
                       ),
                       Divider(),
-                   SfDateRangePicker(
+                   Consumer<LoginProvider>(builder: (context, loginProvider, child) {
+                     return SfDateRangePicker(
                     controller: dateController,
                     showActionButtons: true,
                     allowViewNavigation: true,
@@ -89,15 +96,12 @@ class UpdateLunchStatus extends StatelessWidget {
                                         : DateRangePickerSelectionMode.single,
                     showNavigationArrow: true,
                     onSubmit: (selectedDates) {
-                      print(selectedDates);
-                      provider.updateEvents(selectedDates,provider.reason,uid!);
+                      // print(selectedDates);
+                      provider.updateEvents(selectedDates,provider.reason,uid!,loginProvider);
                     },
-                                         )],
+                                         );
+                   },)],
                   ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  elevation: 8,
                 ),
               ),
               Image.asset("assets/images/food.png"),

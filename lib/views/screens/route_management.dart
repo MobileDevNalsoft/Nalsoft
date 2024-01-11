@@ -12,7 +12,8 @@ import 'package:meals_management/views/screens/user_home_page.dart';
 
 class RouteManagement {
   RouteManagement._();
-  static const String homePage = '/homepage';
+  static const String loginPage = '/';
+  static const String userHomePage = '/homepage';
   static const String employees = '/employees';
   static const String employeeLunchStatus = '/employeeLunchStatus';
   static const String download = '/download';
@@ -23,9 +24,9 @@ class RouteManagement {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => LoginPage());
+        return MaterialPageRoute(builder: (_) => LoginView());
       case '/homepage':
-        return MaterialPageRoute(builder: (_) => UserHomePage());
+        return MaterialPageRoute(builder: (_) => EmployeeHomeView());
       case '/sign':
         return MaterialPageRoute(builder: (_) => SignPage());
       case '/preview':

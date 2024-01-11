@@ -3,51 +3,43 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel{
   String email;
+  String username;
   String employee_id;
-  String password;
   String department;
   String floor;
+  bool isAdmin;
 
   UserModel(
     this.email,
+    this.username,
     this.employee_id,
-    this.password,
     this.department,
     this.floor,
+    this.isAdmin,
   );
+
+  get opted => null;
 
   static UserModel fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot){
     return UserModel(
       snapshot['email'],
+      snapshot['username'],
       snapshot['employee_id'],
-      snapshot['password'],
       snapshot['department'],
-      snapshot['floor']
+      snapshot['floor'],
+      snapshot['isAdmin'],
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
       'email': email,
+      'username':username,
       'employee_id': employee_id,
-      'password': password,
       'department': department,
       'floor': floor,
+      'isAdmin':false,
     };
     return data;
-  }
-
-  void _updateData(UserModel userModel){
-    final userCollection = FirebaseFirestore.instance.collection("Employees");
-
-    final newData = UserModel(email, employee_id, password, department, floor).toJson();
-
-    userCollection.doc(userModel.email).update(newData);
-  }
-
-  void _deleteData(String id){
-    final userCollection = FirebaseFirestore.instance.collection("Employees");
-
-    userCollection.doc(id).delete();
   }
 }
