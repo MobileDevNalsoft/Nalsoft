@@ -2,12 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management_with_firebase/providers/admin_download_csv_provider.dart';
 import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
-import 'package:meals_management_with_firebase/providers/admin_home_provider.dart';
+import 'package:meals_management_with_firebase/providers/auth_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart';
-import 'package:meals_management_with_firebase/providers/login_provider.dart';
-import 'package:meals_management_with_firebase/providers/signup_provider.dart';
 import 'package:meals_management_with_firebase/providers/universal_data_provider.dart';
+import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
 import 'package:meals_management_with_firebase/route_management/route_management.dart';
 import 'package:meals_management_with_firebase/views/screens/authentication/login_view.dart';
 import 'package:meals_management_with_firebase/views/screens/emp_screens/employee_home_view.dart';
@@ -25,30 +24,27 @@ Future<void> main() async {
           projectId: "meals-management-app-37e6a"));
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<LoginProvider>(
-          create: (context) => LoginProvider()),
-      ChangeNotifierProvider<HomePageProvider>(
-          create: (context) => HomePageProvider()),
-      ChangeNotifierProvider<SignupProvider>(
-          create: (context) => SignupProvider()),
+      ChangeNotifierProvider<AuthProvider>(create: (context) => AuthProvider()),
+      ChangeNotifierProvider<EmployeeHomeProvider>(
+          create: (context) => EmployeeHomeProvider()),
       ChangeNotifierProvider<DownloadProvider>(
           create: (context) => DownloadProvider()),
       ChangeNotifierProvider<StatusProvider>(
           create: (context) => StatusProvider()),
-      ChangeNotifierProvider<AdminHomeProvider>(
-          create: (context) => AdminHomeProvider()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
           create: (context) => AdminEmployeesProvider()),
       ChangeNotifierProvider<UniversalDataProvider>(
           create: (context) => UniversalDataProvider()),
+      ChangeNotifierProvider<UserDataProvider>(
+          create: (context) => UserDataProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         onGenerateRoute: RouteManagement.generateRoute,
         home: sharedPreferences.getString("islogged") == "true"
-            ? EmployeeHomeView()
-            : LoginView(),
+            ? const EmployeeHomeView()
+            : const LoginView(),
       ),
     ),
   ));

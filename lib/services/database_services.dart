@@ -1,21 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meals_management_with_firebase/models/events_model.dart';
 import '../models/user_model.dart';
 
 class DatabaseServices {
   final _db = FirebaseFirestore.instance;
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //creates a new user document in firestore collection
+  Future<void> createUser(String docID, UserModel userData) async {
+    await _db.collection('employees').doc(docID).set(userData.toJson());
+  }
+
+  //retrieves the user data from firestore collection
   Future<UserModel> readData() async {
     final userCollection =
         await _db.collection("employees").doc(_auth.currentUser!.uid).get();
     return UserModel.fromSnapshot(userCollection);
   }
 
-  readEmployees(String deptName) async {
+  Future<List<dynamic>> readDepartments() async {
+    final depts =
+        await _db.collection('departments').doc('departments_nalsoft').get();
+    return depts.data()!.values.toList();
+  }
 
+  Future<List<Map<String, Map<String, dynamic>>>> readFloors() async {
+    final snapshot = await _db.collection('floors').get();
+    return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
+  }
+
+  readEmployees(String deptName) async {
     return await _db
         .collection('employees')
         .where('department', isEqualTo: deptName)
@@ -24,24 +38,14 @@ class DatabaseServices {
             querySnapshot.docs.map((doc) => doc.data()).toList());
   }
 
-  readDepartments() async {
-    final depts =
-        await _db.collection('departments').doc('departments_nalsoft').get();
-    return depts.data()!.values.toList();
-  }
-
-  readFloors() async {
-    final snapshot = await _db.collection('floors').get();
-    return snapshot.docs.map((doc) => doc.id).toList();
-  }
-
-  readFloorDetails(String id) async {
-    final snapshot = await _db.collection('floors').doc(id).get();
-    return snapshot.data();
-  }
-
-  void pushEmployeeData(String docID, UserModel userData) {
-    _db.collection('employees').doc(docID).set(userData.toJson());
+  void pushEvents(List<DateTime>? dates) async {
+    DocumentReference employeeReference =
+        _db.collection('employees').doc(_auth.currentUser!.uid);
+    DocumentSnapshot employeeSnapshot =
+        await _db.collection('employees').doc(_auth.currentUser!.uid).get();
+    var currentDates = employeeSnapshot['events']['notOpted'];
+    currentDates.add(dates);
+    await employeeReference.update({'notOpted': currentDates[1]});
   }
 
   // void pushEventDates(EventsModel events){

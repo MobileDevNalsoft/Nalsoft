@@ -7,7 +7,7 @@ class UserModel {
   String department;
   String floor;
   bool isAdmin;
-  Map<String,List> events;
+  Map<String, dynamic> events;
 
   UserModel(this.userName, this.email, this.employee_id, this.department,
       this.floor, this.isAdmin, this.events);

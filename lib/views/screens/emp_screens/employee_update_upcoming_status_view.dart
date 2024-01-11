@@ -1,15 +1,15 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart";
+import "package:meals_management_with_firebase/services/database_services.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
 // ignore: must_be_immutable
 class UpdateLunchStatus extends StatelessWidget {
-  
-  DateRangePickerController dateController = DateRangePickerController();
-
   UpdateLunchStatus({super.key});
+
+  DatabaseServices _db = DatabaseServices();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,8 @@ class UpdateLunchStatus extends StatelessWidget {
           // title: const Text("Lunch Status"),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle_sharp))
+            IconButton(
+                onPressed: () {}, icon: const Icon(Icons.account_circle_sharp))
           ],
           backgroundColor: const Color.fromARGB(100, 179, 110, 234),
           elevation: 4,
@@ -53,7 +54,6 @@ class UpdateLunchStatus extends StatelessWidget {
                 DropdownButton<String>(
                   value: provider.getReason,
                   onChanged: (String? newValue) {
-                    dateController.backward;
                     provider.setReason(newValue!);
                   },
                   items: <String>['Single day', 'Multiple days', 'Vacation']
@@ -88,7 +88,6 @@ class UpdateLunchStatus extends StatelessWidget {
                         ),
                         const Divider(),
                         SfDateRangePicker(
-                          controller: dateController,
                           showActionButtons: true,
                           allowViewNavigation: true,
                           selectionMode: provider.getReason == 'Multiple days'
@@ -97,6 +96,9 @@ class UpdateLunchStatus extends StatelessWidget {
                                   ? DateRangePickerSelectionMode.extendableRange
                                   : DateRangePickerSelectionMode.single,
                           showNavigationArrow: true,
+                          onSubmit: (p0) {
+                            _db.pushEvents(p0 as List<DateTime>?);
+                          },
                         )
                       ],
                     ),

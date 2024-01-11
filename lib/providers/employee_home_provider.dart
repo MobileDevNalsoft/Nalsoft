@@ -1,27 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/models/events_model.dart';
-import 'package:meals_management_with_firebase/models/user_model.dart';
 import 'package:meals_management_with_firebase/services/database_services.dart';
 
-class HomePageProvider extends ChangeNotifier {
+class EmployeeHomeProvider extends ChangeNotifier {
   final DatabaseServices _db = DatabaseServices();
 
-  UserModel? _user;
-  Map<String, dynamic> floorDetails = {'start_time': ' ', 'end_time': ' '};
+  List<Map<String, Map<String, dynamic>>> floorDetails = [];
   DateTime? _selectedDate;
   int _radioValue = 1;
   bool _reasonEmpty = false;
   String? _optionStatus;
   bool _isToggled = false;
+  List<DateTime>? optedDates = [];
 
-  void setUser() async {
-    _user = await _db.readData();
-    notifyListeners();
-  }
-
-  void setFloorDetails() async {
-    UserModel user = await _db.readData();
-    floorDetails = await _db.readFloorDetails(user.floor);
+  Future<void> setFloorDetails() async {
+    floorDetails = await _db.readFloors();
     notifyListeners();
   }
 
@@ -50,15 +42,24 @@ class HomePageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setOptedDate(DateTime date) {
+    optedDates!.add(date);
+    _db.pushEvents(optedDates);
+  }
+
+  void setNotOptedDate(DateTime date) {
+    optedDates!.add(date);
+    _db.pushEvents(optedDates);
+  }
+
   // void pushEvents(EventsModel events){
   //   _db.pushEventDates(events);
   // }
 
-  UserModel? get getUser => _user;
   DateTime? get getSelectedDate => _selectedDate;
   int get getRadioValue => _radioValue;
   bool get getReasonEmpty => _reasonEmpty;
   String? get getOptions => _optionStatus;
   bool get getIsToggled => _isToggled;
-  Map<String, dynamic> get getFloorDetails => floorDetails;
+  List<Map<String, Map<String, dynamic>>> get getFloorDetails => floorDetails;
 }

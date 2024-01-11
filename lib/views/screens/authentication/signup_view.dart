@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
-import 'package:meals_management_with_firebase/providers/signup_provider.dart';
+import 'package:meals_management_with_firebase/providers/auth_provider.dart';
+import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
 import 'package:meals_management_with_firebase/utils/constants.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_dropdown.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../providers/login_provider.dart';
 import '../../custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_snackbar.dart';
 
@@ -17,7 +17,6 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
-
   final GlobalKey formKey = GlobalKey<FormState>();
 
   late SharedPreferences sharedPreferences;
@@ -27,33 +26,42 @@ class _SignUpViewState extends State<SignUpView> {
   final _empIdController = TextEditingController();
   final _createPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool _isLoading = true;
 
   @override
   initState() {
     super.initState();
     initiate();
+    initData();
   }
 
   initiate() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
+  Future<void> initData() async {
+    try {
+      await Provider.of<AuthProvider>(context, listen: false)
+          .setDeptandFloorList();
+    } finally {
+      // Set loading state to false when data fetching is complete
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
 
-    Provider.of<SignupProvider>(context, listen: false).setDeptandFloorList();
-
-    return Provider.of<SignupProvider>(context, listen: true)
-            .getDeptList
-            .isEmpty
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Scaffold(
-            backgroundColor: Colors.white,
-            body: Column(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
               children: [
                 RotatedBox(
                   quarterTurns: 2,
@@ -101,7 +109,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   SizedBox(
                                     height: size.height * 0.018,
                                   ),
-                                  Consumer<LoginProvider>(
+                                  Consumer<AuthProvider>(
                                       builder: (context, provider, _) {
                                     return CustomTextFormField(
                                       hintText: 'create password',
@@ -123,7 +131,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   SizedBox(
                                     height: size.height * 0.018,
                                   ),
-                                  Consumer<LoginProvider>(
+                                  Consumer<AuthProvider>(
                                       builder: (context, provider, _) {
                                     return CustomTextFormField(
                                       hintText: 'confirm password',
@@ -147,14 +155,17 @@ class _SignUpViewState extends State<SignUpView> {
                                   ),
                                   Row(
                                     children: [
-                                      Consumer<SignupProvider>(
+                                      Consumer<AuthProvider>(
                                         builder: (context, provider, child) {
                                           return Expanded(
                                             child: CustomDropDown(
                                               hint: const Text(
                                                 'Department',
                                               ),
-                                              value: provider.getDept,
+                                              value:
+                                                  Provider.of<UserDataProvider>(
+                                                          context)
+                                                      .getDept,
                                               items: provider.getDeptList
                                                   .map<
                                                       DropdownMenuItem<String>>(
@@ -170,7 +181,10 @@ class _SignUpViewState extends State<SignUpView> {
                                                   )
                                                   .toList(),
                                               onChanged: (String? newValue) {
-                                                provider.setDept(newValue!);
+                                                Provider.of<UserDataProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .setDept(newValue!);
                                               },
                                               menuMaxHeight: size.height * 0.5,
                                             ),
@@ -180,13 +194,16 @@ class _SignUpViewState extends State<SignUpView> {
                                       SizedBox(
                                         width: size.width * 0.02,
                                       ),
-                                      Consumer<SignupProvider>(
+                                      Consumer<AuthProvider>(
                                         builder: (context, provider, child) {
                                           return CustomDropDown(
                                             hint: const Text(
                                               'Floor',
                                             ),
-                                            value: provider.getFloor,
+                                            value:
+                                                Provider.of<UserDataProvider>(
+                                                        context)
+                                                    .getFloor,
                                             items: provider.getFloorList
                                                 .map<DropdownMenuItem<String>>(
                                                   (value) =>
@@ -202,7 +219,10 @@ class _SignUpViewState extends State<SignUpView> {
                                                 )
                                                 .toList(),
                                             onChanged: (String? newValue) {
-                                              provider.setFloor(newValue!);
+                                              Provider.of<UserDataProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .setFloor(newValue!);
                                             },
                                             menuMaxHeight: size.height * 0.5,
                                           );
@@ -260,21 +280,21 @@ class _SignUpViewState extends State<SignUpView> {
                               _confirmPasswordController.text) {
                             CustomSnackBar.showSnackBar(
                                 context, 'passwords must match');
-                          } else if (Provider.of<SignupProvider>(context,
+                          } else if (Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .getDept ==
                                   null ||
-                              Provider.of<SignupProvider>(context,
+                              Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .getFloor ==
                                   null) {
                             CustomSnackBar.showSnackBar(context,
                                 'please select your department and floor');
                           } else {
-                            var isSuccess = await Provider.of<SignupProvider>(
+                            var isSuccess = await Provider.of<UserDataProvider>(
                                     context,
                                     listen: false)
-                                .signUp(
+                                .createUser(
                                     _usernameController.text,
                                     _emailController.text.trim(),
                                     _empIdController.text.trim(),
@@ -305,6 +325,7 @@ class _SignUpViewState extends State<SignUpView> {
                     ? Image.asset('assets/images/food_png.png')
                     : const SizedBox(),
               ],
-            ));
+            ),
+    );
   }
 }

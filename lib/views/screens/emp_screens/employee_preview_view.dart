@@ -89,11 +89,11 @@ class Preview extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Provider.of<HomePageProvider>(context)
-                                      .getUser!
-                                      .userName),
-                                  const Text('XXXXXX'),
-                                  const Text('08')
+                                  // Text(Provider.of<HomePageProvider>(context)
+                                  //     .getUser!
+                                  //     .userName),
+                                  // const Text('XXXXXX'),
+                                  // const Text('08')
                                 ],
                               )
                             ],

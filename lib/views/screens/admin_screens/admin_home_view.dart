@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
-import "package:meals_management_with_firebase/providers/admin_home_provider.dart";
-import "package:meals_management_with_firebase/providers/universal_data_provider.dart";
+import "package:intl/intl.dart";
+import "package:meals_management_with_firebase/models/user_model.dart";
+import "package:meals_management_with_firebase/providers/user_data_provider.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
+import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "../../../providers/employee_home_provider.dart";
 import "../../../services/firebase_auth_services.dart";
 
@@ -16,28 +18,47 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   late SharedPreferences sharedPreferences;
 
+  bool _isLoading = true;
+
+  DateTime now = DateTime.now();
+
+  @override
+  initState() {
+    super.initState();
+    initiate();
+    initData();
+  }
+
   initiate() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
+  Future<void> initData() async {
+    try {
+      await Provider.of<UserDataProvider>(context, listen: false).setUser();
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    
-    Provider.of<HomePageProvider>(context, listen: false).setUser();
-    Provider.of<AdminHomeProvider>(context, listen: false).setDeptList();
-
     var size = MediaQuery.of(context).size;
 
+    UserModel? user =
+        Provider.of<UserDataProvider>(context, listen: false).getUser;
+
     return SafeArea(
-      child: Provider.of<AdminHomeProvider>(context, listen: true)
-              .getDeptList
-              .isEmpty
+      child: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : Scaffold(
               resizeToAvoidBottomInset: false,
               body: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
@@ -53,12 +74,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Consumer<HomePageProvider>(
+                        Consumer<EmployeeHomeProvider>(
                           builder: (context, provider, child) {
                             return Padding(
                               padding: const EdgeInsets.only(left: 25, top: 15),
                               child: Text(
-                                'Hi,\n${provider.getUser!.userName}',
+                                'Hi,\n${user!.userName}',
                                 style: const TextStyle(
                                     fontSize: 25, fontWeight: FontWeight.bold),
                               ),
@@ -66,17 +87,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           },
                         ),
                         const Expanded(child: SizedBox()),
-                        Consumer<HomePageProvider>(
+                        Consumer<EmployeeHomeProvider>(
                           builder: (context, provider, child) {
-                            return provider.getUser!.isAdmin
+                            return user!.isAdmin
                                 ? Switch(
                                     value: true,
                                     onChanged: (value) {
                                       Navigator.pushReplacementNamed(
                                           context, '/emp_homepage');
                                     },
-                                    activeColor:
-                                        const Color.fromARGB(255, 181, 129, 248),
+                                    activeColor: const Color.fromARGB(
+                                        255, 181, 129, 248),
                                   )
                                 : const SizedBox();
                           },
@@ -90,15 +111,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                     value: 'Sign Out',
                                     height: 10,
                                     onTap: () => FirebaseAuthServices()
-                                          .signOutNow()
-                                          .then((value) {
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            "/login_page",
-                                            (route) => false);
-                                        sharedPreferences!
-                                            .setString("islogged", 'false');
-                                      }),
+                                            .signOutNow()
+                                            .then((value) {
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              "/login_page",
+                                              (route) => false);
+                                          sharedPreferences!
+                                              .setString("islogged", 'false');
+                                        }),
                                     child: const Text('Sign Out'))
                               ];
                             },
@@ -109,86 +130,75 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
                         color: const Color.fromRGBO(236, 230, 240, 100),
                       ),
-                      child: Row(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/admin_employees');
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(Icons.groups),
+                            SizedBox(
+                              width: size.width * 0.04,
+                            ),
+                            const Expanded(child: Text("Search employee")),
+                            const Icon(Icons.search),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Text("Select Date",
+                      style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100))),
+                  SizedBox(
+                    width: size.width * 0.95,
+                    height: size.height * 0.5,
+                    child: Card(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      elevation: 8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {},
+                          SizedBox(
+                            height: size.height * 0.01,
                           ),
-                          const Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Search employee"),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 18.0, top: 4),
+                            child: Text('Lunch Calendar'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0, left: 18),
+                            child: Text(
+                              '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                              style: const TextStyle(fontSize: 30),
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.search),
-                            onPressed: () {},
-                          ),
+                          const Divider(),
+                          Consumer<EmployeeHomeProvider>(
+                            builder: (context, provider, child) {
+                              return Expanded(
+                                child: SfDateRangePicker(
+                                    showActionButtons: true,
+                                    allowViewNavigation: true,
+                                    selectionMode:
+                                        DateRangePickerSelectionMode.single,
+                                    showNavigationArrow: true,
+                                    onSubmit: (date) {}),
+                              );
+                            },
+                          )
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 16.0,
-                  ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Text("Select Department",
-                          style: TextStyle(
-                              color: Color.fromRGBO(73, 69, 79, 100))),
-                    ],
-                  ),
-                  Consumer<AdminHomeProvider>(
-                    builder: (context, provider, child) {
-                      return Expanded(
-                        child: Scrollbar(
-                          child: ListView(
-                            children: provider.deptList
-                                .map((item) => Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 10.0, right: 10.0, bottom: 4.0),
-                                      height: size.height * 0.1,
-                                      child: Card(
-                                        elevation: 3,
-                                        child: TextButton(
-                                          onPressed: () {
-                                            Provider.of<UniversalDataProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .setDeptNameforEmployeesPage(
-                                                    item);
-                                            Navigator.pushNamed(
-                                                context, '/admin_employees');
-                                          },
-                                          style: TextButton.styleFrom(
-                                              alignment: Alignment.centerLeft),
-                                          child: Text(item),
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/download_csv');
-                      },
-                      child: const Text("Generate CSV")),
                   Image.asset("assets/images/food_png.png")
                 ],
               ),
