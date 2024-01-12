@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/Repositories/events_repo.dart';
-import 'package:meals_management/Repositories/user_repo.dart';
-import 'package:meals_management/providers/login_provider.dart';
+// import 'package:meals_management/Repositories/user_repo.dart';
+import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/views/models/events_model.dart';
 
 
@@ -19,7 +19,7 @@ class EventsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateEvents(dates, String selectedReason,String uid,LoginProvider loginProvider) {
+  void updateEvents(dates, String selectedReason,String uid,AuthenticationProvider loginProvider) {
     print("inside provider");
     if  (selectedReason!="vacation"  && selectedReason!='Single day'){
       print("multiple days selected");

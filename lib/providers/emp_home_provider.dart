@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/services/database_service.dart';
 import 'package:meals_management/views/models/user_model.dart';
@@ -5,8 +6,6 @@ import 'package:meals_management/views/models/user_model.dart';
 class HomePageProvider extends ChangeNotifier {
   String _userName = '';
   bool _isAdmin=false;
-  late UserModel _user=UserModel('', '', '', '', '', false);
-  UserModel get user=>_user;
 
   late DateTime _selectedDate;
   Map<String, dynamic> floorDetails = {'start_time': ' ', 'end_time': ' '};
@@ -19,16 +18,9 @@ class HomePageProvider extends ChangeNotifier {
 
   get getFloorDetails => floorDetails;  
   get isAdmin => _isAdmin;
-  
-  void setUserName() async {
-     _user = await _db.readData();
-    _userName = _user.username;
-    // _isAdmin = user.isAdmin;
-    notifyListeners();
-  }
 
   void setFloorDetails() async {
-    UserModel user = await _db.readData();
+    UserModel user = await _db.getEmployeeData(FirebaseAuth.instance.currentUser!.uid);
     floorDetails = await _db.readFloorDetails(user.floor);
     notifyListeners();
   }

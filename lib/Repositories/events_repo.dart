@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/views/models/events_model.dart';
 import 'package:meals_management/views/models/user_model.dart';
 

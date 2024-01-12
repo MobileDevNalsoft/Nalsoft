@@ -2,7 +2,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:meals_management/providers/events_provider.dart";
-import "package:meals_management/providers/login_provider.dart";
+import "package:meals_management/providers/auth_provider.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
@@ -86,7 +86,7 @@ class UpdateLunchStatus extends StatelessWidget {
                         ),
                       ),
                       Divider(),
-                   Consumer<LoginProvider>(builder: (context, loginProvider, child) {
+                   Consumer<AuthenticationProvider>(builder: (context, loginProvider, child) {
                      return SfDateRangePicker(
                     controller: dateController,
                     showActionButtons: true,

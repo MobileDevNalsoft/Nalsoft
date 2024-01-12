@@ -3,6 +3,7 @@ import 'package:meals_management/views/screens/admin_home_page.dart';
 import 'package:meals_management/views/screens/digital_sign_page.dart';
 import 'package:meals_management/views/screens/download.dart';
 import 'package:meals_management/views/screens/employee_lunch_status.dart';
+import 'package:meals_management/views/screens/employee_search.dart';
 import 'package:meals_management/views/screens/employees.dart';
 import 'package:meals_management/views/screens/login_page.dart';
 import 'package:meals_management/views/screens/preview_page.dart';
@@ -21,7 +22,7 @@ class RouteManagement {
   static const String userRegistration = '/userRegistration';
   static const String updateUpcomingStatus = '/updateUpcomingStatus';
   static const String previewPage = '/preview';
-
+static const String employeeSearch = '/employeeSearch';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
@@ -47,6 +48,8 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => AdminHomePage());
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) => UpdateLunchStatus());
+      // case '/employeeSearch':
+      //   return MaterialPageRoute(builder: (_) => EmployeeSearch());
       default:
         return null;
     }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/user_provider.dart';
 import 'package:meals_management/services/user_authentication.dart';
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/widgets/custom_button.dart';
@@ -81,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
                                   prefixIcon: Icon(Icons.person),
                                 ),
                                 const SizedBox(height: 15,),
-                                Consumer<LoginProvider>(
+                                Consumer<AuthenticationProvider>(
                                       builder: (context, provider, _) {
                                         return CustomTextField(hintText: 'password',
                                           controller: _passwordController,
@@ -122,7 +123,7 @@ class _LoginViewState extends State<LoginView> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Consumer<LoginProvider>(builder: (context, provider, child) {
+                                    Consumer<UserProvider>(builder: (context, provider, child) {
                                  return    CustomButton(
                                       child: const Text('Login',
                                         style: TextStyle(color: Colors.black),
@@ -173,21 +174,13 @@ class _LoginViewState extends State<LoginView> {
     String email = _emailController.text.trim().toLowerCase();
     String password = _passwordController.text.trim();
     bool onSuccessfulLogin=await provider.loginUser(email,password);
-    // User? user = await _auth.signInWithEmailAndPassword(email, password);
 
     if(onSuccessfulLogin){
-      // UserProvider employee=UserProvider();
-      // employee.getUser(user.uid);
-      // if (provider.user.isAdmin){
         print("userpage");
         sharedPreferences.setString("isLogged", "true");
           ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login Successful')));
       Navigator.pushReplacementNamed(context, RouteManagement.userHomePage);  
-      // }
-      // else{
-      // print("userpage");
-      // Navigator.pushNamed(context, RouteManagement.adminHomePage);}
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
-import 'package:meals_management/providers/login_provider.dart';
-import 'package:meals_management/providers/user_signup_provider.dart';
+import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/user_provider.dart';
 import 'package:meals_management/services/database_service.dart';
 import 'package:meals_management/services/user_authentication.dart';
 import 'package:meals_management/utils/constants.dart';
@@ -47,8 +47,8 @@ void initState() {
 getDeptandFloorsList();
   }
     getDeptandFloorsList() async {
-    final depts = await _dbsservice.readDepartments();
-    final floors = await _dbsservice.readFloors();
+    final depts = await _dbsservice.getDepartments();
+    final floors = await _dbsservice.getFloors();
     setState(() {
       deptList = depts.values.toList();
       floorList = floors;
@@ -58,7 +58,7 @@ getDeptandFloorsList();
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-Provider.of<SignUpProvider>(context, listen: false).setDeptandFloorList();
+Provider.of<UserProvider>(context, listen: false).setDeptandFloorList();
    return Scaffold(
       backgroundColor: Colors.white,
         body: Column(
@@ -90,7 +90,7 @@ Provider.of<SignUpProvider>(context, listen: false).setDeptandFloorList();
                                       SizedBox(height: size.height*0.018,),
                                       CustomTextField(controller: _empIdController,hintText: 'employee id', prefixIcon: Icon(Icons.person),),
                                       SizedBox(height: size.height*0.018,),
-                                      Consumer<LoginProvider>(
+                                      Consumer<AuthenticationProvider>(
                                           builder: (context, provider, _) {
                                             return CustomTextField(hintText: 'create password',
                                               controller: _createPasswordController,
@@ -109,7 +109,7 @@ Provider.of<SignUpProvider>(context, listen: false).setDeptandFloorList();
                                           }
                                       ),
                                       SizedBox(height: size.height*0.018,),
-                                      Consumer<LoginProvider>(
+                                      Consumer<AuthenticationProvider>(
                                           builder: (context, provider, _) {
                                             return CustomTextField(hintText: 'confirm password',
                                               controller: _confirmPasswordController,
@@ -130,7 +130,7 @@ Provider.of<SignUpProvider>(context, listen: false).setDeptandFloorList();
                                       SizedBox(height: size.height*0.018,),
                                       Row(
                                         children: [
-                                          Consumer<SignUpProvider>(
+                                          Consumer<UserProvider>(
                                             builder: (context, provider, child) {
                                               return Expanded(
                                                 child: CustomDropDown(
@@ -151,7 +151,7 @@ Provider.of<SignUpProvider>(context, listen: false).setDeptandFloorList();
                                             },
                                           ),
                                           SizedBox(width: size.width*0.02,),
-                                          Consumer<SignUpProvider>(
+                                          Consumer<UserProvider>(
                                             builder: (context, provider, child) {
                                               return CustomDropDown(
                                                 hint: Text('Floor',),
@@ -212,11 +212,11 @@ Provider.of<SignUpProvider>(context, listen: false).setDeptandFloorList();
                 else if(_createPasswordController.text != _confirmPasswordController.text){
                   CustomSnackBar.showSnackBar(context, 'passwords must match');
                 }
-                else if(Provider.of<SignUpProvider>(context, listen: false).getDept == null || Provider.of<SignUpProvider>(context, listen: false).getFloor == null){
+                else if(Provider.of<UserProvider>(context, listen: false).getDept == null || Provider.of<UserProvider>(context, listen: false).getFloor == null){
                   CustomSnackBar.showSnackBar(context, 'please select your department and floor');
                 }
                 else {
-                  var isSuccess = await Provider.of<SignUpProvider>(context, listen: false).signUpUser(_usernameController.text, _emailController.text.trim(), _empIdController.text.trim(), _confirmPasswordController.text);
+                  var isSuccess = await Provider.of<UserProvider>(context, listen: false).signUpUser(_usernameController.text, _emailController.text.trim(), _empIdController.text.trim(), _confirmPasswordController.text);
                   if(isSuccess){
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('You have successfully registered'))

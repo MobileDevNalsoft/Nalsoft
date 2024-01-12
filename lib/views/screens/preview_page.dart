@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
+import 'package:meals_management/providers/user_provider.dart';
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/widgets/custom_button.dart';
 // import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
@@ -121,7 +122,7 @@ Future<void> getDigitalSignature()async{
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Provider.of<HomePageProvider>(context)
+                                  Text(Provider.of<UserProvider>(context)
                                       .user.username),
                                   const Text('XXXXXX'),
                                   const Text('08')

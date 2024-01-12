@@ -4,14 +4,13 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/providers/department_provider.dart';
+// import 'package:meals_management/providers/department_provider.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/download_provider.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
 import 'package:meals_management/providers/events_provider.dart';
-import 'package:meals_management/providers/login_provider.dart';
-import 'package:meals_management/providers/update_upcoming_status_provider.dart';
-import 'package:meals_management/providers/user_signup_provider.dart';
+import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/user_provider.dart';
 import 'package:meals_management/views/screens/login_page.dart';  
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/screens/user_home_page.dart';
@@ -29,14 +28,12 @@ void main() async{
   runApp(
   MultiProvider(
     providers: [
-      ChangeNotifierProvider<LoginProvider>(create: (context) => LoginProvider()),
+      ChangeNotifierProvider<AuthenticationProvider>(create: (context) => AuthenticationProvider()),
       ChangeNotifierProvider<HomePageProvider>(create: (context) => HomePageProvider()),
       ChangeNotifierProvider<DownloadProvider>(create: (context) => DownloadProvider()),
-      ChangeNotifierProvider<StatusProvider>(create: (context) => StatusProvider()),
       ChangeNotifierProvider<EventsProvider>(create: (context) => EventsProvider()),
-        ChangeNotifierProvider<SignUpProvider>(create: (context) => SignUpProvider()),
-        ChangeNotifierProvider<DeptProvider >(create: (context) => DeptProvider()),
-        ChangeNotifierProvider<SignatureProvider >(create: (context) => SignatureProvider()),
+      ChangeNotifierProvider<SignatureProvider >(create: (context) => SignatureProvider()),
+      ChangeNotifierProvider<UserProvider>(create: (context) => UserProvider()),
     ],
     child: SafeArea(
       child: MaterialApp( 

@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
-import 'package:meals_management/providers/login_provider.dart';
+import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/user_provider.dart';
 import 'package:meals_management/services/user_authentication.dart';
+import 'package:meals_management/views/screens/login_page.dart';
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +41,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
     final size = MediaQuery.of(context).size;
     // sharedPreferences!.setString("isLogged", "true");
-    Provider.of<HomePageProvider>(context, listen: false).setUserName();
+    // Provider.of<HomePageProvider>(context, listen: false).setUserName();
+    Provider.of<UserProvider>(context,listen: false).setUser();
     Provider.of<HomePageProvider>(context, listen: false).setFloorDetails();
 
     return SafeArea(
@@ -72,7 +75,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 25, top: 15),
-                          child: Text('Hi,\n${Provider.of<HomePageProvider>(context, listen: true).getUserName}',
+                          child: Text('Hi,\n${Provider.of<UserProvider>(context, listen: false).user.username}',
                             style: const TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold
@@ -80,7 +83,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                           ),
                         ),
                         Expanded(child: SizedBox()),
-                       Provider.of<HomePageProvider>(context, listen: true).user.isAdmin? Switch(
+                       Provider.of<UserProvider>(context, listen: false).user.isAdmin? Switch(
                               value: false,
                               onChanged: (value) {
                                 Navigator.pushReplacementNamed(context, RouteManagement.adminHomePage);
@@ -96,7 +99,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 value: 'Sign Out',
                                 height: 10,
                                 onTap: () {
-                                  FirebaseAuthService().signOutNow().then((value) => Navigator.pushNamedAndRemoveUntil(context, RouteManagement.loginPage, (route) => false));
+                                  Provider.of<UserProvider>(context, listen: false).removeUser();
+                                  FirebaseAuthService().signOutNow().then((value) => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>LoginView()), (route) => false));
                                   sharedPreferences.setString("isLogged","false");
                                   print('navigated to login page');
                                 }
