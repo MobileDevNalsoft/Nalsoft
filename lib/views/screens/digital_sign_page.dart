@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
+import 'package:meals_management/views/screens/route_management.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
@@ -81,8 +82,7 @@ class SignPage extends StatelessWidget {
                                 ByteData? byteData = await signatureImage?.toByteData(format: ui.ImageByteFormat.png);
                                 Uint8List pngBytes = byteData!.buffer.asUint8List();
                                 signatureProvider.uploadImage(pngBytes);
-                                // print("pngbytes ${pngBytes}");
-                                Navigator.pushNamed(context, '/preview');
+                                Navigator.pushNamed(context, RouteManagement.previewPage);
                               }
                             },
                             style: ButtonStyle(

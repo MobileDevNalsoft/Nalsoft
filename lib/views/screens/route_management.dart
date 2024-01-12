@@ -20,7 +20,8 @@ class RouteManagement {
   static const String adminHomePage = '/adminHomePage';
   static const String userRegistration = '/userRegistration';
   static const String updateUpcomingStatus = '/updateUpcomingStatus';
-  
+  static const String previewPage = '/preview';
+
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':

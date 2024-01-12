@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
+import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/widgets/custom_button.dart';
 // import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
 // import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
@@ -20,21 +23,35 @@ class Preview extends StatefulWidget {
 
 class _PreviewState extends State<Preview> {
   ScreenshotController screenshotController = ScreenshotController();
+
 @override
 void initState() {
-    // TODO: implement initState
     super.initState();
-    Provider.of<SignatureProvider>(context,listen: false).getSignature();
+    getDigitalSignature();
   }
+
+Future<void> getDigitalSignature()async{
+  Timer timer;
+  timer = Timer(Duration(seconds: 5), () async {
+  await Provider.of<SignatureProvider>(context,listen: false).getSignature();
+  print("got the signature");
+  });
+   
+}
+
   final now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: const Color.fromARGB(255, 247, 242, 250),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 247, 242, 250),
         toolbarHeight: 80,
+        leading: IconButton(icon: Icon(Icons.arrow_back,),onPressed: () {
+          Navigator.pushNamedAndRemoveUntil(context, RouteManagement.userHomePage, (route) => false);
+        },),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

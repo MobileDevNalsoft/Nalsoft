@@ -12,22 +12,25 @@ class SignatureProvider extends ChangeNotifier{
   final SignatureRepo _signRepo = SignatureRepo();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? imageName;
-
+  bool isUploaded =false;
   Uint8List? _imagebytes;
   get imageBytes => _imagebytes;
 
  void uploadImage(Uint8List pngBytes) async {
   imageName="${DateTime.now().millisecondsSinceEpoch}";
-  await _signRepo.uploadImageToDb(pngBytes, _auth.currentUser!.uid,imageName!);
+  // _imagebytes=pngBytes;
+  if(await _signRepo.uploadImageToDb(pngBytes, _auth.currentUser!.uid,imageName!)){
+    isUploaded=true;
+  }
+  else{
+    isUploaded=false;
+  }
  }
-
 
  Future<void> getSignature() async {
   print("imageName: ${imageName}");
-  print(  await _signRepo.getSignatureFromDb(_auth.currentUser!.uid,imageName!));
-  // _imagebytes =  await _signRepo.getSignatureFromDb(_auth.currentUser!.uid,imageName!);
-  // _imagebytes;
-  notifyListeners();
-  
+   _imagebytes= await _signRepo.getSignatureFromDb(_auth.currentUser!.uid,imageName!);
+   print(imageBytes);
+  notifyListeners();  
  }
 }
