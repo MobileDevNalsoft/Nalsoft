@@ -26,6 +26,7 @@ class UserDataProvider extends ChangeNotifier {
   // getting user data from firestore collection
   Future<void> setUser() async {
     user = await _db.readData();
+    print(user);
     notifyListeners();
   }
 
@@ -37,10 +38,9 @@ class UserDataProvider extends ChangeNotifier {
   Future<bool> createUser(String userName, String email, String employee_id,
       String password) async {
     User? user = await _auth.signUpwithEmailandPassword(email, password);
-    print(_dept);
     if (user != null) {
-      final userData = UserModel(userName, email, employee_id, _dept!, _floor!,
-          false, {'opted': [], 'notOpted': [], 'unSigned': []});
+      final userData = UserModel(
+          userName, email, employee_id, _dept!, _floor!, false, [], {}, []);
       _db.createUser(user.uid, userData);
       return true;
     }

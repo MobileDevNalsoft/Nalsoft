@@ -7,10 +7,12 @@ class UserModel {
   String department;
   String floor;
   bool isAdmin;
-  Map<String, dynamic> events;
+  List<DateTime> opted;
+  Map<DateTime, String> notOpted;
+  List<DateTime> unSigned;
 
   UserModel(this.userName, this.email, this.employee_id, this.department,
-      this.floor, this.isAdmin, this.events);
+      this.floor, this.isAdmin, this.opted, this.notOpted, this.unSigned);
 
   static UserModel fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -21,7 +23,9 @@ class UserModel {
         snapshot['department'],
         snapshot['floor'],
         snapshot['isAdmin'],
-        snapshot['events']);
+        snapshot['opted'],
+        snapshot['notOpted'],
+        snapshot['unSigned']);
   }
 
   Map<String, dynamic> toJson() {
@@ -32,7 +36,9 @@ class UserModel {
       'department': department,
       'floor': floor,
       'isAdmin': isAdmin,
-      'events': events,
+      'opted': opted,
+      'notOpted': notOpted,
+      'unSigned': unSigned,
     };
   }
 }

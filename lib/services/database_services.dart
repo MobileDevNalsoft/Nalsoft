@@ -15,6 +15,7 @@ class DatabaseServices {
   Future<UserModel> readData() async {
     final userCollection =
         await _db.collection("employees").doc(_auth.currentUser!.uid).get();
+    print(UserModel.fromSnapshot(userCollection));
     return UserModel.fromSnapshot(userCollection);
   }
 
@@ -31,21 +32,88 @@ class DatabaseServices {
     return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
   }
 
-  // retrieves list of 
+  // retrieves list of
   Future<List<Map<String, dynamic>>> readEmployees() async {
     final snapshot = await _db.collection('employees').get();
-    return snapshot.docs.map((doc) => {doc.id: doc.data()}).map((e) => e.values.first).toList();
+    return snapshot.docs
+        .map((doc) => {doc.id: doc.data()})
+        .map((e) => e.values.first)
+        .toList();
   }
 
-  void pushEvents(List<DateTime>? dates) async {
-    DocumentReference employeeReference =
-        _db.collection('employees').doc(_auth.currentUser!.uid);
-    DocumentSnapshot employeeSnapshot =
-        await _db.collection('employees').doc(_auth.currentUser!.uid).get();
-    var currentDates = employeeSnapshot['events']['notOpted'];
-    currentDates.add(dates);
-    await employeeReference.update({'events.notOpted': currentDates[1]});
+  //push date to db from employee home provider
+  Future<void> pushDatetoDB(
+      {required DateTime date, required int radioValue, String? reason}) async {
+    final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
+
+    if (radioValue == 2) {
+      docRef.update({
+        'opted': [date],
+      });
+    } else {
+      docRef.update({
+        'notOpted': {date: reason},
+      });
+    }
   }
+
+  // Future<void> pushDatetoDB(
+  //     {required DateTime date, required int radioValue, String? reason}) async {
+  //   final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
+  //   Map<String, dynamic> events = await readEvents();
+  //   List<DateTime> optedDates = [];
+  //   Map<String, dynamic> notOptedDatesWithReason = {};
+
+  //   if (events['opted'] != null) {
+  //     for (var date in events['opted']) {
+  //       optedDates.add(date.toDate());
+  //     }
+  //     optedDates.add(date);
+  //   } else {
+  //     optedDates.add(date);
+  //   }
+
+  //   if (events['notOpted'] != null) {
+  //     events['notOpted'].forEach((key, value) {
+  //       notOptedDatesWithReason[key] = value;
+  //     });
+  //     notOptedDatesWithReason['2024-01-13 00:00:00.000'] = reason;
+  //   } else {
+  //     notOptedDatesWithReason[date.toString()] = reason;
+  //   }
+
+  //   if (radioValue == 2) {
+  //     docRef.update({
+  //       'events': {
+  //         'notOpted': notOptedDatesWithReason,
+  //       },
+  //     });
+  //   } else {
+  //     docRef.update({
+  //       'events': {'opted': FieldValue.arrayUnion(optedDates)},
+  //     });
+  //   }
+  // }
+
+  // //get dates from db for all pages
+  // Future<Map<String, dynamic>> readEvents() async {
+  //   Map<String, dynamic> dates = await _db
+  //       .collection('employees')
+  //       .doc(_auth.currentUser!.uid)
+  //       .get()
+  //       .then((value) => value.data()!['events']);
+  //   return dates;
+  // }
+
+  // void pushEvents(List<DateTime>? dates) async {
+  //   DocumentReference employeeReference =
+  //       _db.collection('employees').doc(_auth.currentUser!.uid);
+  //   DocumentSnapshot employeeSnapshot =
+  //       await _db.collection('employees').doc(_auth.currentUser!.uid).get();
+  //   var currentDates = employeeSnapshot['events']['notOpted'];
+  //   currentDates.add(dates);
+  //   await employeeReference.update({'events.notOpted': currentDates[1]});
+  // }
 
   // void pushEventDates(EventsModel events){
   //   _db.collection('employees').doc(_auth.currentUser!.uid).collection(_auth.currentUser!.uid).doc('events').set(events.toJson());

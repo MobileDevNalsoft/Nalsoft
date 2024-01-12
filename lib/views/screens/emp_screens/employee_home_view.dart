@@ -28,13 +28,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   @override
   void initState() {
     super.initState();
-    initiate();
     initData();
+    initiate();
   }
 
   Future<void> initData() async {
     try {
       await Provider.of<UserDataProvider>(context, listen: false).setUser();
+      // await Provider.of<EmployeeHomeProvider>(context, listen: false)
+      //     .setEventsInfo();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
           .setFloorDetails();
     } finally {
@@ -51,14 +53,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    UserModel? user =
-        Provider.of<UserDataProvider>(context, listen: false).getUser;
+    // UserModel? user =
+    //     Provider.of<UserDataProvider>(context, listen: false).getUser;
     List<Map<String, Map<String, dynamic>>> floorDetails =
-        Provider.of<EmployeeHomeProvider>(context).getFloorDetails;
-    Map<String, dynamic> timings = _isLoading
-        ? {}
-        : floorDetails.map((e) => e[user!.floor]).nonNulls.toList()[0];
+        Provider.of<EmployeeHomeProvider>(context, listen: false)
+            .getFloorDetails;
+    // Map<String, dynamic> timings = _isLoading
+    //     ? {}
+    //     : floorDetails.map((e) => e[user!.floor]).nonNulls.toList()[0];
 
     return SafeArea(
       child: Scaffold(
@@ -91,7 +93,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   padding:
                                       const EdgeInsets.only(left: 25, top: 15),
                                   child: Text(
-                                    'Hi,\n${user!.userName}',
+                                    // 'Hi,\n${user!.userName}',
+                                    'hi',
                                     style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold),
@@ -102,7 +105,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             const Expanded(child: SizedBox()),
                             Consumer<EmployeeHomeProvider>(
                               builder: (context, provider, child) {
-                                return user!.isAdmin
+                                return true //user!.isAdmin
                                     ? Switch(
                                         value: false,
                                         onChanged: (value) {
@@ -127,12 +130,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                           FirebaseAuthServices()
                                               .signOutNow()
                                               .then((value) {
+                                            sharedPreferences.setString(
+                                                'islogged', 'false');
                                             Navigator.pushNamedAndRemoveUntil(
                                                 context,
                                                 "/login_page",
                                                 (route) => false);
-                                            sharedPreferences.setString(
-                                                'islogged', 'false');
                                           });
                                           // ignore: avoid_print
                                           print('navigated to login page');
@@ -185,6 +188,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         DateRangePickerSelectionMode.single,
                                     showNavigationArrow: true,
                                     onSubmit: (date) {
+                                      provider.setEventsInfo();
                                       if (date == null ||
                                           date.toString().substring(0, 10) !=
                                               now.toString().substring(0, 10)) {
@@ -281,9 +285,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           ),
                                                           CustomButton(
                                                             onPressed: () {
-                                                              provider.setOptions(
-                                                                  'not opted');
-
                                                               if (provider
                                                                       .getRadioValue ==
                                                                   1) {
@@ -296,21 +297,22 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                       'date':
                                                                           date
                                                                     });
-                                                              } else if (notOptController
-                                                                  .text
-                                                                  .isEmpty) {
-                                                                provider
-                                                                    .setReasonEmpty(
-                                                                        true);
                                                               } else {
                                                                 Navigator.pop(
                                                                     context);
-                                                                Provider.of<EmployeeHomeProvider>(
+                                                                Provider.of<
+                                                                            EmployeeHomeProvider>(
                                                                         context,
                                                                         listen:
                                                                             false)
-                                                                    .setNotOptedDate(date
-                                                                        as DateTime);
+                                                                    .pushDate(
+                                                                        date: date
+                                                                            as DateTime,
+                                                                        radioValue:
+                                                                            provider
+                                                                                .getRadioValue,
+                                                                        reason:
+                                                                            notOptController.text);
                                                               }
                                                             },
                                                             color: MaterialStatePropertyAll(
@@ -444,12 +446,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            timings['start_time'],
+                                            // timings['start_time'],
+                                            ' ',
                                             style:
                                                 const TextStyle(fontSize: 12),
                                           ),
                                           Text(
-                                            timings['end_time'],
+                                            // timings['end_time'],
+                                            ' ',
                                             style:
                                                 const TextStyle(fontSize: 12),
                                           )

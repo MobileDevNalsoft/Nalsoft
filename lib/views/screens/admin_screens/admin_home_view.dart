@@ -113,12 +113,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                     onTap: () => FirebaseAuthServices()
                                             .signOutNow()
                                             .then((value) {
+                                          sharedPreferences!
+                                              .setString("islogged", 'false');
                                           Navigator.pushNamedAndRemoveUntil(
                                               context,
                                               "/login_page",
                                               (route) => false);
-                                          sharedPreferences!
-                                              .setString("islogged", 'false');
                                         }),
                                     child: const Text('Sign Out'))
                               ];
@@ -148,7 +148,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             SizedBox(
                               width: size.width * 0.04,
                             ),
-                            const Expanded(child: Text("Search employee", style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100)))),
+                            const Expanded(
+                                child: Text("Search employee",
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromRGBO(73, 69, 79, 100)))),
                             const Icon(Icons.search),
                           ],
                         ),

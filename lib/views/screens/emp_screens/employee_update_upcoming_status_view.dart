@@ -97,7 +97,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                   : DateRangePickerSelectionMode.single,
                           showNavigationArrow: true,
                           onSubmit: (p0) {
-                            _db.pushEvents(p0 as List<DateTime>?);
+                            // _db.pushEvents(p0 as List<DateTime>?);
                           },
                         )
                       ],

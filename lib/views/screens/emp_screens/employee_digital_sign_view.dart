@@ -73,11 +73,7 @@ class DigitalSignView extends StatelessWidget {
                       onPressed: () {
                         Provider.of<EmployeeHomeProvider>(context,
                                 listen: false)
-                            .setOptions('opted');
-
-                        Provider.of<EmployeeHomeProvider>(context,
-                                listen: false)
-                            .setOptedDate(date!);
+                            .pushDate(date: date!, radioValue: 0);
 
                         if (signatureController.isNotEmpty) {
                           Navigator.pushNamed(context, '/preview');

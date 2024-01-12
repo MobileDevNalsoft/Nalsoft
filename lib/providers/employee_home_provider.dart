@@ -4,21 +4,20 @@ import 'package:meals_management_with_firebase/services/database_services.dart';
 class EmployeeHomeProvider extends ChangeNotifier {
   final DatabaseServices _db = DatabaseServices();
 
-  List<Map<String, Map<String, dynamic>>> floorDetails = [];
-  DateTime? _selectedDate;
-  int _radioValue = 1;
+  List<Map<String, Map<String, dynamic>>> _floorDetails = [];
+  int _radioValue = 0;
   bool _reasonEmpty = false;
-  String? _optionStatus;
-  bool _isToggled = false;
-  List<DateTime>? optedDates = [];
 
+  // aquires details of floor from db
   Future<void> setFloorDetails() async {
-    floorDetails = await _db.readFloors();
+    _floorDetails = await _db.readFloors();
+    print(_floorDetails);
     notifyListeners();
   }
 
-  void setSelectedDate(DateTime date) {
-    _selectedDate = date;
+  // aquires details of events from db
+  Future<void> setEventsInfo() async {
+    // _eventsInfo = await _db.readEvents();
     notifyListeners();
   }
 
@@ -32,34 +31,13 @@ class EmployeeHomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setOptions(String value) {
-    _optionStatus = value;
-    notifyListeners();
+  // pushes date to db to opted or notOpted category
+  Future<void> pushDate(
+      {required DateTime date, required int radioValue, String? reason}) async {
+    _db.pushDatetoDB(date: date, radioValue: radioValue, reason: reason);
   }
 
-  void setIsToggled(bool value) {
-    _isToggled = value;
-    notifyListeners();
-  }
-
-  void setOptedDate(DateTime date) {
-    optedDates!.add(date);
-    _db.pushEvents(optedDates);
-  }
-
-  void setNotOptedDate(DateTime date) {
-    optedDates!.add(date);
-    _db.pushEvents(optedDates);
-  }
-
-  // void pushEvents(EventsModel events){
-  //   _db.pushEventDates(events);
-  // }
-
-  DateTime? get getSelectedDate => _selectedDate;
   int get getRadioValue => _radioValue;
   bool get getReasonEmpty => _reasonEmpty;
-  String? get getOptions => _optionStatus;
-  bool get getIsToggled => _isToggled;
-  List<Map<String, Map<String, dynamic>>> get getFloorDetails => floorDetails;
+  List<Map<String, Map<String, dynamic>>> get getFloorDetails => _floorDetails;
 }
