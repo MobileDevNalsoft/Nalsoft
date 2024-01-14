@@ -6,10 +6,14 @@ class EmployeesSearchProvider extends ChangeNotifier {
   final DatebaseServices _db = DatebaseServices();
 
   List<dynamic> empList = [];
+  
 
-  Future<void> setEmpList() async {
-    var allEmpinfoList = await _db.getEmployees();
-    empList = allEmpinfoList.map((e) => e['username']).toList();
+  Future<void> setEmpList({String search=''}) async {
+    var allEmpinfoList = await _db.getEmployees(search: search);
+    print(allEmpinfoList);
+    empList=allEmpinfoList;
+    // empList = allEmpinfoList.map((e) => e['username']).toList();
+
     notifyListeners();
   }
 

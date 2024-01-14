@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/providers/employee_search_provider.dart';
+import 'package:meals_management/views/screens/route_management.dart';
 
 import 'package:provider/provider.dart';
 
 class EmployeeSearch extends StatefulWidget {
-  const EmployeeSearch({super.key});
+   EmployeeSearch({super.key});
 
   @override
   State<EmployeeSearch> createState() => _EmployeeSearchState();
 }
 
 class _EmployeeSearchState extends State<EmployeeSearch> {
+  SearchController employeeSearchController = SearchController();
 
   final FocusNode _focusNode = FocusNode();
   bool _isLoading = true;
@@ -70,8 +72,15 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                           Expanded(
                             child: TextField(
                               focusNode: _focusNode,
+                              controller: employeeSearchController,
+                              onChanged: (searchText) {
+                                if (searchText.length>=3){
+                                  Provider.of<EmployeesSearchProvider>(context,listen: false).setEmpList(search:searchText);
+                                }
+                              },
                               decoration: const InputDecoration(
                                   border: InputBorder.none,
+
                                   hintText: "Search employee",
                                   hintStyle: TextStyle(color: Color.fromRGBO(73, 69, 79, 100,), fontSize: 14)
                                   ),
@@ -90,17 +99,17 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                   SizedBox(
                     height: size.height*0.02,
                   ),
-                  const Text(
+                    Provider.of<EmployeesSearchProvider>(context,listen: true).empList.length!=0? Text(
                     "Select Employee",
                     style:
                         TextStyle(color: Color.fromRGBO(73, 69, 79, 100)),
-                  ),
+                  ):Text(''),
                   Consumer<EmployeesSearchProvider>(
                     builder: (context, provider, child) {
-                      return Expanded(
+                      return provider.empList.length==0 && employeeSearchController.text!=0?Expanded(child: Text("No employee found")): Expanded(
                         child: Scrollbar(
                           child: ListView(
-                            children: empList
+                            children: provider.empList
                                 .map((item) => Container(
                                       margin: const EdgeInsets.only(
                                           left: 10.0, right: 10.0, bottom: 4.0),
@@ -110,7 +119,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                                         child: TextButton(
                                           onPressed: () {
                                             Navigator.pushNamed(context,
-                                                '/employee_lunch_status');
+                                                RouteManagement.employeeLunchStatus);
                                           },
                                           style: TextButton.styleFrom(
                                               alignment: Alignment.centerLeft),
@@ -126,7 +135,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                       );
                     },
                   ),
-                  Image.asset("assets/images/food_png.png")
+                  Image.asset("assets/images/food.png")
                 ],
               ),
             ),

@@ -4,16 +4,18 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:meals_management/providers/department_provider.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/download_provider.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
+import 'package:meals_management/providers/employee_search_provider.dart';
 import 'package:meals_management/providers/events_provider.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/user_provider.dart';
+import 'package:meals_management/views/screens/employee_search.dart';
 import 'package:meals_management/views/screens/login_page.dart';  
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/screens/user_home_page.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +36,7 @@ void main() async{
       ChangeNotifierProvider<EventsProvider>(create: (context) => EventsProvider()),
       ChangeNotifierProvider<SignatureProvider >(create: (context) => SignatureProvider()),
       ChangeNotifierProvider<UserProvider>(create: (context) => UserProvider()),
+      ChangeNotifierProvider<EmployeesSearchProvider>(create: (context) => EmployeesSearchProvider()),
     ],
     child: SafeArea(
       child: MaterialApp( 

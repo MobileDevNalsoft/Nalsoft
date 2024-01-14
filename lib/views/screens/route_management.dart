@@ -48,8 +48,8 @@ static const String employeeSearch = '/employeeSearch';
         return MaterialPageRoute(builder: (_) => AdminHomePage());
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) => UpdateLunchStatus());
-      // case '/employeeSearch':
-      //   return MaterialPageRoute(builder: (_) => EmployeeSearch());
+      case '/employeeSearch':
+        return MaterialPageRoute(builder: (_) => EmployeeSearch());
       default:
         return null;
     }
