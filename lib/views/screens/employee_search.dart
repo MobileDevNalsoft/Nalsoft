@@ -139,6 +139,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                                         elevation: 3,
                                         child: TextButton(
                                           onPressed: () {
+                                            // Provider.of<EmployeeProvider>(context,listen:false).setUid();
                                             Navigator.pushNamed(
                                                 context,
                                                 RouteManagement

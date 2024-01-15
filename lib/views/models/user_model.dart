@@ -18,8 +18,6 @@ class UserModel{
     this.isAdmin,
   );
 
-  get opted => null;
-
   static UserModel fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot){
     return UserModel(
       snapshot['email'],

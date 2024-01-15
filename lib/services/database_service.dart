@@ -47,7 +47,8 @@ FirebaseAuth _auth = FirebaseAuth.instance;
     QuerySnapshot querySnapshot = await _db.collection('employees').where('username',isGreaterThanOrEqualTo: search).where('username',isLessThan: '${search}z').orderBy('username').get();
     // print(querySnapshot.docs[0]['username']);
     print("list of employees ${querySnapshot.docs.map((doc) => doc['username']).toList()}");
-    
+    // print(querySnapshot.docs.);
+    // return querySnapshot.docs.map((doc) => [doc['username'],doc.id]).toList();
     return querySnapshot.docs.map((doc) => doc['username']).toList();
   }
 
