@@ -320,6 +320,24 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "path_provider",
+      "rootUri": "file:///C:/Users/madhankumar.ch/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "path_provider_android",
+      "rootUri": "file:///C:/Users/madhankumar.ch/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_android-2.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "path_provider_foundation",
+      "rootUri": "file:///C:/Users/madhankumar.ch/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_foundation-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "path_provider_linux",
       "rootUri": "file:///C:/Users/madhankumar.ch/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_linux-2.2.1",
       "packageUri": "lib/",
@@ -400,12 +418,6 @@
     {
       "name": "provider",
       "rootUri": "file:///C:/Users/madhankumar.ch/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "screenshot",
-      "rootUri": "file:///C:/Users/madhankumar.ch/AppData/Local/Pub/Cache/hosted/pub.dev/screenshot-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -596,7 +608,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2024-01-16T08:46:49.820579Z",
+  "generated": "2024-01-16T12:05:03.519384Z",
   "generator": "pub",
   "generatorVersion": "3.2.3"
 }
