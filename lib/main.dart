@@ -1,6 +1,3 @@
-
-import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,43 +6,52 @@ import 'package:meals_management/providers/download_provider.dart';
 import 'package:meals_management/providers/emp_home_provider.dart';
 import 'package:meals_management/providers/employee_search_provider.dart';
 import 'package:meals_management/providers/events_provider.dart';
-import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/user_provider.dart';
-import 'package:meals_management/views/screens/employee_search.dart';
-import 'package:meals_management/views/screens/login_page.dart';  
+import 'package:meals_management/views/screens/login_page.dart';
 import 'package:meals_management/views/screens/route_management.dart';
 import 'package:meals_management/views/screens/user_home_page.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:meals_management/providers/employee_digital_sign_provider.dart';
+import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/views/screens/authentication/login_view.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 
-void main() async{
-   WidgetsFlutterBinding.ensureInitialized();
-    SharedPreferences? sharedPreferences= await SharedPreferences.getInstance();
-   await Firebase.initializeApp(
-      options: FirebaseOptions(apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE", appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a", messagingSenderId: "1066586839679",projectId: "meals-management-app-37e6a")
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences? sharedPreferences = await SharedPreferences.getInstance();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+          apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE",
+          appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a",
+          messagingSenderId: "1066586839679",
+          projectId: "meals-management-app-37e6a"));
   print("islogged${sharedPreferences.getString("isLogged")}");
-  runApp(
-  MultiProvider(
+  runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<AuthenticationProvider>(create: (context) => AuthenticationProvider()),
-      ChangeNotifierProvider<HomePageProvider>(create: (context) => HomePageProvider()),
-      ChangeNotifierProvider<DownloadProvider>(create: (context) => DownloadProvider()),
-      ChangeNotifierProvider<EventsProvider>(create: (context) => EventsProvider()),
-      ChangeNotifierProvider<SignatureProvider >(create: (context) => SignatureProvider()),
+      ChangeNotifierProvider<AuthProvider>(create: (context) => AuthProvider()),
+      ChangeNotifierProvider<HomePageProvider>(
+          create: (context) => HomePageProvider()),
+      ChangeNotifierProvider<DownloadProvider>(
+          create: (context) => DownloadProvider()),
+      ChangeNotifierProvider<EventsProvider>(
+          create: (context) => EventsProvider()),
+      ChangeNotifierProvider<SignatureProvider>(
+          create: (context) => SignatureProvider()),
       ChangeNotifierProvider<UserProvider>(create: (context) => UserProvider()),
-      ChangeNotifierProvider<EmployeesSearchProvider>(create: (context) => EmployeesSearchProvider()),
+      ChangeNotifierProvider<EmployeesSearchProvider>(
+          create: (context) => EmployeesSearchProvider()),
     ],
     child: SafeArea(
-      child: MaterialApp( 
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        onGenerateRoute: RouteManagement.generateRoute, 
-         home: sharedPreferences.getString("isLogged") == "true" ? EmployeeHomeView() : LoginView(),
+        onGenerateRoute: RouteManagement.generateRoute,
+        home: sharedPreferences.getString("isLogged") == "true"
+            ? EmployeeHomeView()
+            : LoginView(),
       ),
     ),
-  )
-);
+  ));
 }
-

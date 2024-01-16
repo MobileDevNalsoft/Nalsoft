@@ -1,4 +1,6 @@
-class Constants{
-  static final regex = RegExp( r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{10,}$');
+class Constants {
+  static final regex = RegExp(
+      r'(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{":;\' '?/<>,.])');
   static final empIDRegex = RegExp(r'^\d+$');
+  static bool homeIsLoading = true;
 }

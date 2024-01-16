@@ -1,36 +1,43 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/Repositories/events_repo.dart';
-// import 'package:meals_management/Repositories/user_repo.dart';
-import 'package:meals_management/providers/auth_provider.dart';
-import 'package:meals_management/views/models/events_model.dart';
-
+import 'package:meals_management/Repositories/user_events_repo.dart';
 
 class EventsProvider extends ChangeNotifier {
-  
-  late EventsModel _eventModel;
- EventsRepo _eventsRepo= EventsRepo();
+  final UserEventsRepo _db = UserEventsRepo();
 
-  String _reason='Single day';
+  List<DateTime> _optedDates = [];
+  List<DateTime> _notOptedDates = [];
+  Map<DateTime, String> _notOptedDatesWithReasons = {};
 
-  String get reason=> _reason;
-  void setReason(String value){
-    _reason = value;
+  Future<void> getOptedFromDB() async {
+    _optedDates = await _db.readOpted();
     notifyListeners();
   }
 
-  void updateEvents(dates, String selectedReason,String uid,AuthenticationProvider loginProvider) {
-    print("inside provider");
-    if  (selectedReason!="vacation"  && selectedReason!='Single day'){
-      print("multiple days selected");
-      print(dates[0].runtimeType);
-      var notOptedList = dates.map((item) => Timestamp.fromDate(item)).toList();
-      // get
-      
-      // _eventsRepo.updateEvents(dates,uid);
-      // print("added");
-      // _eventsRepo.getEvents(uid);
-      notifyListeners();
+  Future<void> getNotOptedFromDB() async {
+    _notOptedDates = await _db.readNotOpted();
+    notifyListeners();
   }
-}
+
+  Future<void> getNotOptedWithReasonsFromDB() async {
+    _notOptedDatesWithReasons = await _db.readNotOptedWithReasons();
+    notifyListeners();
+  }
+
+  List<DateTime> get getOpted => _optedDates;
+  List<DateTime> get getNotOpted => _notOptedDates;
+  Map<DateTime, String> get getNotOptedWithReasons => _notOptedDatesWithReasons;
+
+  // pushes date to db to opted or notOpted category
+  Future<void> pushDate(
+      {required DateTime date, required int radioValue, String? reason}) async {
+    _db.pushDatetoDB(date: date, radioValue: radioValue, reason: reason);
+  }
+
+  // pushes dates to db to notopted category
+  Future<void> pushDates(
+      {required List<DateTime> dates,
+      required int radioValue,
+      String? reason}) async {
+    _db.pushDatestoDB(dates: dates, radioValue: radioValue, reason: reason);
+  }
 }
