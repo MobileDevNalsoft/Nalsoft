@@ -4,6 +4,7 @@ import 'package:meals_management_with_firebase/providers/admin_employees_provide
 import 'package:meals_management_with_firebase/providers/auth_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_digital_sign_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
+import 'package:meals_management_with_firebase/providers/employee_lunch_status_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart';
 import 'package:meals_management_with_firebase/providers/events_provider.dart';
 import 'package:meals_management_with_firebase/providers/universal_data_provider.dart';
@@ -40,6 +41,8 @@ Future<void> main() async {
           create: (context) => EventsProvider()),
       ChangeNotifierProvider<SignatureProvider>(
           create: (context) => SignatureProvider()),
+      ChangeNotifierProvider<EmployeeLunchStatusProvider>(
+          create: (context) => EmployeeLunchStatusProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(

@@ -21,9 +21,13 @@ class RouteManagement {
       case '/emp_homepage':
         return MaterialPageRoute(builder: (_) => EmployeeHomeView());
       case '/admin_employees':
-        return MaterialPageRoute(builder: (_) => Employees());
+        return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/employee_lunch_status':
-        return MaterialPageRoute(builder: (_) => EmployeeLunchStatus());
+        return MaterialPageRoute(builder: (_) {
+          final args = settings.arguments as Map<String, dynamic>;
+          final empid = args['empid'];
+          return EmployeeLunchStatus(empid: empid);
+        });
       case '/register':
         return MaterialPageRoute(builder: (_) => SignUpView());
       case '/update_upcoming_status':
