@@ -30,9 +30,6 @@ class AdminHomePage extends StatelessWidget {
 
     DateRangePickerController datesController = DateRangePickerController();
 
-    UserModel? user =
-        Provider.of<UserDataProvider>(context, listen: false).getUser;
-
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -58,7 +55,7 @@ class AdminHomePage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(left: 25, top: 15),
                         child: Text(
-                          'Hi,\n${user!.userName}',
+                          'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
                           style: const TextStyle(
                               fontSize: 25, fontWeight: FontWeight.bold),
                         ),
@@ -68,7 +65,9 @@ class AdminHomePage extends StatelessWidget {
                   const Expanded(child: SizedBox()),
                   Consumer<EmployeeHomeProvider>(
                     builder: (context, provider, child) {
-                      return user!.isAdmin
+                      return Provider.of<UserDataProvider>(context,
+                                  listen: false)
+                              .getIsAdmin!
                           ? Switch(
                               value: true,
                               onChanged: (value) {

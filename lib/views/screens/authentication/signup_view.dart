@@ -163,10 +163,7 @@ class _SignUpViewState extends State<SignUpView> {
                                               hint: const Text(
                                                 'Department',
                                               ),
-                                              value:
-                                                  Provider.of<UserDataProvider>(
-                                                          context)
-                                                      .getDept,
+                                              value: provider.getDept,
                                               items: provider.getDeptList
                                                   .map<
                                                       DropdownMenuItem<String>>(
@@ -182,10 +179,7 @@ class _SignUpViewState extends State<SignUpView> {
                                                   )
                                                   .toList(),
                                               onChanged: (String? newValue) {
-                                                Provider.of<UserDataProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .setDept(newValue!);
+                                                provider.setDept(newValue!);
                                               },
                                               menuMaxHeight: size.height * 0.5,
                                             ),
@@ -201,10 +195,7 @@ class _SignUpViewState extends State<SignUpView> {
                                             hint: const Text(
                                               'Floor',
                                             ),
-                                            value:
-                                                Provider.of<UserDataProvider>(
-                                                        context)
-                                                    .getFloor,
+                                            value: provider.getFloor,
                                             items: provider.getFloorList
                                                 .map<DropdownMenuItem<String>>(
                                                   (value) =>
@@ -220,10 +211,7 @@ class _SignUpViewState extends State<SignUpView> {
                                                 )
                                                 .toList(),
                                             onChanged: (String? newValue) {
-                                              Provider.of<UserDataProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .setFloor(newValue!);
+                                              provider.setFloor(newValue!);
                                             },
                                             menuMaxHeight: size.height * 0.5,
                                           );
@@ -281,25 +269,27 @@ class _SignUpViewState extends State<SignUpView> {
                               _confirmPasswordController.text) {
                             CustomSnackBar.showSnackBar(
                                 context, 'passwords must match');
-                          } else if (Provider.of<UserDataProvider>(context,
+                          } else if (Provider.of<AuthenticationProvider>(
+                                          context,
                                           listen: false)
                                       .getDept ==
                                   null ||
-                              Provider.of<UserDataProvider>(context,
+                              Provider.of<AuthenticationProvider>(context,
                                           listen: false)
                                       .getFloor ==
                                   null) {
                             CustomSnackBar.showSnackBar(context,
                                 'please select your department and floor');
                           } else {
-                            var isSuccess = await Provider.of<UserDataProvider>(
-                                    context,
-                                    listen: false)
-                                .createUser(
-                                    _usernameController.text,
-                                    _emailController.text.trim(),
-                                    _empIdController.text.trim(),
-                                    _confirmPasswordController.text);
+                            var isSuccess =
+                                await Provider.of<AuthenticationProvider>(
+                                        context,
+                                        listen: false)
+                                    .createUser(
+                                        _usernameController.text,
+                                        _emailController.text.trim(),
+                                        _empIdController.text.trim(),
+                                        _confirmPasswordController.text);
                             if (isSuccess) {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(

@@ -2,7 +2,6 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/providers/employee_lunch_status_provider.dart";
-import "package:meals_management/providers/events_provider.dart";
 import "package:meals_management/providers/user_data_provider.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";

@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
-import 'package:meals_management/providers/events_provider.dart';
+import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
@@ -82,7 +82,7 @@ class DigitalSignView extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             onPressed: () async {
-                              Provider.of<EventsProvider>(context,
+                              Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .pushDate(date: date!, radioValue: 0);
                               if (signatureController.isNotEmpty) {

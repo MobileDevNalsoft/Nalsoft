@@ -1,57 +1,56 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
-import 'package:meals_management/repositories/firebase_auth_repo.dart';
 
 class UserDataProvider extends ChangeNotifier {
-  final FirebaseAuthRepo _auth = FirebaseAuthRepo();
   final UserEventsRepo _db = UserEventsRepo();
 
-  // for UI updations
-  String? _dept;
-  String? _floor;
-  UserModel? user;
-
-  void setDept(String dept) {
-    _dept = dept;
-    notifyListeners();
-  }
-
-  void setFloor(String floor) {
-    _floor = floor;
-    notifyListeners();
-  }
+  // for UI updations related to user data
+  UserModel? _user;
+  List<DateTime> _optedDates = [];
+  List<DateTime> _notOptedDates = [];
+  Map<DateTime, String> _notOptedDatesWithReasons = {};
 
   // getting user data from firestore collection
-  Future<void> setUser() async {
-    user = await _db.readData();
+  Future<void> getUserFromDB() async {
+    _user = await _db.readData();
     notifyListeners();
   }
 
-  String? get getDept => _dept;
-  String? get getFloor => _floor;
-  UserModel? get getUser => user;
-
-  // creating user document in firestore collection
-  Future<bool> createUser(String userName, String email, String employee_id,
-      String password) async {
-    User? user = await _auth.signUpwithEmailandPassword(email, password);
-    if (user != null) {
-      final userData = UserModel(
-          userName, email, employee_id, _dept!, _floor!, false, [], {}, []);
-      _db.createUser(user.uid, userData);
-      return true;
-    }
-    return false;
+  Future<void> getOptedFromDB() async {
+    _optedDates = await _db.readOpted();
+    notifyListeners();
   }
 
-  // validating user login details
-  Future<bool> userLogin(String email, String password) async {
-    User? user = await _auth.signInwithEmailandPassword(email, password);
-    if (user != null) {
-      return true;
-    }
-    return false;
+  Future<void> getNotOptedFromDB() async {
+    _notOptedDates = await _db.readNotOpted();
+    notifyListeners();
+  }
+
+  Future<void> getNotOptedWithReasonsFromDB() async {
+    _notOptedDatesWithReasons = await _db.readNotOptedWithReasons();
+    notifyListeners();
+  }
+
+  String? get getUsername => _user!.userName;
+  bool? get getIsAdmin => _user!.isAdmin;
+  String? get getFloor => _user!.floor;
+  String? get getEmpID => _user!.employee_id;
+  List<DateTime> get getOpted => _optedDates;
+  List<DateTime> get getNotOpted => _notOptedDates;
+  Map<DateTime, String> get getNotOptedWithReasons => _notOptedDatesWithReasons;
+
+  // pushes date to db to opted or notOpted category
+  Future<void> pushDate(
+      {required DateTime date, required int radioValue, String? reason}) async {
+    _db.pushDatetoDB(date: date, radioValue: radioValue, reason: reason);
+  }
+
+  // pushes dates to db to notopted category
+  Future<void> pushDates(
+      {required List<DateTime> dates,
+      required int radioValue,
+      String? reason}) async {
+    _db.pushDatestoDB(dates: dates, radioValue: radioValue, reason: reason);
   }
 }

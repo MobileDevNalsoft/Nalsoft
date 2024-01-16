@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:meals_management/providers/employee_home_provider.dart";
 import "package:meals_management/providers/employee_update_upcoming_status_provider.dart";
-import "package:meals_management/providers/events_provider.dart";
+import "package:meals_management/providers/user_data_provider.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:provider/provider.dart";
@@ -101,12 +101,12 @@ class UpdateLunchStatus extends StatelessWidget {
                                 DateRangePickerSelectionShape.circle,
                             cellBuilder: (BuildContext context,
                                 DateRangePickerCellDetails details) {
-                              bool isOpted = Provider.of<EventsProvider>(
+                              bool isOpted = Provider.of<UserDataProvider>(
                                       context,
                                       listen: false)
                                   .getOpted
                                   .contains(details.date);
-                              bool isNotOpted = Provider.of<EventsProvider>(
+                              bool isNotOpted = Provider.of<UserDataProvider>(
                                       context,
                                       listen: false)
                                   .getNotOpted
@@ -255,7 +255,7 @@ class UpdateLunchStatus extends StatelessWidget {
                               CustomSnackBar.showSnackBar(
                                   context, 'remove weekoffs from selection');
                             } else {
-                              Provider.of<EventsProvider>(context,
+                              Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .pushDate(
                                       date: dates as DateTime,
@@ -275,7 +275,7 @@ class UpdateLunchStatus extends StatelessWidget {
                               CustomSnackBar.showSnackBar(
                                   context, 'remove weekoffs from selection');
                             } else {
-                              Provider.of<EventsProvider>(context,
+                              Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .pushDates(
                                       dates: datesList,

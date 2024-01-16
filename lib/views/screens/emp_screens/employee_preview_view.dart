@@ -117,15 +117,15 @@ class _PreviewState extends State<Preview> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text(Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .getUsername!),
                                     Text(Provider.of<UserDataProvider>(
                                       context,
-                                    ).getUser!.userName),
+                                    ).getEmpID!),
                                     Text(Provider.of<UserDataProvider>(
                                       context,
-                                    ).getUser!.employee_id),
-                                    Text(Provider.of<UserDataProvider>(
-                                      context,
-                                    ).getUser!.floor)
+                                    ).getFloor!)
                                   ],
                                 )
                               ],

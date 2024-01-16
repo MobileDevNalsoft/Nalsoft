@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/employee_home_provider.dart';
-import 'package:meals_management/providers/events_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/firebase_auth_repo.dart';
 import 'package:meals_management/route_management/route_management.dart';
@@ -15,10 +12,6 @@ import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
-import 'package:excel/excel.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class EmployeeHomeView extends StatefulWidget {
   const EmployeeHomeView({super.key});
@@ -45,12 +38,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   Future<void> initData() async {
     try {
-      await Provider.of<UserDataProvider>(context, listen: false).setUser();
-      await Provider.of<EventsProvider>(context, listen: false)
+      await Provider.of<UserDataProvider>(context, listen: false)
+          .getUserFromDB();
+      await Provider.of<UserDataProvider>(context, listen: false)
           .getOptedFromDB();
-      await Provider.of<EventsProvider>(context, listen: false)
+      await Provider.of<UserDataProvider>(context, listen: false)
           .getNotOptedFromDB();
-      await Provider.of<EventsProvider>(context, listen: false)
+      await Provider.of<UserDataProvider>(context, listen: false)
           .getNotOptedWithReasonsFromDB();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
           .setFloorDetails();
@@ -71,9 +65,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel? user =
-        Provider.of<UserDataProvider>(context, listen: false).getUser;
-
     final size = MediaQuery.of(context).size;
 
     List<Map<String, Map<String, dynamic>>> floorDetails =
@@ -81,7 +72,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
             .getFloorDetails;
     Map<String, dynamic> timings = Constants.homeIsLoading
         ? {}
-        : floorDetails.map((e) => e[user!.floor]).nonNulls.toList()[0];
+        : floorDetails
+            .map((e) => e[
+                Provider.of<UserDataProvider>(context, listen: false).getFloor])
+            .nonNulls
+            .toList()[0];
 
     return SafeArea(
       child: Scaffold(
@@ -114,7 +109,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   padding:
                                       const EdgeInsets.only(left: 25, top: 15),
                                   child: Text(
-                                    'Hi,\n${user!.userName}',
+                                    'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
                                     style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold),
@@ -125,7 +120,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             const Expanded(child: SizedBox()),
                             Consumer<EmployeeHomeProvider>(
                               builder: (context, provider, child) {
-                                return user!.isAdmin
+                                return Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .getIsAdmin!
                                     ? Switch(
                                         value: false,
                                         onChanged: (value) {
@@ -210,12 +207,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                     cellBuilder: (BuildContext context,
                                         DateRangePickerCellDetails details) {
                                       bool isOpted =
-                                          Provider.of<EventsProvider>(context,
+                                          Provider.of<UserDataProvider>(context,
                                                   listen: false)
                                               .getOpted
                                               .contains(details.date);
                                       bool isNotOpted =
-                                          Provider.of<EventsProvider>(context,
+                                          Provider.of<UserDataProvider>(context,
                                                   listen: false)
                                               .getNotOpted
                                               .contains(details.date);
@@ -382,7 +379,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                 Navigator.pop(
                                                                     context);
                                                                 setState(() {
-                                                                  Provider.of<EventsProvider>(context, listen: false).pushDate(
+                                                                  Provider.of<UserDataProvider>(context, listen: false).pushDate(
                                                                       date: date
                                                                           as DateTime,
                                                                       radioValue:
