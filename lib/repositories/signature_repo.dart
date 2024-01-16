@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/widgets.dart';
 
 class SignatureRepo {
   uploadImageToDb(Uint8List imageBytes, String uid, String imageName) async {
@@ -11,6 +15,9 @@ class SignatureRepo {
           .ref()
           .child("signatures/$uid/$imageName");
       final uploadedImageBytes = ref.putData(imageBytes);
+
+      print(uploadedImageBytes);
+      print("upload done");
 
       //deleting all the signatures other thsn the latest one
       final refToDelete = FirebaseStorage.instanceFor(
@@ -30,6 +37,7 @@ class SignatureRepo {
           print("Error deleting file: $e");
         }
       }
+      print("done deleteing");
 
       return true;
       // final downloadUrl =  ref.getData();
