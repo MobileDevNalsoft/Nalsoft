@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
-import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 // ignore: must_be_immutable
@@ -20,6 +18,9 @@ class Preview extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 247, 242, 250),
         toolbarHeight: 80,
+        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
+          Navigator.pushNamedAndRemoveUntil(context, '/emp_homepage', (route) => false);
+        },),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

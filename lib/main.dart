@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/providers/admin_download_csv_provider.dart';
 import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
 import 'package:meals_management_with_firebase/providers/auth_provider.dart';
+import 'package:meals_management_with_firebase/providers/employee_digital_sign_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart';
+import 'package:meals_management_with_firebase/providers/events_provider.dart';
 import 'package:meals_management_with_firebase/providers/universal_data_provider.dart';
 import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
 import 'package:meals_management_with_firebase/route_management/route_management.dart';
@@ -27,8 +28,6 @@ Future<void> main() async {
       ChangeNotifierProvider<AuthProvider>(create: (context) => AuthProvider()),
       ChangeNotifierProvider<EmployeeHomeProvider>(
           create: (context) => EmployeeHomeProvider()),
-      ChangeNotifierProvider<DownloadProvider>(
-          create: (context) => DownloadProvider()),
       ChangeNotifierProvider<StatusProvider>(
           create: (context) => StatusProvider()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
@@ -37,6 +36,10 @@ Future<void> main() async {
           create: (context) => UniversalDataProvider()),
       ChangeNotifierProvider<UserDataProvider>(
           create: (context) => UserDataProvider()),
+      ChangeNotifierProvider<EventsProvider>(
+          create: (context) => EventsProvider()),
+      ChangeNotifierProvider<SignatureProvider>(
+          create: (context) => SignatureProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(

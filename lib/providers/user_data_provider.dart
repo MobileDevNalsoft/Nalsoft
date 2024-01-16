@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management_with_firebase/models/user_model.dart';
-import 'package:meals_management_with_firebase/services/database_services.dart';
-import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
+import 'package:meals_management_with_firebase/repositories/user_events_repo.dart';
+import 'package:meals_management_with_firebase/repositories/firebase_auth_repo.dart';
 
 class UserDataProvider extends ChangeNotifier {
-  final FirebaseAuthServices _auth = FirebaseAuthServices();
-  final DatabaseServices _db = DatabaseServices();
+  final FirebaseAuthRepo _auth = FirebaseAuthRepo();
+  final UserEventsRepo _db = UserEventsRepo();
 
   // for UI updations
   String? _dept;
@@ -26,7 +26,6 @@ class UserDataProvider extends ChangeNotifier {
   // getting user data from firestore collection
   Future<void> setUser() async {
     user = await _db.readData();
-    print(user);
     notifyListeners();
   }
 

@@ -10,13 +10,7 @@ class Employees extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return Provider.of<AdminEmployeesProvider>(context, listen: true)
-            .getEmpList
-            .isEmpty
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : SafeArea(
+    return SafeArea(
             child: Scaffold(
               resizeToAvoidBottomInset: false,
               body: Column(
@@ -31,9 +25,12 @@ class Employees extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {},
+                          SizedBox(
+                            width: size.width * 0.04,
+                          ),
+                          const Icon(Icons.groups),
+                          SizedBox(
+                            width: size.width * 0.04,
                           ),
                           const Expanded(
                             child: TextField(
@@ -52,28 +49,6 @@ class Employees extends StatelessWidget {
                   ),
                   const SizedBox(
                     height: 16.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 16.0),
-                        child: Text(
-                          "Department",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      const Text(':'),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: Text(
-                          Provider.of<UniversalDataProvider>(context)
-                              .getDDeptNameforEmployeesPage!,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
                   ),
                   const SizedBox(
                     height: 16,
@@ -96,7 +71,7 @@ class Employees extends StatelessWidget {
                       return Expanded(
                         child: Scrollbar(
                           child: ListView(
-                            children: provider.getEmpList
+                            children: provider.getEmpData
                                 .map((item) => Container(
                                       margin: const EdgeInsets.only(
                                           left: 10.0, right: 10.0, bottom: 4.0),
@@ -110,9 +85,7 @@ class Employees extends StatelessWidget {
                                           },
                                           style: TextButton.styleFrom(
                                               alignment: Alignment.centerLeft),
-                                          child: Text(
-                                            item['username'],
-                                          ),
+                                          child: Text(item['username']),
                                         ),
                                       ),
                                     ))
@@ -122,8 +95,6 @@ class Employees extends StatelessWidget {
                       );
                     },
                   ),
-                  ElevatedButton(
-                      onPressed: () {}, child: const Text("Generate CSV")),
                   Image.asset("assets/images/food_png.png")
                 ],
               ),

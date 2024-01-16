@@ -1,13 +1,26 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management_with_firebase/models/user_model.dart';
+import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
 import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
+import 'package:meals_management_with_firebase/providers/events_provider.dart';
 import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
-import 'package:meals_management_with_firebase/services/firebase_auth_services.dart';
+import 'package:meals_management_with_firebase/repositories/firebase_auth_repo.dart';
+import 'package:meals_management_with_firebase/utils/constants.dart';
 import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
+import 'package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+
+
 
 class EmployeeHomeView extends StatefulWidget {
   const EmployeeHomeView({super.key});
@@ -21,9 +34,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   TextEditingController notOptController = TextEditingController();
 
-  late SharedPreferences sharedPreferences;
+  DateRangePickerController datesController = DateRangePickerController();
 
-  bool _isLoading = true;
+  late SharedPreferences sharedPreferences;
 
   @override
   void initState() {
@@ -35,13 +48,18 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Future<void> initData() async {
     try {
       await Provider.of<UserDataProvider>(context, listen: false).setUser();
-      // await Provider.of<EmployeeHomeProvider>(context, listen: false)
-      //     .setEventsInfo();
+      await Provider.of<EventsProvider>(context, listen: false)
+          .getOptedFromDB();
+      await Provider.of<EventsProvider>(context, listen: false)
+          .getNotOptedFromDB();
+      await Provider.of<EventsProvider>(context, listen: false)
+          .getNotOptedWithReasonsFromDB();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
           .setFloorDetails();
+      await Provider.of<AdminEmployeesProvider>(context, listen: false).setEmpData();
     } finally {
       setState(() {
-        _isLoading = false;
+        Constants.homeIsLoading = false;
       });
     }
   }
@@ -52,20 +70,23 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   @override
   Widget build(BuildContext context) {
+
+    UserModel? user =
+         Provider.of<UserDataProvider>(context, listen: false).getUser;
+  
     final size = MediaQuery.of(context).size;
-    // UserModel? user =
-    //     Provider.of<UserDataProvider>(context, listen: false).getUser;
+    
     List<Map<String, Map<String, dynamic>>> floorDetails =
         Provider.of<EmployeeHomeProvider>(context, listen: false)
             .getFloorDetails;
-    // Map<String, dynamic> timings = _isLoading
-    //     ? {}
-    //     : floorDetails.map((e) => e[user!.floor]).nonNulls.toList()[0];
+    Map<String, dynamic> timings = Constants.homeIsLoading
+        ? {}
+        : floorDetails.map((e) => e[user!.floor]).nonNulls.toList()[0]; 
 
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: _isLoading
+        body: Constants.homeIsLoading
             ? const Center(
                 child: CircularProgressIndicator(),
               )
@@ -93,8 +114,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   padding:
                                       const EdgeInsets.only(left: 25, top: 15),
                                   child: Text(
-                                    // 'Hi,\n${user!.userName}',
-                                    'hi',
+                                    'Hi,\n${user!.userName}',
                                     style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold),
@@ -105,7 +125,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             const Expanded(child: SizedBox()),
                             Consumer<EmployeeHomeProvider>(
                               builder: (context, provider, child) {
-                                return true //user!.isAdmin
+                                return user!.isAdmin
                                     ? Switch(
                                         value: false,
                                         onChanged: (value) {
@@ -127,7 +147,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         value: 'Sign Out',
                                         height: 10,
                                         onTap: () {
-                                          FirebaseAuthServices()
+                                          FirebaseAuthRepo()
                                               .signOutNow()
                                               .then((value) {
                                             sharedPreferences.setString(
@@ -182,33 +202,54 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                               Consumer<EmployeeHomeProvider>(
                                 builder: (context, provider, child) {
                                   return SfDateRangePicker(
+                                    controller: datesController,
+                                    selectionColor: Colors.deepPurple.shade200,
+                                    selectionShape: DateRangePickerSelectionShape.circle,
+                                    cellBuilder: (BuildContext context, DateRangePickerCellDetails details) {
+                                        bool isOpted = Provider.of<EventsProvider>(context, listen: false).getOpted.contains(details.date); 
+                                        bool isNotOpted = Provider.of<EventsProvider>(context, listen: false).getNotOpted.contains(details.date);
+                                        Color circleColor = isOpted ? Colors.green.shade200 :
+                                                                  isNotOpted ? Colors.orange.shade200 :
+                                                                        (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday) ? Colors.blueGrey.shade200 : Colors.white30;
+                                        return Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: Container(
+                                              width: details.bounds.width/2,
+                                              height: details.bounds.width/2,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: circleColor,
+                                              ),
+                                              child: Center(child: Text(details.date.day.toString())),
+                                            ),
+                                        );
+                                      },
                                     showActionButtons: true,
                                     allowViewNavigation: true,
                                     selectionMode:
                                         DateRangePickerSelectionMode.single,
                                     showNavigationArrow: true,
                                     onSubmit: (date) {
-                                      provider.setEventsInfo();
                                       if (date == null ||
                                           date.toString().substring(0, 10) !=
                                               now.toString().substring(0, 10)) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                content:
-                                                    Text('please select today'
-                                                        's date')));
-                                      } else {
+                                        CustomSnackBar.showSnackBar(context, 'please select todays date');
+                                      } 
+                                      else if([DateTime.sunday, DateTime.saturday].contains(DateTime.parse(date.toString()).weekday)){
+                                        CustomSnackBar.showSnackBar(context, 'cannot opt on weekoffs');
+                                      }
+                                      else {
                                         notOptController.clear();
                                         showDialog(
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(content:
                                                 Consumer<EmployeeHomeProvider>(
-                                              builder: (context, value, child) {
+                                              builder: (context, dialogProvider, child) {
                                                 return SizedBox(
                                                   width: size.width * 0.6,
                                                   height:
-                                                      provider.getRadioValue ==
+                                                      dialogProvider.getRadioValue ==
                                                               2
                                                           ? size.height * 0.365
                                                           : size.height * 0.22,
@@ -217,14 +258,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                         MainAxisAlignment.start,
                                                     children: [
                                                       _radioButtons(
-                                                          provider: provider,
+                                                          provider: dialogProvider,
                                                           text: 'Opt and Sign',
                                                           value: 1),
                                                       _radioButtons(
-                                                          provider: provider,
+                                                          provider: dialogProvider,
                                                           text: 'Not opt',
                                                           value: 2),
-                                                      if (provider
+                                                      if (dialogProvider
                                                               .getRadioValue ==
                                                           2)
                                                         TextFormField(
@@ -238,7 +279,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                               hintStyle: const TextStyle(
                                                                   color: Colors
                                                                       .black38),
-                                                              errorText: provider
+                                                              errorText: dialogProvider
                                                                       .getReasonEmpty
                                                                   ? 'reason cannot be empty'
                                                                   : null),
@@ -246,11 +287,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           maxLength: 30,
                                                           onChanged: (value) {
                                                             if (value.isEmpty) {
-                                                              provider
+                                                              dialogProvider
                                                                   .setReasonEmpty(
                                                                       true);
                                                             } else {
-                                                              provider
+                                                              dialogProvider
                                                                   .setReasonEmpty(
                                                                       false);
                                                             }
@@ -266,6 +307,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                         children: [
                                                           CustomButton(
                                                             onPressed: () {
+                                                              datesController.selectedDate = null;
                                                               Navigator.pop(
                                                                   context);
                                                             },
@@ -285,7 +327,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           ),
                                                           CustomButton(
                                                             onPressed: () {
-                                                              if (provider
+                                                              if (dialogProvider
                                                                       .getRadioValue ==
                                                                   1) {
                                                                 Navigator.pop(
@@ -300,19 +342,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                               } else {
                                                                 Navigator.pop(
                                                                     context);
-                                                                Provider.of<
-                                                                            EmployeeHomeProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .pushDate(
-                                                                        date: date
-                                                                            as DateTime,
+                                                                setState(() {
+                                                                  Provider.of<EventsProvider>(context, listen: false).pushDate(
+                                                                        date: date as DateTime,
                                                                         radioValue:
-                                                                            provider
+                                                                            dialogProvider
                                                                                 .getRadioValue,
                                                                         reason:
                                                                             notOptController.text);
+                                                                  initData();
+                                                                  datesController.selectedDate = null;
+                                                                });
                                                               }
                                                             },
                                                             color: MaterialStatePropertyAll(
@@ -336,6 +376,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                           },
                                         );
                                       }
+                                    },
+                                  onCancel: () {
+                                      datesController.selectedDate = null;
                                     },
                                   );
                                 },
@@ -446,14 +489,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            // timings['start_time'],
-                                            ' ',
+                                            timings['start_time'],
                                             style:
                                                 const TextStyle(fontSize: 12),
                                           ),
                                           Text(
-                                            // timings['end_time'],
-                                            ' ',
+                                            timings['end_time'],
                                             style:
                                                 const TextStyle(fontSize: 12),
                                           )
@@ -527,4 +568,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           provider.setRadioValue(value);
         });
   }
+
+  
 }
+

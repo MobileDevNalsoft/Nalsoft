@@ -1,26 +1,29 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
+import 'package:meals_management_with_firebase/providers/employee_digital_sign_provider.dart';
+import 'package:meals_management_with_firebase/providers/events_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
-import '../../custom_widgets/custom_button.dart';
 
 // ignore: must_be_immutable
 class DigitalSignView extends StatelessWidget {
-  DateTime? date;
 
-  SignatureController signatureController = SignatureController();
+  DateTime? date;
 
   DigitalSignView({super.key, this.date});
 
-  @override
+  SignatureController signatureController = SignatureController();
+
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 247, 242, 250),
+      backgroundColor: Color.fromARGB(255, 247, 242, 250),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 247, 242, 250),
-        title: const Text('Signature'),
+        backgroundColor: Color.fromARGB(255, 247, 242, 250),
+        title: Text('Signature'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_outlined),
+          icon: Icon(Icons.arrow_back_outlined),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -46,51 +49,57 @@ class DigitalSignView extends StatelessWidget {
                   width: 350,
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 height: 15,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Expanded(
+                  Expanded(
                       child: SizedBox(
                     width: 180,
                   )),
-                  CustomButton(
-                    onPressed: () => signatureController.clear(),
-                    color: const MaterialStatePropertyAll(Colors.white),
-                    child: const Text(
+                  ElevatedButton(
+                    child: Text(
                       'Re-sign',
                       style: TextStyle(color: Colors.black),
                     ),
+                    onPressed: () => signatureController.clear(),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.white),
+                        elevation: MaterialStatePropertyAll(5)),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 15,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: CustomButton(
-                      onPressed: () {
-                        Provider.of<EmployeeHomeProvider>(context,
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: Consumer<SignatureProvider>(
+                        builder: (context, signatureProvider, child) {
+                          return ElevatedButton(
+                            child: Text(
+                              'Save',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () async {
+                              Provider.of<EventsProvider>(context,
                                 listen: false)
                             .pushDate(date: date!, radioValue: 0);
-
-                        if (signatureController.isNotEmpty) {
-                          Navigator.pushNamed(context, '/preview');
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('signature cannot be empty')));
-                        }
-                      },
-                      color: MaterialStatePropertyAll(
-                          Colors.deepPurpleAccent.shade200),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )
+                              if (signatureController.isNotEmpty) {
+                                ui.Image? signatureImage =await signatureController.toImage();
+                                ByteData? byteData = await signatureImage?.toByteData(format: ui.ImageByteFormat.png);
+                                Uint8List pngBytes = byteData!.buffer.asUint8List();
+                                signatureProvider.uploadImage(pngBytes);
+                                Navigator.pushNamed(context, '/preview');
+                              }
+                            },
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Colors.deepPurpleAccent.shade200),
+                                elevation: MaterialStatePropertyAll(5)),
+                          );
+                        },
+                      ))
                 ],
               )
             ],

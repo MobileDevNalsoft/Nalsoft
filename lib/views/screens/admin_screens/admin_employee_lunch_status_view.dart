@@ -1,4 +1,10 @@
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:meals_management_with_firebase/models/user_model.dart";
+import "package:meals_management_with_firebase/providers/events_provider.dart";
+import "package:meals_management_with_firebase/providers/user_data_provider.dart";
+import "package:meals_management_with_firebase/views/custom_widgets/custom_button.dart";
+import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
 class EmployeeLunchStatus extends StatelessWidget {
@@ -9,6 +15,10 @@ class EmployeeLunchStatus extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var size = MediaQuery.of(context).size;
+
+    UserModel user = Provider.of<UserDataProvider>(context, listen: false).getUser!;
+
+    Map<DateTime,String> dates = Provider.of<EventsProvider>(context, listen: false).getNotOptedWithReasons;
 
     return SafeArea(
         child: Scaffold(
@@ -33,7 +43,7 @@ class EmployeeLunchStatus extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(24.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -59,18 +69,19 @@ class EmployeeLunchStatus extends StatelessWidget {
                   children: [Text(":"), Text(":"), Text(":")],
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Peter Parker",
+                    Text(user.userName,
                         style: TextStyle(
                             color: Colors.black87,
                             fontSize: 16,
                             fontWeight: FontWeight.bold)),
-                    Text("Engineering",
+                    Text(user.department,
                         style: TextStyle(
                             color: Colors.black87,
                             fontSize: 16,
                             fontWeight: FontWeight.bold)),
-                    Text("8",
+                    Text(user.floor,
                         style: TextStyle(
                             color: Colors.black87,
                             fontSize: 16,
@@ -92,19 +103,59 @@ class EmployeeLunchStatus extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SfDateRangePicker(
-                        showActionButtons: true,
-                        allowViewNavigation: true,
-                        selectionMode: DateRangePickerSelectionMode.single,
-                        showNavigationArrow: true,
-                      )
+                    selectionColor: Colors.deepPurple.shade200,
+                    selectionShape: DateRangePickerSelectionShape.circle,
+                    cellBuilder: (BuildContext context, DateRangePickerCellDetails details) {
+                        bool isOpted = Provider.of<EventsProvider>(context, listen: false).getOpted.contains(details.date); 
+                        bool isNotOpted = Provider.of<EventsProvider>(context, listen: false).getNotOpted.contains(details.date);
+                        Color circleColor = isOpted ? Colors.green.shade200 :
+                                                  isNotOpted ? Colors.orange.shade200 :
+                                                        (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday) ? Colors.blueGrey.shade200 : Colors.white30;
+                        return Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Container(
+                              width: details.bounds.width/2,
+                              height: details.bounds.width/2,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: circleColor,
+                              ),
+                              child: Center(child: Text(details.date.day.toString())),
+                            ),
+                        );
+                      },
+                    allowViewNavigation: true,
+                    selectionMode:
+                        DateRangePickerSelectionMode.single,
+                    showNavigationArrow: true,
+                    onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                      if(dates.keys.contains(dateRangePickerSelectionChangedArgs.value)){
+                        showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: SizedBox(
+                              width: size.width * 0.6,
+                              height: size.height*0.08,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Reason', style: TextStyle(fontSize: 18),),
+                                  SizedBox(height: size.height*0.02,),
+                                  Text(dates[dateRangePickerSelectionChangedArgs.value]!),
+                                ],
+                              )
+                            ),
+                          );
+                        },
+                      );
+                      }
+                    },
+                  )
                 ],
               ),
             ),
           ),
-          ElevatedButton(
-            onPressed: (){
-            Navigator.pushNamed(context, '/download_csv');
-          }, child: const Text("Generate CSV")),
           Image.asset("assets/images/food_png.png"),
         ],
       ),

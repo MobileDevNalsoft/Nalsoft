@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/services/database_services.dart';
+import 'package:meals_management_with_firebase/repositories/user_events_repo.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
-  final DatabaseServices _db = DatabaseServices();
+  final UserEventsRepo _db = UserEventsRepo();
 
-  List<dynamic> empList = [];
+  List<Map<String,dynamic>> _empData = [];
 
-  Future<void> setEmpList() async {
-    var allEmpinfoList = await _db.readEmployees();
-    empList = allEmpinfoList.map((e) => e['username']).toList();
+  Future<void> setEmpData() async {
+    _empData = await _db.readEmployees();
     notifyListeners();
   }
 
-  List<dynamic> get getEmpList => empList;
+  List<Map<String,dynamic>> get getEmpData => _empData;
 }

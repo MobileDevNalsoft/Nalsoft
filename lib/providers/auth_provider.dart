@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/services/database_services.dart';
+import 'package:meals_management_with_firebase/repositories/user_events_repo.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final DatabaseServices _db = DatabaseServices();
+  final UserEventsRepo _db = UserEventsRepo();
 
   bool _obscurePassword = true;
   List<dynamic> deptList = [];

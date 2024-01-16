@@ -1,7 +1,10 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:meals_management_with_firebase/providers/employee_home_provider.dart";
 import "package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart";
-import "package:meals_management_with_firebase/services/database_services.dart";
+import "package:meals_management_with_firebase/providers/events_provider.dart";
+import "package:meals_management_with_firebase/views/custom_widgets/custom_button.dart";
+import "package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
@@ -9,7 +12,9 @@ import "package:syncfusion_flutter_datepicker/datepicker.dart";
 class UpdateLunchStatus extends StatelessWidget {
   UpdateLunchStatus({super.key});
 
-  DatabaseServices _db = DatabaseServices();
+  DateRangePickerController datesController = DateRangePickerController();
+
+  TextEditingController notOptController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +53,15 @@ class UpdateLunchStatus extends StatelessWidget {
                   height: size.height * 0.01,
                 ),
                 const Text(
-                  'Select Reason',
-                  style: TextStyle(fontSize: 15),
+                  'How many days are you not opting for lunch?',
+                  style: TextStyle(fontSize: 13),
                 ),
                 DropdownButton<String>(
                   value: provider.getReason,
                   onChanged: (String? newValue) {
                     provider.setReason(newValue!);
                   },
-                  items: <String>['Single day', 'Multiple days', 'Vacation']
+                  items: <String>['Single day', 'Multiple days']
                       .map<DropdownMenuItem<String>>(
                         (String value) => DropdownMenuItem<String>(
                           value: value,
@@ -87,19 +92,65 @@ class UpdateLunchStatus extends StatelessWidget {
                           ),
                         ),
                         const Divider(),
-                        SfDateRangePicker(
-                          showActionButtons: true,
-                          allowViewNavigation: true,
-                          selectionMode: provider.getReason == 'Multiple days'
-                              ? DateRangePickerSelectionMode.multiple
-                              : provider.getReason == 'Vacation'
-                                  ? DateRangePickerSelectionMode.extendableRange
-                                  : DateRangePickerSelectionMode.single,
-                          showNavigationArrow: true,
-                          onSubmit: (p0) {
-                            // _db.pushEvents(p0 as List<DateTime>?);
-                          },
-                        )
+                        Consumer<StatusProvider>(
+                                builder: (context, provider, child) {
+                                  return SfDateRangePicker(
+                                    controller: datesController,
+                                    selectionColor: Colors.deepPurple.shade200,
+                                    selectionShape: DateRangePickerSelectionShape.circle,
+                                    cellBuilder: (BuildContext context, DateRangePickerCellDetails details) {
+                                        bool isOpted = Provider.of<EventsProvider>(context, listen: false).getOpted.contains(details.date); 
+                                        bool isNotOpted = Provider.of<EventsProvider>(context, listen: false).getNotOpted.contains(details.date);
+                                        Color circleColor = isOpted ? Colors.green.shade200 :
+                                                                  isNotOpted ? Colors.orange.shade200 :
+                                                                        (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday) ? Colors.blueGrey.shade200 : Colors.white30;
+                                        return Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: Container(
+                                              width: details.bounds.width/2,
+                                              height: details.bounds.width/2,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: circleColor,
+                                              ),
+                                              child: Center(child: Text(details.date.day.toString())),
+                                            ),
+                                        );
+                                      },
+                                    showActionButtons: true,
+                                    allowViewNavigation: true,
+                                    selectionMode:provider.getReason == 'Multiple days'
+                                                            ? DateRangePickerSelectionMode.multiple
+                                                                : DateRangePickerSelectionMode.single,
+                                    showNavigationArrow: true,
+                                    onSubmit: (dates) {
+                                      if(provider.getReason == 'Single day'){
+                                        if(DateTime.parse(dates.toString()).weekday == DateTime.saturday || DateTime.parse(dates.toString()).weekday == DateTime.sunday){
+                                          CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
+                                        }
+                                        else{
+                                          dialog(context, size, provider, dates);
+                                        }
+                                      }
+                                      else if(provider.getReason == 'Multiple days'){
+                                        List<DateTime> datesList = dates as List<DateTime>;
+                                        if(datesList.map((e) => e.weekday).toList().contains(6) || datesList.map((e) => e.weekday).toList().contains(7)){
+                                          CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
+                                        }
+                                        else{
+                                          dialog(context, size, provider, dates);
+                                        }
+                                      }
+                                          },
+                                    onCancel: () {
+                                      datesController.selectedDate = null;
+                                      datesController.selectedDates = null;
+                                      datesController.selectedRange = null;
+                                    },
+                                        );
+                                      }
+                                  )
+                        
                       ],
                     ),
                     shape: const RoundedRectangleBorder(
@@ -112,5 +163,130 @@ class UpdateLunchStatus extends StatelessWidget {
             );
           },
         ));
+  }
+
+  void dialog(context, size, provider, dates){
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(content:
+            Consumer<EmployeeHomeProvider>(
+          builder: (context, dialogProvider, child) {
+            return SizedBox(
+              width: size.width * 0.6,
+              height: size.height*0.218,
+              child: Column(
+                mainAxisAlignment:
+                    MainAxisAlignment.start,
+                children: [
+                    TextFormField(
+                      controller:
+                          notOptController,
+                      decoration: InputDecoration(
+                          border:
+                              const OutlineInputBorder(),
+                          hintText:
+                              'reason for not opting...',
+                          hintStyle: const TextStyle(
+                              color: Colors
+                                  .black38),
+                          errorText: dialogProvider
+                                  .getReasonEmpty
+                              ? 'reason cannot be empty'
+                              : null),
+                      maxLines: 2,
+                      maxLength: 30,
+                      onChanged: (value) {
+                        if (value.isEmpty) {
+                          dialogProvider
+                              .setReasonEmpty(
+                                  true);
+                        } else {
+                          dialogProvider
+                              .setReasonEmpty(
+                                  false);
+                        }
+                      },
+                    ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment
+                            .end,
+                    children: [
+                      CustomButton(
+                        onPressed: () {
+                          Navigator.pop(
+                              context);
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                        },
+                        color:
+                            const MaterialStatePropertyAll(
+                                Colors
+                                    .white),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                              color: Colors
+                                  .black),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      CustomButton(
+                        onPressed: () {
+                          if(provider.getReason == 'Single day'){
+                            if(DateTime.parse(dates.toString()).weekday == DateTime.saturday || DateTime.parse(dates.toString()).weekday == DateTime.sunday){
+                              CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
+                            }
+                            else{
+                              Provider.of<EventsProvider>(context, listen: false).pushDate(date: dates as DateTime, radioValue: 2, reason: notOptController.text);
+                            }
+                          }
+                          else{
+                            List<DateTime> datesList = dates as List<DateTime>;
+                            if(datesList.map((e) => e.weekday).toList().contains(6) || datesList.map((e) => e.weekday).toList().contains(7)){
+                              CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
+                            }
+                            else{
+                              Provider.of<EventsProvider>(context, listen: false).pushDates(dates: datesList, radioValue: 2, reason: notOptController.text);
+                            }
+                          }
+                          // else{
+                          //   PickerDateRange range = dates as PickerDateRange;
+                          //   List<DateTime> rangeList = List.generate(int.parse(range.endDate!.toString().substring(8,10))+1 - int.parse(range.startDate!.toString().substring(8,10)), (index) => range.startDate!.add(Duration(days : index)));
+                          //   Provider.of<EventsProvider>(context, listen: false).pushDates(dates: rangeList, radioValue: 2, reason: notOptController.text);
+                          // }
+                          Navigator.pop(context);
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                          notOptController.clear();
+                        },
+                        color: MaterialStatePropertyAll(
+                            Colors
+                                .deepPurpleAccent
+                                .shade200),
+                        child: const Text(
+                          'Proceed',
+                          style: TextStyle(
+                              color: Colors
+                                  .white),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+        ));
+      },
+    );
   }
 }

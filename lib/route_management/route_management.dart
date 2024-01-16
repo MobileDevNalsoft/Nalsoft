@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../views/screens/admin_screens/admin_download_csv_view.dart';
 import '../views/screens/admin_screens/admin_employee_lunch_status_view.dart';
 import '../views/screens/admin_screens/admin_employees_view.dart';
 import '../views/screens/admin_screens/admin_home_view.dart';
@@ -21,8 +20,6 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => AdminHomePage());
       case '/emp_homepage':
         return MaterialPageRoute(builder: (_) => EmployeeHomeView());
-      case '/download_csv':
-        return MaterialPageRoute(builder: (_) => Download());
       case '/admin_employees':
         return MaterialPageRoute(builder: (_) => Employees());
       case '/employee_lunch_status':

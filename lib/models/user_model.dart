@@ -7,9 +7,9 @@ class UserModel {
   String department;
   String floor;
   bool isAdmin;
-  List<DateTime> opted;
-  Map<DateTime, String> notOpted;
-  List<DateTime> unSigned;
+  List<dynamic> opted;
+  Map<String, dynamic> notOpted;
+  List<dynamic> unSigned;
 
   UserModel(this.userName, this.email, this.employee_id, this.department,
       this.floor, this.isAdmin, this.opted, this.notOpted, this.unSigned);

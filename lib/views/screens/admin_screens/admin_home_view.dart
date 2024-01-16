@@ -1,61 +1,39 @@
+import "dart:io";
+import "package:excel/excel.dart";
 import "package:flutter/material.dart";
+import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:intl/intl.dart";
 import "package:meals_management_with_firebase/models/user_model.dart";
+import "package:meals_management_with_firebase/providers/admin_employees_provider.dart";
 import "package:meals_management_with_firebase/providers/user_data_provider.dart";
+import "package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart";
+import "package:path_provider/path_provider.dart";
+import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "../../../providers/employee_home_provider.dart";
-import "../../../services/firebase_auth_services.dart";
+import '../../../repositories/firebase_auth_repo.dart';
 
-class AdminHomePage extends StatefulWidget {
-  const AdminHomePage({super.key});
+// ignore: must_be_immutable
+class AdminHomePage extends StatelessWidget {
+  AdminHomePage({super.key});
 
-  @override
-  State<AdminHomePage> createState() => _AdminHomePageState();
-}
-
-class _AdminHomePageState extends State<AdminHomePage> {
   late SharedPreferences sharedPreferences;
 
-  bool _isLoading = true;
-
   DateTime now = DateTime.now();
-
-  @override
-  initState() {
-    super.initState();
-    initiate();
-    initData();
-  }
-
-  initiate() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-  }
-
-  Future<void> initData() async {
-    try {
-      await Provider.of<UserDataProvider>(context, listen: false).setUser();
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
+    DateRangePickerController datesController = DateRangePickerController();
+
     UserModel? user =
         Provider.of<UserDataProvider>(context, listen: false).getUser;
 
     return SafeArea(
-      child: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Scaffold(
+      child: Scaffold(
               resizeToAvoidBottomInset: false,
               body: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,7 +88,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                 PopupMenuItem(
                                     value: 'Sign Out',
                                     height: 10,
-                                    onTap: () => FirebaseAuthServices()
+                                    onTap: () => FirebaseAuthRepo()
                                             .signOutNow()
                                             .then((value) {
                                           sharedPreferences!
@@ -190,12 +168,43 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             builder: (context, provider, child) {
                               return Expanded(
                                 child: SfDateRangePicker(
+                                    controller: datesController,
+                                    selectionColor: Colors.deepPurple.shade200,
+                                    selectionShape: DateRangePickerSelectionShape.circle,
+                                    cellBuilder: (BuildContext context, DateRangePickerCellDetails details) {
+                                        Color circleColor = (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday) ? Colors.blueGrey.shade200 : Colors.white30;
+                                        return Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: Container(
+                                              width: details.bounds.width/2,
+                                              height: details.bounds.width/2,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: circleColor,
+                                              ),
+                                              child: Center(child: Text(details.date.day.toString())),
+                                            ),
+                                        );
+                                      },
                                     showActionButtons: true,
                                     allowViewNavigation: true,
-                                    selectionMode:
-                                        DateRangePickerSelectionMode.single,
+                                    selectionMode:DateRangePickerSelectionMode.single,
                                     showNavigationArrow: true,
-                                    onSubmit: (date) {}),
+                                    confirmText: 'Send Mail',
+                                    cancelText: 'Clear Selection',
+                                    onSubmit: (date) {
+                                      if(date != null){
+                                        date = date as DateTime;
+                                        sendMail(date, context);
+                                      }else{
+                                        CustomSnackBar.showSnackBar(context, 'please select a date');
+                                      }
+                                    },
+                                    onCancel: () {
+                                      datesController.selectedDate = null;
+                                      datesController.selectedDates = null;
+                                    },
+                                  )
                               );
                             },
                           )
@@ -208,5 +217,62 @@ class _AdminHomePageState extends State<AdminHomePage> {
               ),
             ),
     );
+  }
+
+  Future<void> sendMail(DateTime date, BuildContext context) async{
+    List<Map<String,dynamic>> empData = Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpData;
+    List<String?> optedEmployees = empData.map((e) {
+      if(e['opted'] != null){
+        if(e['opted'].contains(date.toString())){
+        return e['username'] as String;
+      }
+      }
+    }).nonNulls.toList();
+    //creating excel 
+
+    var excel = Excel.createExcel();
+    Sheet sheet = excel['Today''s Meals opted employees'];
+
+    sheet.appendRow([TextCellValue('Employees opted today')]);
+
+    for(int i = 0; i < optedEmployees.length ;i ++){
+      List<String?> rowData = [optedEmployees[i]];
+      List<CellValue> name = rowData.map((e) => TextCellValue(e!)).toList();
+      sheet.appendRow(name);
+    }
+
+    sheet.appendRow([TextCellValue('${optedEmployees.length}'),TextCellValue('Number of employees opted today')]);
+
+    final bytes = excel.encode();
+
+    // Request storage permission if needed
+    var status = await Permission.storage.status;
+    if (status.isDenied) {
+      await Permission.storage.request();
+    }
+    // Permission granted, proceed with storage operations
+    final dir = await getExternalStorageDirectory();
+    final path = '${dir!.path}/mess_data.xlsx';
+    File(path).writeAsBytes(bytes!);
+    const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
+    const subject = 'Excel Data';
+    const body = 'Please find the attached Excel file with the data.';
+    final excelFile =  File(path);
+
+    final email = Email(
+    body: body,
+    subject: subject,
+    recipients: [recipientEmail],
+    attachmentPaths: [excelFile.path],
+    );
+
+    try {
+      await FlutterEmailSender.send(email);
+      CustomSnackBar.showSnackBar(context, 'Email sent successfully');
+    } catch (error) {
+      print('Error sending email: $error');
+      // Handle the error appropriately, e.g., display an error message to the user
+    }
+    
   }
 }
