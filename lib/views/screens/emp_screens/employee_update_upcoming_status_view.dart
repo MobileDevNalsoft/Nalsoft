@@ -44,9 +44,7 @@ class UpdateLunchStatus extends StatelessWidget {
                   bottomLeft: Radius.circular(50),
                   bottomRight: Radius.circular(50))),
         ),
-        body: Consumer<StatusProvider>(
-          builder: (context, provider, child) {
-            return Column(
+        body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
@@ -57,9 +55,9 @@ class UpdateLunchStatus extends StatelessWidget {
                   style: TextStyle(fontSize: 13),
                 ),
                 DropdownButton<String>(
-                  value: provider.getReason,
+                  value: Provider.of<StatusProvider>(context, listen: true).getReason,
                   onChanged: (String? newValue) {
-                    provider.setReason(newValue!);
+                    Provider.of<StatusProvider>(context, listen: false).setReason(newValue!);
                   },
                   items: <String>['Single day', 'Multiple days']
                       .map<DropdownMenuItem<String>>(
@@ -92,7 +90,7 @@ class UpdateLunchStatus extends StatelessWidget {
                           ),
                         ),
                         const Divider(),
-                        Consumer<StatusProvider>(
+                        Consumer<UserDataProvider>(
                             builder: (context, provider, child) {
                           return SfDateRangePicker(
                             controller: datesController,
@@ -101,16 +99,8 @@ class UpdateLunchStatus extends StatelessWidget {
                                 DateRangePickerSelectionShape.circle,
                             cellBuilder: (BuildContext context,
                                 DateRangePickerCellDetails details) {
-                              bool isOpted = Provider.of<UserDataProvider>(
-                                      context,
-                                      listen: false)
-                                  .getOpted
-                                  .contains(details.date);
-                              bool isNotOpted = Provider.of<UserDataProvider>(
-                                      context,
-                                      listen: false)
-                                  .getNotOpted
-                                  .contains(details.date);
+                              bool isOpted = provider.getOpted.contains(details.date);
+                              bool isNotOpted = provider.getNotOpted.contains(details.date);
                               Color circleColor = isOpted
                                   ? Colors.green.shade200
                                   : isNotOpted
@@ -137,12 +127,12 @@ class UpdateLunchStatus extends StatelessWidget {
                             },
                             showActionButtons: true,
                             allowViewNavigation: true,
-                            selectionMode: provider.getReason == 'Multiple days'
+                            selectionMode: Provider.of<StatusProvider>(context, listen: true).getReason == 'Multiple days'
                                 ? DateRangePickerSelectionMode.multiple
                                 : DateRangePickerSelectionMode.single,
                             showNavigationArrow: true,
                             onSubmit: (dates) {
-                              if (provider.getReason == 'Single day') {
+                              if (Provider.of<StatusProvider>(context, listen: false).getReason == 'Single day') {
                                 if (DateTime.parse(dates.toString()).weekday ==
                                         DateTime.saturday ||
                                     DateTime.parse(dates.toString()).weekday ==
@@ -150,9 +140,9 @@ class UpdateLunchStatus extends StatelessWidget {
                                   CustomSnackBar.showSnackBar(context,
                                       'remove weekoffs from selection');
                                 } else {
-                                  dialog(context, size, provider, dates);
+                                  dialog(context, size, dates);
                                 }
-                              } else if (provider.getReason ==
+                              } else if (Provider.of<StatusProvider>(context, listen: false).getReason ==
                                   'Multiple days') {
                                 List<DateTime> datesList =
                                     dates as List<DateTime>;
@@ -167,7 +157,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                   CustomSnackBar.showSnackBar(context,
                                       'remove weekoffs from selection');
                                 } else {
-                                  dialog(context, size, provider, dates);
+                                  dialog(context, size, dates);
                                 }
                               }
                             },
@@ -187,12 +177,10 @@ class UpdateLunchStatus extends StatelessWidget {
                 ),
                 Image.asset("assets/images/food.png"),
               ],
-            );
-          },
-        ));
+            ));
   }
 
-  void dialog(context, size, provider, dates) {
+  void dialog(context, size, dates) {
     showDialog(
       context: context,
       builder: (context) {
@@ -247,7 +235,7 @@ class UpdateLunchStatus extends StatelessWidget {
                       ),
                       CustomButton(
                         onPressed: () {
-                          if (provider.getReason == 'Single day') {
+                          if (Provider.of<StatusProvider>(context, listen: false).getReason == 'Single day') {
                             if (DateTime.parse(dates.toString()).weekday ==
                                     DateTime.saturday ||
                                 DateTime.parse(dates.toString()).weekday ==
@@ -255,6 +243,7 @@ class UpdateLunchStatus extends StatelessWidget {
                               CustomSnackBar.showSnackBar(
                                   context, 'remove weekoffs from selection');
                             } else {
+                              Provider.of<UserDataProvider>(context, listen: false).setNotOptedDates(dates: [dates!]);
                               Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .pushDate(
@@ -275,6 +264,7 @@ class UpdateLunchStatus extends StatelessWidget {
                               CustomSnackBar.showSnackBar(
                                   context, 'remove weekoffs from selection');
                             } else {
+                              Provider.of<UserDataProvider>(context, listen: false).setNotOptedDates(dates: dates);
                               Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .pushDates(

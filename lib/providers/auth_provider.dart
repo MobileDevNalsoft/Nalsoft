@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/Repositories/firebase_auth_repo.dart';
-import 'package:meals_management/Repositories/user_events_repo.dart';
+import 'package:meals_management/repositories/firebase_auth_repo.dart';
+import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:meals_management/models/user_model.dart';
 
 class AuthenticationProvider extends ChangeNotifier {

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/Repositories/signature_repo.dart';
+import 'package:meals_management/repositories/signature_repo.dart';
 
 class SignatureProvider extends ChangeNotifier {
   final SignatureRepo _signRepo = SignatureRepo();

@@ -123,28 +123,6 @@ class UserEventsRepo {
     }
   }
 
-  //get opted dates from db for all pages
-  Future<List<DateTime>> readOpted() async {
-    List<dynamic> dates = await _db
-        .collection('employees')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((value) => value.data()!['opted']);
-    List<DateTime> dateTimelist = dates.map((e) => DateTime.parse(e)).toList();
-    return dateTimelist;
-  }
-
-  //get notopted dates from db for all pages
-  Future<List<DateTime>> readNotOpted() async {
-    List<dynamic> dates = await _db
-        .collection('employees')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((value) => value.data()!['notOpted'].keys.toList());
-    List<DateTime> dateTimelist = dates.map((e) => DateTime.parse(e)).toList();
-    return dateTimelist;
-  }
-
   Future<Map<DateTime, String>> readNotOptedWithReasons() async {
     Map<String, dynamic> dates = await _db
         .collection('employees')

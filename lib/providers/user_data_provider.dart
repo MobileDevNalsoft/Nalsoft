@@ -17,14 +17,26 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getOptedFromDB() async {
-    _optedDates = await _db.readOpted();
-    notifyListeners();
+  void setOptedDates({List<DateTime>? dates}){
+    if(dates == null){
+      _optedDates = _user!.opted.map((e) => DateTime.parse(e)).toList();
+      notifyListeners();
+    }else{
+      _notOptedDates.remove(dates[0]);
+      _optedDates = _optedDates + dates;
+      notifyListeners();
+    }
   }
 
-  Future<void> getNotOptedFromDB() async {
-    _notOptedDates = await _db.readNotOpted();
-    notifyListeners();
+  void setNotOptedDates({List<DateTime>? dates}){
+    if(dates == null){
+      _notOptedDates = _user!.notOpted.keys.map((e) => DateTime.parse(e)).toList();
+      notifyListeners();
+    }else{
+      dates.forEach((e) => _optedDates.remove(e));
+      _notOptedDates = _notOptedDates + dates;
+      notifyListeners();
+    }
   }
 
   Future<void> getNotOptedWithReasonsFromDB() async {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/employee_home_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -28,22 +27,19 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   DateRangePickerController datesController = DateRangePickerController();
 
   late SharedPreferences sharedPreferences;
+  
 
   @override
   void initState() {
     super.initState();
     initData();
-    initiate();
   }
 
   Future<void> initData() async {
     try {
+      sharedPreferences = await SharedPreferences.getInstance();
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserFromDB();
-      await Provider.of<UserDataProvider>(context, listen: false)
-          .getOptedFromDB();
-      await Provider.of<UserDataProvider>(context, listen: false)
-          .getNotOptedFromDB();
       await Provider.of<UserDataProvider>(context, listen: false)
           .getNotOptedWithReasonsFromDB();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
@@ -52,15 +48,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           .setEmpList();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
           .checkRadius();
+      Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
+      Provider.of<UserDataProvider>(context, listen: false).setNotOptedDates();
+      datesController.selectedDate = null;
     } finally {
       setState(() {
         Constants.homeIsLoading = false;
       });
     }
-  }
-
-  Future<void> initiate() async {
-    sharedPreferences = await SharedPreferences.getInstance();
   }
 
   @override
@@ -102,10 +97,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Consumer<EmployeeHomeProvider>(
-                              builder: (context, provider, child) {
-                                return Padding(
+                          children: [Padding(
                                   padding:
                                       const EdgeInsets.only(left: 25, top: 15),
                                   child: Text(
@@ -114,13 +106,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                );
-                              },
-                            ),
+                                ),
                             const Expanded(child: SizedBox()),
-                            Consumer<EmployeeHomeProvider>(
-                              builder: (context, provider, child) {
-                                return Provider.of<UserDataProvider>(context,
+                             Provider.of<UserDataProvider>(context,
                                             listen: false)
                                         .getIsAdmin!
                                     ? Switch(
@@ -133,9 +121,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         activeColor: const Color.fromARGB(
                                             255, 181, 129, 248),
                                       )
-                                    : const SizedBox();
-                              },
-                            ),
+                            : const SizedBox(),
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: PopupMenuButton(
@@ -197,7 +183,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 ),
                               ),
                               const Divider(),
-                              Consumer<EmployeeHomeProvider>(
+                              Consumer<UserDataProvider>(
                                 builder: (context, provider, child) {
                                   return SfDateRangePicker(
                                     controller: datesController,
@@ -206,19 +192,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         DateRangePickerSelectionShape.circle,
                                     cellBuilder: (BuildContext context,
                                         DateRangePickerCellDetails details) {
-                                      bool isOpted =
-                                          Provider.of<UserDataProvider>(context,
-                                                  listen: false)
-                                              .getOpted
-                                              .contains(details.date);
-                                      bool isNotOpted =
-                                          Provider.of<UserDataProvider>(context,
-                                                  listen: false)
-                                              .getNotOpted
-                                              .contains(details.date);
-                                      Color circleColor = isOpted
+                                      Color circleColor = provider.getOpted.contains(details.date)
                                           ? Colors.green.shade200
-                                          : isNotOpted
+                                          : provider.getNotOpted.contains(details.date)
                                               ? Colors.orange.shade200
                                               : (details.date.weekday ==
                                                           DateTime.sunday ||
@@ -264,13 +240,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialog(content:
-                                                Consumer<EmployeeHomeProvider>(
-                                              builder: (context, dialogProvider,
-                                                  child) {
-                                                return SizedBox(
+                                            return AlertDialog(content: SizedBox(
                                                   width: size.width * 0.6,
-                                                  height: dialogProvider
+                                                  height: Provider.of<EmployeeHomeProvider>(context, listen: true)
                                                               .getRadioValue ==
                                                           2
                                                       ? size.height * 0.365
@@ -280,16 +252,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                         MainAxisAlignment.start,
                                                     children: [
                                                       _radioButtons(
-                                                          provider:
-                                                              dialogProvider,
+                                                          context: context,
                                                           text: 'Opt and Sign',
                                                           value: 1),
                                                       _radioButtons(
-                                                          provider:
-                                                              dialogProvider,
+                                                          context: context,
                                                           text: 'Not opt',
                                                           value: 2),
-                                                      if (dialogProvider
+                                                      if (Provider.of<EmployeeHomeProvider>(context, listen: true)
                                                               .getRadioValue ==
                                                           2)
                                                         TextFormField(
@@ -303,7 +273,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                               hintStyle: const TextStyle(
                                                                   color: Colors
                                                                       .black38),
-                                                              errorText: dialogProvider
+                                                              errorText: Provider.of<EmployeeHomeProvider>(context, listen: true)
                                                                       .getReasonEmpty
                                                                   ? 'reason cannot be empty'
                                                                   : null),
@@ -311,11 +281,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           maxLength: 30,
                                                           onChanged: (value) {
                                                             if (value.isEmpty) {
-                                                              dialogProvider
+                                                              Provider.of<EmployeeHomeProvider>(context, listen: false)
                                                                   .setReasonEmpty(
                                                                       true);
                                                             } else {
-                                                              dialogProvider
+                                                              Provider.of<EmployeeHomeProvider>(context, listen: false)
                                                                   .setReasonEmpty(
                                                                       false);
                                                             }
@@ -353,11 +323,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           ),
                                                           CustomButton(
                                                             onPressed: () {
-                                                              if (dialogProvider
+                                                              if (Provider.of<EmployeeHomeProvider>(context, listen: false)
                                                                       .getRadioValue ==
                                                                   1) {
-                                                                if (provider
-                                                                    .isWithinRadius) {
+                                                                if (Provider.of<EmployeeHomeProvider>(context, listen: false).isWithinRadius) {
                                                                   Navigator.pop(
                                                                       context);
                                                                   Navigator.pushNamed(
@@ -378,20 +347,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                               } else {
                                                                 Navigator.pop(
                                                                     context);
-                                                                setState(() {
-                                                                  Provider.of<UserDataProvider>(context, listen: false).pushDate(
-                                                                      date: date
-                                                                          as DateTime,
+                                                                  provider.setNotOptedDates(dates: [date as DateTime]);
+                                                                  provider.pushDate(
+                                                                      date: date,
                                                                       radioValue:
-                                                                          dialogProvider
+                                                                          Provider.of<EmployeeHomeProvider>(context, listen: false)
                                                                               .getRadioValue,
                                                                       reason: notOptController
                                                                           .text);
-                                                                  initData();
                                                                   datesController
                                                                           .selectedDate =
                                                                       null;
-                                                                });
                                                               }
                                                             },
                                                             color: MaterialStatePropertyAll(
@@ -409,9 +375,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                       )
                                                     ],
                                                   ),
-                                                );
-                                              },
-                                            ));
+                                                ));
                                           },
                                         );
                                       }
@@ -598,13 +562,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     );
   }
 
-  Widget _radioButtons({required provider, required text, required value}) {
+  Widget _radioButtons({required context, required text, required value}) {
     return RadioListTile<int>(
         title: Text(text),
         value: value,
-        groupValue: provider.getRadioValue,
+        groupValue: Provider.of<EmployeeHomeProvider>(context, listen: true).getRadioValue,
         onChanged: (value) {
-          provider.setRadioValue(value);
+          Provider.of<EmployeeHomeProvider>(context, listen: false).setRadioValue(value);
         });
   }
 }

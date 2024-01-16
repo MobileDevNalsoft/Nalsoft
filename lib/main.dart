@@ -23,7 +23,6 @@ void main() async {
           appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a",
           messagingSenderId: "1066586839679",
           projectId: "meals-management-app-37e6a"));
-  print("islogged${sharedPreferences.getString("islogged")}");
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<EmployeeHomeProvider>(
