@@ -79,14 +79,14 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                         focusNode: _focusNode,
                         controller: employeeSearchController,
                         onChanged: (searchText) {
-                          if (searchText.length >= 3) {
+                          // if (searchText.length >= 3) {
                             Provider.of<EmployeesSearchProvider>(context,
                                     listen: false)
                                 .isSearching=true;
                             Provider.of<EmployeesSearchProvider>(context,
                                     listen: false)
                                 .setEmpList(search: searchText);
-                          }
+                          // }
                         },
                         decoration: const InputDecoration(
                             border: InputBorder.none,

@@ -54,7 +54,8 @@ Future<void> getDigitalSignature()async{
           Navigator.pushNamedAndRemoveUntil(context, RouteManagement.userHomePage, (route) => false);
         },),
       ),
-      body: Column(
+      body: Provider.of<SignatureProvider>(context,listen:true).isUploaded?
+      Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Expanded(
@@ -122,10 +123,12 @@ Future<void> getDigitalSignature()async{
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Provider.of<UserProvider>(context)
+                                  Text(Provider.of<UserProvider>(context,)
                                       .user.username),
-                                  const Text('XXXXXX'),
-                                  const Text('08')
+                                  Text(Provider.of<UserProvider>(context,)
+                                      .user.employee_id),
+                                   Text(Provider.of<UserProvider>(context,)
+                                      .user.floor)
                                 ],
                               )
                             ],
@@ -191,7 +194,7 @@ Future<void> getDigitalSignature()async{
             height: 130,
           )
         ],
-      ),
+      ):Center(child: CircularProgressIndicator()),
     );
   }
 }

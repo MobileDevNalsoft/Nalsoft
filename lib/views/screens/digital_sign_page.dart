@@ -31,6 +31,8 @@ class SignPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              
+             //signature pad
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -81,6 +83,7 @@ class SignPage extends StatelessWidget {
                                 ui.Image? signatureImage =await signatureController.toImage();
                                 ByteData? byteData = await signatureImage?.toByteData(format: ui.ImageByteFormat.png);
                                 Uint8List pngBytes = byteData!.buffer.asUint8List();
+                                signatureProvider.isUploaded=false;
                                 signatureProvider.uploadImage(pngBytes);
                                 Navigator.pushNamed(context, RouteManagement.previewPage);
                               }
