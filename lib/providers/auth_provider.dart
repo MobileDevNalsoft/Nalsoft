@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/Repositories/user_events_repo.dart';
 
-class AuthProvider extends ChangeNotifier {
+class AuthenticationProvider extends ChangeNotifier {
   bool _obscurePassword = true;
   int _errTxt = 0;
   int _passErrTxt = 0;

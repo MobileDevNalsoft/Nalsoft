@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/providers/auth_provider.dart';
-import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
+import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/views/custom_widgets/custom_button.dart';
+import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/constants.dart';
@@ -78,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
                           const SizedBox(
                             height: 15,
                           ),
-                          Consumer<AuthProvider>(
+                          Consumer<AuthenticationProvider>(
                               builder: (context, provider, _) {
                             return CustomTextFormField(
                               hintText: 'password',
@@ -109,7 +110,8 @@ class _LoginViewState extends State<LoginView> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, '/register');
+                                  Navigator.pushNamed(
+                                      context, RouteManagement.signUp);
                                 },
                                 child: const Text(
                                   'Register',
@@ -157,8 +159,10 @@ class _LoginViewState extends State<LoginView> {
                                       sharedPreferences!
                                           .setString("islogged", "true");
                                       // ignore: use_build_context_synchronously
-                                      Navigator.pushNamedAndRemoveUntil(context,
-                                          '/emp_homepage', (route) => false);
+                                      Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          RouteManagement.employeeHomePage,
+                                          (route) => false);
                                       // ignore: use_build_context_synchronously
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
@@ -190,7 +194,7 @@ class _LoginViewState extends State<LoginView> {
             Expanded(
               flex: 2,
               child: Image.asset(
-                'assets/images/food_png.png',
+                'assets/images/food.png',
                 fit: BoxFit.fill, // Fill the width of the screen
                 width: MediaQuery.of(context).size.width,
               ),

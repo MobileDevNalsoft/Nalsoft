@@ -3,10 +3,11 @@ import "package:excel/excel.dart";
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:intl/intl.dart";
-import "package:meals_management_with_firebase/models/user_model.dart";
-import "package:meals_management_with_firebase/providers/admin_employees_provider.dart";
-import "package:meals_management_with_firebase/providers/user_data_provider.dart";
-import "package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart";
+import "package:meals_management/models/user_model.dart";
+import "package:meals_management/providers/admin_employees_provider.dart";
+import "package:meals_management/providers/user_data_provider.dart";
+import "package:meals_management/route_management/route_management.dart";
+import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
@@ -72,7 +73,7 @@ class AdminHomePage extends StatelessWidget {
                               value: true,
                               onChanged: (value) {
                                 Navigator.pushReplacementNamed(
-                                    context, '/emp_homepage');
+                                    context, RouteManagement.employeeHomePage);
                               },
                               activeColor:
                                   const Color.fromARGB(255, 181, 129, 248),
@@ -92,8 +93,10 @@ class AdminHomePage extends StatelessWidget {
                                   FirebaseAuthRepo().signOutNow().then((value) {
                                     sharedPreferences!
                                         .setString("islogged", 'false');
-                                    Navigator.pushNamedAndRemoveUntil(context,
-                                        "/login_page", (route) => false);
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        RouteManagement.loginPage,
+                                        (route) => false);
                                   }),
                               child: const Text('Sign Out'))
                         ];
@@ -115,7 +118,8 @@ class AdminHomePage extends StatelessWidget {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, '/admin_employees');
+                    Navigator.pushNamed(
+                        context, RouteManagement.adminEmployees);
                   },
                   child: Row(
                     children: [
@@ -214,7 +218,7 @@ class AdminHomePage extends StatelessWidget {
                 ),
               ),
             ),
-            Image.asset("assets/images/food_png.png")
+            Image.asset("assets/images/food.png")
           ],
         ),
       ),

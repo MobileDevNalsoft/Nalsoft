@@ -1,9 +1,10 @@
 import "package:flutter/material.dart";
-import 'package:meals_management_with_firebase/providers/auth_provider.dart';
-import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
-import 'package:meals_management_with_firebase/utils/constants.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_dropdown.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_textformfield.dart';
+import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/utils/constants.dart';
+import 'package:meals_management/views/custom_widgets/custom_dropdown.dart';
+import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../custom_widgets/custom_button.dart';
@@ -41,7 +42,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   Future<void> initData() async {
     try {
-      await Provider.of<AuthProvider>(context, listen: false)
+      await Provider.of<AuthenticationProvider>(context, listen: false)
           .setDeptandFloorList();
     } finally {
       // Set loading state to false when data fetching is complete
@@ -65,7 +66,7 @@ class _SignUpViewState extends State<SignUpView> {
               children: [
                 RotatedBox(
                   quarterTurns: 2,
-                  child: Image.asset('assets/images/food_png.png'),
+                  child: Image.asset('assets/images/food.png'),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -109,7 +110,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   SizedBox(
                                     height: size.height * 0.018,
                                   ),
-                                  Consumer<AuthProvider>(
+                                  Consumer<AuthenticationProvider>(
                                       builder: (context, provider, _) {
                                     return CustomTextFormField(
                                       hintText: 'create password',
@@ -131,7 +132,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   SizedBox(
                                     height: size.height * 0.018,
                                   ),
-                                  Consumer<AuthProvider>(
+                                  Consumer<AuthenticationProvider>(
                                       builder: (context, provider, _) {
                                     return CustomTextFormField(
                                       hintText: 'confirm password',
@@ -155,7 +156,7 @@ class _SignUpViewState extends State<SignUpView> {
                                   ),
                                   Row(
                                     children: [
-                                      Consumer<AuthProvider>(
+                                      Consumer<AuthenticationProvider>(
                                         builder: (context, provider, child) {
                                           return Expanded(
                                             child: CustomDropDown(
@@ -194,7 +195,7 @@ class _SignUpViewState extends State<SignUpView> {
                                       SizedBox(
                                         width: size.width * 0.02,
                                       ),
-                                      Consumer<AuthProvider>(
+                                      Consumer<AuthenticationProvider>(
                                         builder: (context, provider, child) {
                                           return CustomDropDown(
                                             hint: const Text(
@@ -308,7 +309,8 @@ class _SignUpViewState extends State<SignUpView> {
                               // ignore: use_build_context_synchronously
                               sharedPreferences.setString('islogged', 'true');
                               // ignore: use_build_context_synchronously
-                              Navigator.pushNamed(context, '/emp_homepage');
+                              Navigator.pushNamed(
+                                  context, RouteManagement.employeeHomePage);
                             } else {
                               print('some error occurred');
                             }
@@ -322,7 +324,7 @@ class _SignUpViewState extends State<SignUpView> {
                       )
                     : const SizedBox(),
                 MediaQuery.of(context).viewInsets.bottom == 0
-                    ? Image.asset('assets/images/food_png.png')
+                    ? Image.asset('assets/images/food.png')
                     : const SizedBox(),
               ],
             ),

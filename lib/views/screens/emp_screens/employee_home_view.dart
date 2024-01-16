@@ -2,21 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management_with_firebase/models/user_model.dart';
-import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
-import 'package:meals_management_with_firebase/providers/employee_home_provider.dart';
-import 'package:meals_management_with_firebase/providers/events_provider.dart';
-import 'package:meals_management_with_firebase/providers/user_data_provider.dart';
-import 'package:meals_management_with_firebase/repositories/firebase_auth_repo.dart';
-import 'package:meals_management_with_firebase/utils/constants.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_button.dart';
-import 'package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/models/user_model.dart';
+import 'package:meals_management/providers/admin_employees_provider.dart';
+import 'package:meals_management/providers/employee_home_provider.dart';
+import 'package:meals_management/providers/events_provider.dart';
+import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/repositories/firebase_auth_repo.dart';
+import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/utils/constants.dart';
+import 'package:meals_management/views/custom_widgets/custom_button.dart';
+import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
@@ -56,6 +56,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           .setFloorDetails();
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .setEmpList();
+      await Provider.of<EmployeeHomeProvider>(context, listen: false)
+          .checkRadius();
     } finally {
       setState(() {
         Constants.homeIsLoading = false;
@@ -128,7 +130,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         value: false,
                                         onChanged: (value) {
                                           Navigator.pushReplacementNamed(
-                                              context, '/admin_homepage');
+                                              context,
+                                              RouteManagement.adminHomePage);
                                         },
                                         activeColor: const Color.fromARGB(
                                             255, 181, 129, 248),
@@ -152,7 +155,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                 'islogged', 'false');
                                             Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                "/login_page",
+                                                RouteManagement.loginPage,
                                                 (route) => false);
                                           });
                                           // ignore: avoid_print
@@ -356,15 +359,25 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                               if (dialogProvider
                                                                       .getRadioValue ==
                                                                   1) {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.pushNamed(
-                                                                    context,
-                                                                    '/sign',
-                                                                    arguments: {
-                                                                      'date':
-                                                                          date
-                                                                    });
+                                                                if (provider
+                                                                    .isWithinRadius) {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.pushNamed(
+                                                                      context,
+                                                                      RouteManagement
+                                                                          .digitalSignature,
+                                                                      arguments: {
+                                                                        'date':
+                                                                            date
+                                                                      });
+                                                                } else {
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(const SnackBar(
+                                                                          content:
+                                                                              Text('Please be inside the office premesis to sign')));
+                                                                }
                                                               } else {
                                                                 Navigator.pop(
                                                                     context);
@@ -447,7 +460,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                           ],
                         ),
                       ),
-                      Image.asset('assets/images/food_png.png'),
+                      Image.asset('assets/images/food.png'),
                     ],
                   ),
                   Positioned(
@@ -557,8 +570,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       fontWeight: FontWeight.normal),
                                 ),
                                 onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, '/update_upcoming_status');
+                                  Navigator.pushNamed(context,
+                                      RouteManagement.updateUpcomingStatus);
                                 },
                               ),
                             ),

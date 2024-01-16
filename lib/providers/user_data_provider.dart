@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/models/user_model.dart';
-import 'package:meals_management_with_firebase/repositories/user_events_repo.dart';
-import 'package:meals_management_with_firebase/repositories/firebase_auth_repo.dart';
+import 'package:meals_management/models/user_model.dart';
+import 'package:meals_management/repositories/user_events_repo.dart';
+import 'package:meals_management/repositories/firebase_auth_repo.dart';
 
 class UserDataProvider extends ChangeNotifier {
   final FirebaseAuthRepo _auth = FirebaseAuthRepo();

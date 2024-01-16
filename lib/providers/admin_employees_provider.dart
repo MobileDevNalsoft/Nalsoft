@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/repositories/user_events_repo.dart';
+import 'package:meals_management/repositories/user_events_repo.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
   final UserEventsRepo _db = UserEventsRepo();

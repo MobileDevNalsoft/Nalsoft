@@ -2,14 +2,14 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/providers/employee_digital_sign_provider.dart';
-import 'package:meals_management_with_firebase/providers/events_provider.dart';
+import 'package:meals_management/providers/digital_signature_provider.dart';
+import 'package:meals_management/providers/events_provider.dart';
+import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
 // ignore: must_be_immutable
 class DigitalSignView extends StatelessWidget {
-
   DateTime? date;
 
   DigitalSignView({super.key, this.date});
@@ -83,14 +83,19 @@ class DigitalSignView extends StatelessWidget {
                             ),
                             onPressed: () async {
                               Provider.of<EventsProvider>(context,
-                                listen: false)
-                            .pushDate(date: date!, radioValue: 0);
+                                      listen: false)
+                                  .pushDate(date: date!, radioValue: 0);
                               if (signatureController.isNotEmpty) {
-                                ui.Image? signatureImage =await signatureController.toImage();
-                                ByteData? byteData = await signatureImage?.toByteData(format: ui.ImageByteFormat.png);
-                                Uint8List pngBytes = byteData!.buffer.asUint8List();
+                                ui.Image? signatureImage =
+                                    await signatureController.toImage();
+                                ByteData? byteData =
+                                    await signatureImage?.toByteData(
+                                        format: ui.ImageByteFormat.png);
+                                Uint8List pngBytes =
+                                    byteData!.buffer.asUint8List();
                                 signatureProvider.uploadImage(pngBytes);
-                                Navigator.pushNamed(context, '/preview');
+                                Navigator.pushNamed(
+                                    context, RouteManagement.previewPage);
                               }
                             },
                             style: ButtonStyle(

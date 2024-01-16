@@ -1,10 +1,10 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:meals_management_with_firebase/providers/employee_home_provider.dart";
-import "package:meals_management_with_firebase/providers/employee_update_upcoming_status_provider.dart";
-import "package:meals_management_with_firebase/providers/events_provider.dart";
-import "package:meals_management_with_firebase/views/custom_widgets/custom_button.dart";
-import "package:meals_management_with_firebase/views/custom_widgets/custom_snackbar.dart";
+import "package:meals_management/providers/employee_home_provider.dart";
+import "package:meals_management/providers/employee_update_upcoming_status_provider.dart";
+import "package:meals_management/providers/events_provider.dart";
+import "package:meals_management/views/custom_widgets/custom_button.dart";
+import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
@@ -93,64 +93,91 @@ class UpdateLunchStatus extends StatelessWidget {
                         ),
                         const Divider(),
                         Consumer<StatusProvider>(
-                                builder: (context, provider, child) {
-                                  return SfDateRangePicker(
-                                    controller: datesController,
-                                    selectionColor: Colors.deepPurple.shade200,
-                                    selectionShape: DateRangePickerSelectionShape.circle,
-                                    cellBuilder: (BuildContext context, DateRangePickerCellDetails details) {
-                                        bool isOpted = Provider.of<EventsProvider>(context, listen: false).getOpted.contains(details.date); 
-                                        bool isNotOpted = Provider.of<EventsProvider>(context, listen: false).getNotOpted.contains(details.date);
-                                        Color circleColor = isOpted ? Colors.green.shade200 :
-                                                                  isNotOpted ? Colors.orange.shade200 :
-                                                                        (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday) ? Colors.blueGrey.shade200 : Colors.white30;
-                                        return Padding(
-                                          padding: const EdgeInsets.all(2),
-                                          child: Container(
-                                              width: details.bounds.width/2,
-                                              height: details.bounds.width/2,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: circleColor,
-                                              ),
-                                              child: Center(child: Text(details.date.day.toString())),
-                                            ),
-                                        );
-                                      },
-                                    showActionButtons: true,
-                                    allowViewNavigation: true,
-                                    selectionMode:provider.getReason == 'Multiple days'
-                                                            ? DateRangePickerSelectionMode.multiple
-                                                                : DateRangePickerSelectionMode.single,
-                                    showNavigationArrow: true,
-                                    onSubmit: (dates) {
-                                      if(provider.getReason == 'Single day'){
-                                        if(DateTime.parse(dates.toString()).weekday == DateTime.saturday || DateTime.parse(dates.toString()).weekday == DateTime.sunday){
-                                          CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
-                                        }
-                                        else{
-                                          dialog(context, size, provider, dates);
-                                        }
-                                      }
-                                      else if(provider.getReason == 'Multiple days'){
-                                        List<DateTime> datesList = dates as List<DateTime>;
-                                        if(datesList.map((e) => e.weekday).toList().contains(6) || datesList.map((e) => e.weekday).toList().contains(7)){
-                                          CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
-                                        }
-                                        else{
-                                          dialog(context, size, provider, dates);
-                                        }
-                                      }
-                                          },
-                                    onCancel: () {
-                                      datesController.selectedDate = null;
-                                      datesController.selectedDates = null;
-                                      datesController.selectedRange = null;
-                                    },
-                                        );
-                                      }
-                                  )
-                        
+                            builder: (context, provider, child) {
+                          return SfDateRangePicker(
+                            controller: datesController,
+                            selectionColor: Colors.deepPurple.shade200,
+                            selectionShape:
+                                DateRangePickerSelectionShape.circle,
+                            cellBuilder: (BuildContext context,
+                                DateRangePickerCellDetails details) {
+                              bool isOpted = Provider.of<EventsProvider>(
+                                      context,
+                                      listen: false)
+                                  .getOpted
+                                  .contains(details.date);
+                              bool isNotOpted = Provider.of<EventsProvider>(
+                                      context,
+                                      listen: false)
+                                  .getNotOpted
+                                  .contains(details.date);
+                              Color circleColor = isOpted
+                                  ? Colors.green.shade200
+                                  : isNotOpted
+                                      ? Colors.orange.shade200
+                                      : (details.date.weekday ==
+                                                  DateTime.sunday ||
+                                              details.date.weekday ==
+                                                  DateTime.saturday)
+                                          ? Colors.blueGrey.shade200
+                                          : Colors.white30;
+                              return Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: Container(
+                                  width: details.bounds.width / 2,
+                                  height: details.bounds.width / 2,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: circleColor,
+                                  ),
+                                  child: Center(
+                                      child: Text(details.date.day.toString())),
+                                ),
+                              );
+                            },
+                            showActionButtons: true,
+                            allowViewNavigation: true,
+                            selectionMode: provider.getReason == 'Multiple days'
+                                ? DateRangePickerSelectionMode.multiple
+                                : DateRangePickerSelectionMode.single,
+                            showNavigationArrow: true,
+                            onSubmit: (dates) {
+                              if (provider.getReason == 'Single day') {
+                                if (DateTime.parse(dates.toString()).weekday ==
+                                        DateTime.saturday ||
+                                    DateTime.parse(dates.toString()).weekday ==
+                                        DateTime.sunday) {
+                                  CustomSnackBar.showSnackBar(context,
+                                      'remove weekoffs from selection');
+                                } else {
+                                  dialog(context, size, provider, dates);
+                                }
+                              } else if (provider.getReason ==
+                                  'Multiple days') {
+                                List<DateTime> datesList =
+                                    dates as List<DateTime>;
+                                if (datesList
+                                        .map((e) => e.weekday)
+                                        .toList()
+                                        .contains(6) ||
+                                    datesList
+                                        .map((e) => e.weekday)
+                                        .toList()
+                                        .contains(7)) {
+                                  CustomSnackBar.showSnackBar(context,
+                                      'remove weekoffs from selection');
+                                } else {
+                                  dialog(context, size, provider, dates);
+                                }
+                              }
+                            },
+                            onCancel: () {
+                              datesController.selectedDate = null;
+                              datesController.selectedDates = null;
+                              datesController.selectedRange = null;
+                            },
+                          );
+                        })
                       ],
                     ),
                     shape: const RoundedRectangleBorder(
@@ -158,81 +185,61 @@ class UpdateLunchStatus extends StatelessWidget {
                     elevation: 8,
                   ),
                 ),
-                Image.asset("assets/images/food_png.png"),
+                Image.asset("assets/images/food.png"),
               ],
             );
           },
         ));
   }
 
-  void dialog(context, size, provider, dates){
+  void dialog(context, size, provider, dates) {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(content:
-            Consumer<EmployeeHomeProvider>(
+        return AlertDialog(content: Consumer<EmployeeHomeProvider>(
           builder: (context, dialogProvider, child) {
             return SizedBox(
               width: size.width * 0.6,
-              height: size.height*0.218,
+              height: size.height * 0.218,
               child: Column(
-                mainAxisAlignment:
-                    MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                    TextFormField(
-                      controller:
-                          notOptController,
-                      decoration: InputDecoration(
-                          border:
-                              const OutlineInputBorder(),
-                          hintText:
-                              'reason for not opting...',
-                          hintStyle: const TextStyle(
-                              color: Colors
-                                  .black38),
-                          errorText: dialogProvider
-                                  .getReasonEmpty
-                              ? 'reason cannot be empty'
-                              : null),
-                      maxLines: 2,
-                      maxLength: 30,
-                      onChanged: (value) {
-                        if (value.isEmpty) {
-                          dialogProvider
-                              .setReasonEmpty(
-                                  true);
-                        } else {
-                          dialogProvider
-                              .setReasonEmpty(
-                                  false);
-                        }
-                      },
-                    ),
+                  TextFormField(
+                    controller: notOptController,
+                    decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: 'reason for not opting...',
+                        hintStyle: const TextStyle(color: Colors.black38),
+                        errorText: dialogProvider.getReasonEmpty
+                            ? 'reason cannot be empty'
+                            : null),
+                    maxLines: 2,
+                    maxLength: 30,
+                    onChanged: (value) {
+                      if (value.isEmpty) {
+                        dialogProvider.setReasonEmpty(true);
+                      } else {
+                        dialogProvider.setReasonEmpty(false);
+                      }
+                    },
+                  ),
                   const SizedBox(
                     height: 12,
                   ),
                   Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment
-                            .end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       CustomButton(
                         onPressed: () {
-                          Navigator.pop(
-                              context);
+                          Navigator.pop(context);
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;
                         },
-                        color:
-                            const MaterialStatePropertyAll(
-                                Colors
-                                    .white),
+                        color: const MaterialStatePropertyAll(Colors.white),
                         child: const Text(
                           'Cancel',
-                          style: TextStyle(
-                              color: Colors
-                                  .black),
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                       const SizedBox(
@@ -240,21 +247,40 @@ class UpdateLunchStatus extends StatelessWidget {
                       ),
                       CustomButton(
                         onPressed: () {
-                          if(provider.getReason == 'Single day'){
-                            if(DateTime.parse(dates.toString()).weekday == DateTime.saturday || DateTime.parse(dates.toString()).weekday == DateTime.sunday){
-                              CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
+                          if (provider.getReason == 'Single day') {
+                            if (DateTime.parse(dates.toString()).weekday ==
+                                    DateTime.saturday ||
+                                DateTime.parse(dates.toString()).weekday ==
+                                    DateTime.sunday) {
+                              CustomSnackBar.showSnackBar(
+                                  context, 'remove weekoffs from selection');
+                            } else {
+                              Provider.of<EventsProvider>(context,
+                                      listen: false)
+                                  .pushDate(
+                                      date: dates as DateTime,
+                                      radioValue: 2,
+                                      reason: notOptController.text);
                             }
-                            else{
-                              Provider.of<EventsProvider>(context, listen: false).pushDate(date: dates as DateTime, radioValue: 2, reason: notOptController.text);
-                            }
-                          }
-                          else{
+                          } else {
                             List<DateTime> datesList = dates as List<DateTime>;
-                            if(datesList.map((e) => e.weekday).toList().contains(6) || datesList.map((e) => e.weekday).toList().contains(7)){
-                              CustomSnackBar.showSnackBar(context, 'remove weekoffs from selection');
-                            }
-                            else{
-                              Provider.of<EventsProvider>(context, listen: false).pushDates(dates: datesList, radioValue: 2, reason: notOptController.text);
+                            if (datesList
+                                    .map((e) => e.weekday)
+                                    .toList()
+                                    .contains(6) ||
+                                datesList
+                                    .map((e) => e.weekday)
+                                    .toList()
+                                    .contains(7)) {
+                              CustomSnackBar.showSnackBar(
+                                  context, 'remove weekoffs from selection');
+                            } else {
+                              Provider.of<EventsProvider>(context,
+                                      listen: false)
+                                  .pushDates(
+                                      dates: datesList,
+                                      radioValue: 2,
+                                      reason: notOptController.text);
                             }
                           }
                           // else{
@@ -269,14 +295,10 @@ class UpdateLunchStatus extends StatelessWidget {
                           notOptController.clear();
                         },
                         color: MaterialStatePropertyAll(
-                            Colors
-                                .deepPurpleAccent
-                                .shade200),
+                            Colors.deepPurpleAccent.shade200),
                         child: const Text(
                           'Proceed',
-                          style: TextStyle(
-                              color: Colors
-                                  .white),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],

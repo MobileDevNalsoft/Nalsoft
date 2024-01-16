@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management_with_firebase/providers/admin_employees_provider.dart';
+import 'package:meals_management/providers/admin_employees_provider.dart';
+import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
 
 class EmployeeSearch extends StatefulWidget {
@@ -128,8 +129,10 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                                             child: TextButton(
                                               onPressed: () {
                                                 // Provider.of<EmployeeProvider>(context,listen:false).setUid();
-                                                Navigator.pushNamed(context,
-                                                    '/employee_lunch_status',
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    RouteManagement
+                                                        .employeeLunchStatus,
                                                     arguments: {
                                                       'empid': item[1]
                                                     });
@@ -156,7 +159,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
               },
             ),
             MediaQuery.of(context).viewInsets.bottom == 0
-                ? Image.asset('assets/images/food_png.png')
+                ? Image.asset('assets/images/food.png')
                 : SizedBox(),
           ],
         ),
@@ -263,7 +266,7 @@ class Employees extends StatelessWidget {
                       );
                     },
                   ),
-                  Image.asset("assets/images/food_png.png")
+                  Image.asset("assets/images/food.png")
                 ],
               ),
             ),
