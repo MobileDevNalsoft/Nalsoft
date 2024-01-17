@@ -202,6 +202,15 @@ class UserEventsRepo {
     return dateReasons;
   }
 
+  Future<void> removeDateFromDb(DateTime date) async {
+    final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
+    Map<String, dynamic>? data =
+        await docRef.get().then((value) => value.data());
+
+    data!['notOpted'].remove(date.toString());
+    docRef.update({'notOpted': data['notOpted']});
+  }
+
   // void _updateData(UserModel userModel){
   //   final userCollection = FirebaseFirestore.instance.collection("employees");
   //

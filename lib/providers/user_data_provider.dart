@@ -17,26 +17,32 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setOptedDates({List<DateTime>? dates}){
-    if(dates == null){
+  void setOptedDates({List<DateTime>? dates}) {
+    if (dates == null) {
       _optedDates = _user!.opted.map((e) => DateTime.parse(e)).toList();
       notifyListeners();
-    }else{
+    } else {
       _notOptedDates.remove(dates[0]);
       _optedDates = _optedDates + dates;
       notifyListeners();
     }
   }
 
-  void setNotOptedDates({List<DateTime>? dates}){
-    if(dates == null){
-      _notOptedDates = _user!.notOpted.keys.map((e) => DateTime.parse(e)).toList();
+  void setNotOptedDates({List<DateTime>? dates}) {
+    if (dates == null) {
+      _notOptedDates =
+          _user!.notOpted.keys.map((e) => DateTime.parse(e)).toList();
       notifyListeners();
-    }else{
+    } else {
       dates.forEach((e) => _optedDates.remove(e));
       _notOptedDates = _notOptedDates + dates;
       notifyListeners();
     }
+  }
+
+  void removeNotOptedDate(DateTime? date) {
+    _notOptedDates.remove(date);
+    notifyListeners();
   }
 
   Future<void> getNotOptedWithReasonsFromDB() async {
@@ -53,16 +59,20 @@ class UserDataProvider extends ChangeNotifier {
   Map<DateTime, String> get getNotOptedWithReasons => _notOptedDatesWithReasons;
 
   // pushes date to db to opted or notOpted category
-  Future<void> pushDate(
-      {required DateTime date, required int radioValue, String? reason}) async {
+  void pushDate(
+      {required DateTime date, required int radioValue, String? reason}) {
     _db.pushDatetoDB(date: date, radioValue: radioValue, reason: reason);
   }
 
   // pushes dates to db to notopted category
-  Future<void> pushDates(
+  void pushDates(
       {required List<DateTime> dates,
       required int radioValue,
-      String? reason}) async {
+      String? reason}) {
     _db.pushDatestoDB(dates: dates, radioValue: radioValue, reason: reason);
+  }
+
+  Future<void> removeNotOptedDateFromDB(DateTime date) async {
+    _db.removeDateFromDb(date);
   }
 }
