@@ -1,11 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../models/user_model.dart';
 
 class UserEventsRepo {
   final _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   //creates a new user document in firestore collection
   Future<void> createUser(String docID, UserModel userData) async {
     await _db.collection('employees').doc(docID).set(userData.toJson());
@@ -17,6 +19,35 @@ class UserEventsRepo {
         await _db.collection("employees").doc(_auth.currentUser!.uid).get();
     return UserModel.fromSnapshot(userCollection);
   }
+
+  // Future<void> readUsers() async {
+  //   final userCollection = await _db.collection('employees').get();
+  //   var data = {};
+  //   for (var doc in userCollection.docs) {
+  //     data[doc.id] = doc.data();
+  //   }
+
+  //   List<Uint8List?> signImgs = [];
+
+  //   for (var docID in data.keys) {
+  //     if (data[docID]['opted'].contains(
+  //         '${DateTime.now().toString().substring(0, 10)} 00:00:00.000')) {
+  //       if (data[docID]['opted'][0].substring(0, 10) ==
+  //           DateTime.now().toString().substring(0, 10)) {
+  //         print('inside if');
+  //         final ref = FirebaseStorage.instanceFor(
+  //                 bucket: "gs://meals-management-app-37e6a.appspot.com")
+  //             .ref()
+  //             .child(
+  //                 "/signatures/$docID/${DateTime.now().toString().substring(0, 10)}");
+  //         var signImg = await ref.getData();
+  //         signImgs.add(signImg);
+  //       }
+  //     }
+  //   }
+  //   print(data);
+  //   print(signImgs);
+  // }
 
   //retrieves the user data from firestore collection
   Future<UserModel> readDataWithID({String? empid}) async {
@@ -69,14 +100,17 @@ class UserEventsRepo {
 
   //push date to db from employee home provider
   Future<void> pushDatetoDB(
-      {required DateTime date, required int radioValue, String? reason}) async {
+      {required DateTime date,
+      required int radioValue,
+      String? reason,
+      String? url}) async {
     final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
     Map<String, dynamic>? data =
         await docRef.get().then((value) => value.data());
     // var date = DateTime.parse('2024-01-16 00:00:00.000');
 
     if (radioValue == 2) {
-      if (data!['opted'].contains(date.toString())) {
+      if (data!['opted'].keys.contains(date.toString())) {
         data['opted'].remove(date.toString());
         docRef.update({
           'opted': data['opted'],
@@ -93,13 +127,13 @@ class UserEventsRepo {
         data['notOpted'].remove(date.toString());
         docRef.update({'notOpted': data['notOpted']});
       }
-      if (data['opted'].contains(date.toString())) {
+      if (data['opted'].keys.contains(date.toString())) {
         data['opted'].remove(date.toString());
         docRef.update({
           'opted': data['opted'],
         });
       }
-      data['opted'].add(date.toString());
+      data['opted'][date.toString()] = url;
       docRef.update({
         'opted': data['opted'],
       });

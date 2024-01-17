@@ -7,7 +7,7 @@ class UserModel {
   String department;
   String floor;
   bool isAdmin;
-  List<dynamic> opted;
+  Map<String, dynamic> opted;
   Map<String, dynamic> notOpted;
   List<dynamic> unSigned;
 

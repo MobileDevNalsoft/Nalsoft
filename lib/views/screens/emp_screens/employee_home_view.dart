@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:meals_management/Repositories/user_events_repo.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/employee_home_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -27,7 +28,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   DateRangePickerController datesController = DateRangePickerController();
 
   late SharedPreferences sharedPreferences;
-  
 
   @override
   void initState() {
@@ -46,11 +46,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           .setFloorDetails();
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .setEmpList();
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpData();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
           .checkRadius();
       Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
       Provider.of<UserDataProvider>(context, listen: false).setNotOptedDates();
-      datesController.selectedDate = null;
     } finally {
       setState(() {
         Constants.homeIsLoading = false;
@@ -97,31 +98,29 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: [Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 25, top: 15),
-                                  child: Text(
-                                    'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
-                                    style: const TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25, top: 15),
+                              child: Text(
+                                'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
+                                style: const TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                             const Expanded(child: SizedBox()),
-                             Provider.of<UserDataProvider>(context,
-                                            listen: false)
-                                        .getIsAdmin!
-                                    ? Switch(
-                                        value: false,
-                                        onChanged: (value) {
-                                          Navigator.pushReplacementNamed(
-                                              context,
-                                              RouteManagement.adminHomePage);
-                                        },
-                                        activeColor: const Color.fromARGB(
-                                            255, 181, 129, 248),
-                                      )
-                            : const SizedBox(),
+                            Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getIsAdmin!
+                                ? Switch(
+                                    value: false,
+                                    onChanged: (value) {
+                                      Navigator.pushReplacementNamed(context,
+                                          RouteManagement.adminHomePage);
+                                    },
+                                    activeColor: const Color.fromARGB(
+                                        255, 181, 129, 248),
+                                  )
+                                : const SizedBox(),
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: PopupMenuButton(
@@ -192,9 +191,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         DateRangePickerSelectionShape.circle,
                                     cellBuilder: (BuildContext context,
                                         DateRangePickerCellDetails details) {
-                                      Color circleColor = provider.getOpted.contains(details.date)
+                                      Color circleColor = provider.getOpted
+                                              .contains(details.date)
                                           ? Colors.green.shade200
-                                          : provider.getNotOpted.contains(details.date)
+                                          : provider.getNotOpted
+                                                  .contains(details.date)
                                               ? Colors.orange.shade200
                                               : (details.date.weekday ==
                                                           DateTime.sunday ||
@@ -240,142 +241,173 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialog(content: SizedBox(
-                                                  width: size.width * 0.6,
-                                                  height: Provider.of<EmployeeHomeProvider>(context, listen: true)
+                                            return AlertDialog(
+                                                content: SizedBox(
+                                              width: size.width * 0.6,
+                                              height:
+                                                  Provider.of<EmployeeHomeProvider>(
+                                                                  context,
+                                                                  listen: true)
                                                               .getRadioValue ==
                                                           2
                                                       ? size.height * 0.365
                                                       : size.height * 0.22,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      _radioButtons(
-                                                          context: context,
-                                                          text: 'Opt and Sign',
-                                                          value: 1),
-                                                      _radioButtons(
-                                                          context: context,
-                                                          text: 'Not opt',
-                                                          value: 2),
-                                                      if (Provider.of<EmployeeHomeProvider>(context, listen: true)
-                                                              .getRadioValue ==
-                                                          2)
-                                                        TextFormField(
-                                                          controller:
-                                                              notOptController,
-                                                          decoration: InputDecoration(
-                                                              border:
-                                                                  const OutlineInputBorder(),
-                                                              hintText:
-                                                                  'reason for not opting...',
-                                                              hintStyle: const TextStyle(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  _radioButtons(
+                                                      context: context,
+                                                      text: 'Opt and Sign',
+                                                      value: 1),
+                                                  _radioButtons(
+                                                      context: context,
+                                                      text: 'Not opt',
+                                                      value: 2),
+                                                  if (Provider.of<EmployeeHomeProvider>(
+                                                              context,
+                                                              listen: true)
+                                                          .getRadioValue ==
+                                                      2)
+                                                    TextFormField(
+                                                      controller:
+                                                          notOptController,
+                                                      decoration: InputDecoration(
+                                                          border:
+                                                              const OutlineInputBorder(),
+                                                          hintText:
+                                                              'reason for not opting...',
+                                                          hintStyle:
+                                                              const TextStyle(
                                                                   color: Colors
                                                                       .black38),
-                                                              errorText: Provider.of<EmployeeHomeProvider>(context, listen: true)
-                                                                      .getReasonEmpty
-                                                                  ? 'reason cannot be empty'
-                                                                  : null),
-                                                          maxLines: 2,
-                                                          maxLength: 30,
-                                                          onChanged: (value) {
-                                                            if (value.isEmpty) {
-                                                              Provider.of<EmployeeHomeProvider>(context, listen: false)
-                                                                  .setReasonEmpty(
-                                                                      true);
-                                                            } else {
-                                                              Provider.of<EmployeeHomeProvider>(context, listen: false)
-                                                                  .setReasonEmpty(
-                                                                      false);
-                                                            }
-                                                          },
+                                                          errorText: Provider.of<
+                                                                          EmployeeHomeProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          true)
+                                                                  .getReasonEmpty
+                                                              ? 'reason cannot be empty'
+                                                              : null),
+                                                      maxLines: 2,
+                                                      maxLength: 30,
+                                                      onChanged: (value) {
+                                                        if (value.isEmpty) {
+                                                          Provider.of<EmployeeHomeProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .setReasonEmpty(
+                                                                  true);
+                                                        } else {
+                                                          Provider.of<EmployeeHomeProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .setReasonEmpty(
+                                                                  false);
+                                                        }
+                                                      },
+                                                    ),
+                                                  const SizedBox(
+                                                    height: 12,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      CustomButton(
+                                                        onPressed: () {
+                                                          datesController
+                                                                  .selectedDate =
+                                                              null;
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        color:
+                                                            const MaterialStatePropertyAll(
+                                                                Colors.white),
+                                                        child: const Text(
+                                                          'Cancel',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black),
                                                         ),
-                                                      const SizedBox(
-                                                        height: 12,
                                                       ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          CustomButton(
-                                                            onPressed: () {
-                                                              datesController
-                                                                      .selectedDate =
-                                                                  null;
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      CustomButton(
+                                                        onPressed: () {
+                                                          if (Provider.of<EmployeeHomeProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .getRadioValue ==
+                                                              1) {
+                                                            if (Provider.of<
+                                                                        EmployeeHomeProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .isWithinRadius) {
                                                               Navigator.pop(
                                                                   context);
-                                                            },
-                                                            color:
-                                                                const MaterialStatePropertyAll(
-                                                                    Colors
-                                                                        .white),
-                                                            child: const Text(
-                                                              'Cancel',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .black),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          CustomButton(
-                                                            onPressed: () {
-                                                              if (Provider.of<EmployeeHomeProvider>(context, listen: false)
-                                                                      .getRadioValue ==
-                                                                  1) {
-                                                                if (Provider.of<EmployeeHomeProvider>(context, listen: false).isWithinRadius) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  Navigator.pushNamed(
-                                                                      context,
-                                                                      RouteManagement
-                                                                          .digitalSignature,
-                                                                      arguments: {
-                                                                        'date':
-                                                                            date
-                                                                      });
-                                                                } else {
-                                                                  ScaffoldMessenger.of(
+                                                              Navigator.pushNamed(
+                                                                  context,
+                                                                  RouteManagement
+                                                                      .digitalSignature,
+                                                                  arguments: {
+                                                                    'date': date
+                                                                  });
+                                                            } else {
+                                                              ScaffoldMessenger
+                                                                      .of(
                                                                           context)
-                                                                      .showSnackBar(const SnackBar(
+                                                                  .showSnackBar(
+                                                                      const SnackBar(
                                                                           content:
                                                                               Text('Please be inside the office premesis to sign')));
-                                                                }
-                                                              } else {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                  provider.setNotOptedDates(dates: [date as DateTime]);
-                                                                  provider.pushDate(
-                                                                      date: date,
-                                                                      radioValue:
-                                                                          Provider.of<EmployeeHomeProvider>(context, listen: false)
-                                                                              .getRadioValue,
-                                                                      reason: notOptController
-                                                                          .text);
-                                                                  datesController
-                                                                          .selectedDate =
-                                                                      null;
-                                                              }
-                                                            },
-                                                            color: MaterialStatePropertyAll(
-                                                                Colors
-                                                                    .deepPurpleAccent
-                                                                    .shade200),
-                                                            child: const Text(
-                                                              'Proceed',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
+                                                            }
+                                                          } else {
+                                                            Navigator.pop(
+                                                                context);
+                                                            provider
+                                                                .setNotOptedDates(
+                                                                    dates: [
+                                                                  date
+                                                                      as DateTime
+                                                                ]);
+                                                            provider.pushDate(
+                                                                date: date,
+                                                                radioValue: Provider.of<
+                                                                            EmployeeHomeProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .getRadioValue,
+                                                                reason:
+                                                                    notOptController
+                                                                        .text);
+                                                            datesController
+                                                                    .selectedDate =
+                                                                null;
+                                                          }
+                                                        },
+                                                        color: MaterialStatePropertyAll(
+                                                            Colors
+                                                                .deepPurpleAccent
+                                                                .shade200),
+                                                        child: const Text(
+                                                          'Proceed',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
                                                     ],
-                                                  ),
-                                                ));
+                                                  )
+                                                ],
+                                              ),
+                                            ));
                                           },
                                         );
                                       }
@@ -566,9 +598,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     return RadioListTile<int>(
         title: Text(text),
         value: value,
-        groupValue: Provider.of<EmployeeHomeProvider>(context, listen: true).getRadioValue,
+        groupValue: Provider.of<EmployeeHomeProvider>(context, listen: true)
+            .getRadioValue,
         onChanged: (value) {
-          Provider.of<EmployeeHomeProvider>(context, listen: false).setRadioValue(value);
+          Provider.of<EmployeeHomeProvider>(context, listen: false)
+              .setRadioValue(value);
         });
   }
 }
