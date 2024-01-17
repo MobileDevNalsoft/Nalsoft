@@ -82,12 +82,6 @@ class DigitalSignView extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             onPressed: () async {
-                              Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .setOptedDates(dates: [date!]);
-                              Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .pushDate(date: date!, radioValue: 0);
                               if (signatureController.isNotEmpty) {
                                 ui.Image? signatureImage =
                                     await signatureController.toImage();
@@ -96,7 +90,12 @@ class DigitalSignView extends StatelessWidget {
                                         format: ui.ImageByteFormat.png);
                                 Uint8List pngBytes =
                                     byteData!.buffer.asUint8List();
-                                signatureProvider.uploadImage(pngBytes);
+                                await signatureProvider.uploadImage(pngBytes);
+                                await signatureProvider.setSignatureUrl();
+                                Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .setOptedDateWithURL(date: date!, url: signatureProvider.getURL);
+                                Provider.of<UserDataProvider>(context, listen: false).fetchImageAndConvert(signatureProvider.getURL);
                                 Navigator.pushNamed(
                                     context, RouteManagement.previewPage);
                               }

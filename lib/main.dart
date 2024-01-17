@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
-import 'package:meals_management/providers/employee_home_provider.dart';
+import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/employee_lunch_status_provider.dart';
-import 'package:meals_management/providers/employee_search_provider.dart';
-import 'package:meals_management/providers/employee_update_upcoming_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
@@ -25,22 +23,18 @@ void main() async {
           projectId: "meals-management-app-37e6a"));
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<EmployeeHomeProvider>(
-          create: (context) => EmployeeHomeProvider()),
       ChangeNotifierProvider<SignatureProvider>(
           create: (context) => SignatureProvider()),
       ChangeNotifierProvider<UserDataProvider>(
           create: (context) => UserDataProvider()),
-      ChangeNotifierProvider<EmployeesSearchProvider>(
-          create: (context) => EmployeesSearchProvider()),
       ChangeNotifierProvider<AuthenticationProvider>(
           create: (context) => AuthenticationProvider()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
           create: (context) => AdminEmployeesProvider()),
       ChangeNotifierProvider<EmployeeLunchStatusProvider>(
           create: (context) => EmployeeLunchStatusProvider()),
-      ChangeNotifierProvider<StatusProvider>(
-          create: (context) => StatusProvider()),
+      ChangeNotifierProvider<HomeStatusProvider>(
+          create: (context) => HomeStatusProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(

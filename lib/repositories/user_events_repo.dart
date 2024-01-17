@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,6 +17,16 @@ class UserEventsRepo {
     final userCollection =
         await _db.collection("employees").doc(_auth.currentUser!.uid).get();
     return UserModel.fromSnapshot(userCollection);
+  }
+
+  Future<void> pushOpted(Map<String, dynamic> dates) async {
+    final ref = await _db.collection('employees').doc(_auth.currentUser!.uid);
+    ref.update({'opted' : dates});
+  }
+
+  Future<void> pushNotOpted(Map<String, dynamic> dates) async {
+    final ref = await _db.collection('employees').doc(_auth.currentUser!.uid);
+    ref.update({'notOpted' : dates});
   }
 
   // Future<void> readUsers() async {

@@ -18,16 +18,6 @@ class _PreviewState extends State<Preview> {
   @override
   void initState() {
     super.initState();
-    getDigitalSignature();
-  }
-
-  Future<void> getDigitalSignature() async {
-    // Timer timer;
-    // timer = Timer(Duration(seconds: 2), () async {
-      await Provider.of<SignatureProvider>(context, listen: false)
-          .getSignature();
-      print("got the signature");
-    
   }
 
   final now = DateTime.now();
@@ -150,17 +140,7 @@ class _PreviewState extends State<Preview> {
                                 height: 100,
                                 width: 120,
                                 color: Colors.white,
-                                child: Consumer<SignatureProvider>(
-                                  builder: (context, value, child) {
-                                    return value.imageBytes == null
-                                        ? Center(
-                                            child: CircularProgressIndicator(),
-                                          )
-                                        : Image(
-                                            image:
-                                                MemoryImage(value.imageBytes));
-                                  },
-                                )),
+                                child: Image(image: NetworkImage(Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()]),)),
                             const SizedBox(
                               width: 20,
                             ),
