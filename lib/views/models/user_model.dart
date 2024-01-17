@@ -7,6 +7,8 @@ class UserModel{
   String employee_id;
   String department;
   String floor;
+  Map<String,String> opted;
+  Map<DateTime, String> notOpted;
   bool isAdmin;
 
   UserModel(
@@ -16,6 +18,8 @@ class UserModel{
     this.department,
     this.floor,
     this.isAdmin,
+    this.opted,
+    this.notOpted
   );
 
   static UserModel fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot){
@@ -26,6 +30,9 @@ class UserModel{
       snapshot['department'],
       snapshot['floor'],
       snapshot['isAdmin'],
+      snapshot['opted'],
+      snapshot['notOpted'],
+      
     );
   }
 

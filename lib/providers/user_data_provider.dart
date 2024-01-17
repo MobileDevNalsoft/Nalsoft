@@ -19,7 +19,7 @@ class UserDataProvider extends ChangeNotifier {
 
   void setOptedDates({List<DateTime>? dates}) {
     if (dates == null) {
-      _optedDates = _user!.opted.map((e) => DateTime.parse(e)).toList();
+      _optedDates = _user!.opted.map((date,link) => DateTime.parse(e).);
       notifyListeners();
     } else {
       _notOptedDates.remove(dates[0]);

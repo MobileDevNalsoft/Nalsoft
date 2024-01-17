@@ -6,13 +6,12 @@ import 'package:meals_management/repositories/signature_repo.dart';
 class SignatureProvider extends ChangeNotifier {
   final SignatureRepo _signRepo = SignatureRepo();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String? imageName;
+  String? imageName="${DateTime.now().toString().substring(0,10)}";
   bool isUploaded = true;
   Uint8List? _imagebytes;
   get imageBytes => _imagebytes;
 
   void uploadImage(Uint8List pngBytes) async {
-    imageName = "${DateTime.now().millisecondsSinceEpoch}";
     _imagebytes = pngBytes;
     if (await _signRepo.uploadImageToDb(
         pngBytes, _auth.currentUser!.uid, imageName!)) {

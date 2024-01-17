@@ -141,18 +141,25 @@ class UpdateLunchStatus extends StatelessWidget {
                                       listen: false)
                                   .getReason ==
                               'Single day') {
-                            if (DateTime.parse(dates.toString()).weekday ==
-                                    DateTime.saturday ||
-                                DateTime.parse(dates.toString()).weekday ==
-                                    DateTime.sunday) {
-                              CustomSnackBar.showSnackBar(
-                                  context, 'remove weekoffs from selection');
-                            } else {
-                              if (provider.getNotOpted.contains(dates)) {
-                                removeDialog(context, size, dates);
+                            if ((dates as DateTime).isAfter(now)) {
+                              if (DateTime.parse(dates.toString()).weekday ==
+                                      DateTime.saturday ||
+                                  DateTime.parse(dates.toString()).weekday ==
+                                      DateTime.sunday) {
+                                CustomSnackBar.showSnackBar(
+                                    context, 'remove weekoffs from selection');
                               } else {
-                                dialog(context, size, dates);
+                                if (provider.getNotOpted.contains(dates)) {
+                                  removeDialog(context, size, dates);
+                                } else {
+                                  dialog(context, size, dates);
+                                }
                               }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'You can only update upcoming status')));
                             }
                           } else if (Provider.of<StatusProvider>(context,
                                       listen: false)

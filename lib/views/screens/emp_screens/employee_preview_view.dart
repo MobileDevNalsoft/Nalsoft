@@ -22,12 +22,12 @@ class _PreviewState extends State<Preview> {
   }
 
   Future<void> getDigitalSignature() async {
-    Timer timer;
-    timer = Timer(Duration(seconds: 5), () async {
+    // Timer timer;
+    // timer = Timer(Duration(seconds: 2), () async {
       await Provider.of<SignatureProvider>(context, listen: false)
           .getSignature();
       print("got the signature");
-    });
+    
   }
 
   final now = DateTime.now();
