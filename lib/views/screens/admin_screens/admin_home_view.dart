@@ -1,5 +1,10 @@
+import "dart:convert";
 import "dart:io";
-import "package:excel/excel.dart";
+import "dart:typed_data";
+import "dart:ui";
+import "package:meals_management/providers/digital_signature_provider.dart";
+import "package:meals_management/views/screens/emp_screens/employee_digital_sign_view.dart";
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:intl/intl.dart";
@@ -15,8 +20,8 @@ import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "../../../providers/employee_home_provider.dart";
 import '../../../repositories/firebase_auth_repo.dart';
+import 'package:flutter/painting.dart' as painting;
 
-// ignore: must_be_immutable
 class AdminHomePage extends StatelessWidget {
   AdminHomePage({super.key});
 
@@ -227,63 +232,87 @@ class AdminHomePage extends StatelessWidget {
   Future<void> sendMail(DateTime date, BuildContext context) async {
     List<Map<String, dynamic>> empData =
         Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpData;
-    List<String?> optedEmployees = empData
-        .map((e) {
-          if (e['opted'] != null) {
-            if (e['opted'].contains(date.toString())) {
-              return e['username'] as String;
-            }
-          }
-        })
-        .nonNulls
-        .toList();
-    //creating excel
+    Provider.of<SignatureProvider>(context, listen: false).getSignature();
+    Uint8List? imagebytes =
+        Provider.of<SignatureProvider>(context, listen: false).imageBytes;
+    print(imagebytes);
 
-    var excel = Excel.createExcel();
-    Sheet sheet = excel['Today' 's Meals opted employees'];
-
-    sheet.appendRow([TextCellValue('Employees opted today')]);
-
-    for (int i = 0; i < optedEmployees.length; i++) {
-      List<String?> rowData = [optedEmployees[i]];
-      List<CellValue> name = rowData.map((e) => TextCellValue(e!)).toList();
-      sheet.appendRow(name);
-    }
-
-    sheet.appendRow([
-      TextCellValue('${optedEmployees.length}'),
-      TextCellValue('Number of employees opted today')
-    ]);
-
-    final bytes = excel.encode();
-
-    // Request storage permission if needed
-    var status = await Permission.storage.status;
-    if (status.isDenied) {
-      await Permission.storage.request();
-    }
-    // Permission granted, proceed with storage operations
     final dir = await getExternalStorageDirectory();
-    final path = '${dir!.path}/mess_data.xlsx';
-    File(path).writeAsBytes(bytes!);
-    const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
-    const subject = 'Excel Data';
-    const body = 'Please find the attached Excel file with the data.';
-    final excelFile = File(path);
 
-    final email = Email(
-      body: body,
-      subject: subject,
-      recipients: [recipientEmail],
-      attachmentPaths: [excelFile.path],
-    );
+    // Create a new Excel workbook
+    final excel.Workbook workbook = excel.Workbook();
+
+    // Add a worksheet to the workbook
+    final excel.Worksheet sheet = workbook.worksheets[0];
+
+    // Set the worksheet name
+    sheet.name = 'Today\'s Meals opted employees';
+
+    // Append headers
+    sheet.getRangeByIndex(1, 1).setText('Employee ID');
+    sheet.getRangeByIndex(1, 2).setText('Employee Name');
+    sheet.getRangeByIndex(1, 3).setText(date.toString());
+    sheet.getRangeByIndex(1, 4).setText('Signature');
+
+    // Append data
+    int rowIndex = 2;
+    for (var data in empData) {
+      if (data['opted'].contains(date.toString())) {
+        sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
+        sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
+        sheet.getRangeByIndex(rowIndex, 3).setText('Opted');
+        if (imagebytes!.isNotEmpty) {
+          final excel.Picture picture =
+              sheet.pictures.addStream(rowIndex, 4, imagebytes);
+          picture.height = 20;
+          picture.width = 50;
+        }
+      } else {
+        sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
+        sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
+        sheet.getRangeByIndex(rowIndex, 3).setText('Not Opted');
+      }
+      rowIndex++;
+    }
 
     try {
+      // Save the workbook to external storage
+      final List<int> bytes = workbook.saveAsStream();
+
+      final path = '${dir!.path}/mess_data_$now.xlsx';
+      final File file = File(path);
+      await file.writeAsBytes(bytes);
+
+      // Print debug information
+      print('File saved at: $path');
+
+      // Check email permissions
+      var status = await Permission.storage.status;
+      if (status.isDenied) {
+        await Permission.storage.request();
+      }
+
+      // Permission granted, proceed with sending email
+      const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
+      const subject = 'Excel Data';
+      const body = 'Please find the attached Excel file with the data.';
+
+      final email = Email(
+        body: body,
+        subject: subject,
+        recipients: [recipientEmail],
+        attachmentPaths: [path],
+      );
+
+      // Send email
       await FlutterEmailSender.send(email);
+
+      // Show success message
       CustomSnackBar.showSnackBar(context, 'Email sent successfully');
     } catch (error) {
+      // Handle the error
       print('Error sending email: $error');
-      // Handle the error appropriately, e.g., display an error message to the user
+      CustomSnackBar.showSnackBar(context, 'Error sending email: $error');
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:meals_management/Repositories/user_events_repo.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/employee_home_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -45,11 +46,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           .setFloorDetails();
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .setEmpList();
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpData();
       await Provider.of<EmployeeHomeProvider>(context, listen: false)
           .checkRadius();
       Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
       Provider.of<UserDataProvider>(context, listen: false).setNotOptedDates();
-      datesController.selectedDate = null;
     } finally {
       setState(() {
         Constants.homeIsLoading = false;
@@ -377,6 +379,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                       const SnackBar(
                                                                           content:
                                                                               Text('You can only sign during lunch hours')));
+                                                                              
                                                             }
                                                           } else {
                                                             Navigator.pop(

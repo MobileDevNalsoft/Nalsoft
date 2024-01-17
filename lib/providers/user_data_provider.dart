@@ -19,7 +19,7 @@ class UserDataProvider extends ChangeNotifier {
 
   void setOptedDates({List<DateTime>? dates}) {
     if (dates == null) {
-      _optedDates = _user!.opted.map((date,link) => DateTime.parse(e).);
+      _optedDates = _user!.opted.keys.map((e) => DateTime.parse(e)).toList();
       notifyListeners();
     } else {
       _notOptedDates.remove(dates[0]);
@@ -60,8 +60,12 @@ class UserDataProvider extends ChangeNotifier {
 
   // pushes date to db to opted or notOpted category
   void pushDate(
-      {required DateTime date, required int radioValue, String? reason}) {
-    _db.pushDatetoDB(date: date, radioValue: radioValue, reason: reason);
+      {required DateTime date,
+      required int radioValue,
+      String? reason,
+      String? url}) {
+    _db.pushDatetoDB(
+        date: date, radioValue: radioValue, reason: reason, url: url);
   }
 
   // pushes dates to db to notopted category

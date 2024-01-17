@@ -82,7 +82,9 @@ class DigitalSignView extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             onPressed: () async {
-                              Provider.of<UserDataProvider>(context, listen: false).setOptedDates(dates: [date!]);
+                              Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .setOptedDates(dates: [date!]);
                               Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .pushDate(date: date!, radioValue: 0);
