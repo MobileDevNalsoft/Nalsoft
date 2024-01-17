@@ -352,7 +352,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                           false)
                                                                   .getRadioValue ==
                                                               1) {
-                                                            if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=13 && now.hour <17)) {
+                                                            if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=13 && now.hour <23)) {
                                                               if (Provider.of< EmployeeHomeProvider>(context,  listen: false).isWithinRadius) {
                                                                 Navigator.pop(
                                                                     context);
