@@ -11,7 +11,7 @@ class UserDataProvider extends ChangeNotifier {
   UserModel? _user;
   Map<String, dynamic> _optedDateswithURL = {};
   Map<String, dynamic> _notOptedDatesWithReasons = {};
-  List<DateTime> _unSignedDates = [];
+  List<dynamic> _holidays = [];
   Uint8List? signImage;
 
   
@@ -59,6 +59,10 @@ class UserDataProvider extends ChangeNotifier {
     _notOptedDatesWithReasons.remove(date.toString());
     _db.pushNotOpted(_notOptedDatesWithReasons);
     notifyListeners();
+  }
+
+  Future<void> setHolidays() async {
+    _holidays = await _db.readHolidays();
   }
 
   Future<Uint8List?> fetchImageAndConvert(String imageUrl) async {

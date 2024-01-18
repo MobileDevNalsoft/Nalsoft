@@ -42,26 +42,22 @@ class HomeStatusProvider extends ChangeNotifier {
   }
 
   Future<void> checkRadius() async {
-    // await Geolocator.requestPermission();
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print("location denied");
         return Future.error('Location permissions are denied');
       }
     }
     Position currentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    print(" location ${currentPosition.latitude} ${currentPosition.longitude}");
 
-    double distancefromOffice = await Geolocator.distanceBetween(
+    double distancefromOffice = Geolocator.distanceBetween(
         currentPosition.latitude,
         currentPosition.longitude,
         officeLatitude,
         officeLongitude);
 
-    print(distancefromOffice);
     isWithinRadius = distancefromOffice <= radius;
   }
 
