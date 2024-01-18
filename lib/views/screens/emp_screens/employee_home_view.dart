@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
@@ -77,7 +78,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
         resizeToAvoidBottomInset: false,
         body: Constants.homeIsLoading
             ? const Center(
-                child: CircularProgressIndicator(),
+                child: SpinKitCircle(color:Color.fromARGB(255, 179, 157, 219), size: 50.0),
               )
             : Stack(
                 children: [
@@ -250,18 +251,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                               width: size.width * 0.6,
 
                                               height:
-                                                  Provider.of<HomeStatusProvider>(
-                                                                  context,
-                                                                  listen: true)
-                                                              .getRadioValue ==
-                                                          2
-                                                      ? size.height * 0.365
-                                                      : size.height * 0.22,
-                                              // constraints: BoxConstraints(
-                                              //     maxHeight: (now.hour < 23)
-                                              //         ? size.height * 0.3
-                                              //         : size.height * 0.3,
-                                              //     minHeight: size.height * 0.1),
+                                                  now.hour<10?
+                                                  Provider.of<HomeStatusProvider>(context,listen: true).getRadioValue == 2
+                                                      ? size.height * 0.36
+                                                      : size.height * 0.22:size.height*0.15,
                                               child: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -271,7 +264,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                       context: context,
                                                       text: 'Opt and Sign',
                                                       value: 1),
-                                                  if (now.hour < 23)
+                                                  if (now.hour < 10)
                                                   _radioButtons(
                                                       context: context,
                                                       text: 'Not opt',
@@ -364,7 +357,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                           false)
                                                                   .getRadioValue ==
                                                               1) {
-                                                            if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=13 && now.hour <17)) {
+                                                            // if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=9 && now.hour <17)) {
                                                               if (Provider.of<HomeStatusProvider>(context, listen: false).isWithinRadius) {
                                                                 Navigator.pop(
                                                                     context);
@@ -383,15 +376,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                         content:
                                                                             Text('Please be inside the office premesis to sign')));
                                                               }
-                                                            } else {
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      const SnackBar(
-                                                                          content:
-                                                                              Text('You can only sign during lunch hours')));
-                                                            }
+                                                            // } else {
+                                                            //   ScaffoldMessenger
+                                                            //           .of(
+                                                            //               context)
+                                                            //       .showSnackBar(
+                                                            //           const SnackBar(
+                                                            //               content:
+                                                            //                   Text('You can only sign during lunch hours')));
+                                                            // }
                                                           } else {
                                                             Navigator.pop(
                                                                 context);
@@ -475,7 +468,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                   ),
                   Positioned(
                     top: -480,
-                    bottom: 0,
+                    bottom: 100,
                     left: 0,
                     right: 0,
                     child: Row(
