@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,12 +19,20 @@ class UserEventsRepo {
     return UserModel.fromSnapshot(userCollection);
   }
 
-  // Future<void> readUsers() async {
-  //   final userCollection = await _db.collection('employees').get();
-  //   var data = {};
-  //   for (var doc in userCollection.docs) {
-  //     data[doc.id] = doc.data();
-  //   }
+  Future<void> pushOpted(Map<String, dynamic> dates) async {
+    final ref = await _db.collection('employees').doc(_auth.currentUser!.uid);
+    ref.update({'opted': dates});
+  }
+
+  Future<void> pushNotOpted(Map<String, dynamic> dates) async {
+    final ref = await _db.collection('employees').doc(_auth.currentUser!.uid);
+    ref.update({'notOpted': dates});
+  }
+
+  Future<List<Map<String, dynamic>>> readUsers() async {
+    final userCollection = await _db.collection('employees').get();
+    return userCollection.docs.map((e) => e.data()).toList();
+  }
 
   //   List<Uint8List?> signImgs = [];
 
@@ -76,14 +83,6 @@ class UserEventsRepo {
   Future<List<Map<String, Map<String, dynamic>>>> readFloors() async {
     final snapshot = await _db.collection('floors').get();
     return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
-  }
-
-  // retrieves list of
-  Future<List<Map<String, dynamic>>> readEmployees() async {
-    final snapshot = await _db.collection('employees').get();
-    List<Map<String, dynamic>> empData =
-        snapshot.docs.map((doc) => doc.data()).toList();
-    return empData;
   }
 
   Future<List<dynamic>> getEmployees({String search = ''}) async {

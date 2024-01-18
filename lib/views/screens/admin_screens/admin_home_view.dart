@@ -1,14 +1,11 @@
-import "dart:convert";
 import "dart:io";
 import "dart:typed_data";
 import "dart:ui";
 import "package:meals_management/providers/digital_signature_provider.dart";
-import "package:meals_management/views/screens/emp_screens/employee_digital_sign_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:intl/intl.dart";
-import "package:meals_management/models/user_model.dart";
 import "package:meals_management/providers/admin_employees_provider.dart";
 import "package:meals_management/providers/user_data_provider.dart";
 import "package:meals_management/route_management/route_management.dart";
@@ -18,9 +15,8 @@ import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
-import "../../../providers/employee_home_provider.dart";
+import '../../../providers/home_status_provider.dart';
 import '../../../repositories/firebase_auth_repo.dart';
-import 'package:flutter/painting.dart' as painting;
 
 class AdminHomePage extends StatelessWidget {
   AdminHomePage({super.key});
@@ -55,7 +51,7 @@ class AdminHomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Consumer<EmployeeHomeProvider>(
+                  Consumer<HomeStatusProvider>(
                     builder: (context, provider, child) {
                       return Padding(
                         padding: const EdgeInsets.only(left: 25, top: 15),
@@ -68,7 +64,7 @@ class AdminHomePage extends StatelessWidget {
                     },
                   ),
                   const Expanded(child: SizedBox()),
-                  Consumer<EmployeeHomeProvider>(
+                  Consumer<HomeStatusProvider>(
                     builder: (context, provider, child) {
                       return Provider.of<UserDataProvider>(context,
                                   listen: false)
@@ -95,8 +91,8 @@ class AdminHomePage extends StatelessWidget {
                               height: 10,
                               onTap: () =>
                                   FirebaseAuthRepo().signOutNow().then((value) {
-                                    sharedPreferences!
-                                        .setString("islogged", 'false');
+                                    sharedPreferences.setString(
+                                        "islogged", 'false');
                                     Navigator.pushNamedAndRemoveUntil(
                                         context,
                                         RouteManagement.loginPage,
@@ -168,7 +164,7 @@ class AdminHomePage extends StatelessWidget {
                       ),
                     ),
                     const Divider(),
-                    Consumer<EmployeeHomeProvider>(
+                    Consumer<HomeStatusProvider>(
                       builder: (context, provider, child) {
                         return Expanded(
                             child: SfDateRangePicker(
@@ -231,10 +227,10 @@ class AdminHomePage extends StatelessWidget {
 
   Future<void> sendMail(DateTime date, BuildContext context) async {
     List<Map<String, dynamic>> empData =
-        Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpData;
-    Provider.of<SignatureProvider>(context, listen: false).getSignature();
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+            .getAllEmpData;
     Uint8List? imagebytes =
-        Provider.of<SignatureProvider>(context, listen: false).imageBytes;
+        Provider.of<UserDataProvider>(context, listen: false).signImage;
     print(imagebytes);
 
     final dir = await getExternalStorageDirectory();
@@ -257,7 +253,7 @@ class AdminHomePage extends StatelessWidget {
     // Append data
     int rowIndex = 2;
     for (var data in empData) {
-      if (data['opted'].contains(date.toString())) {
+      if (data['opted'].keys.contains(date.toString())) {
         sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
         sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
         sheet.getRangeByIndex(rowIndex, 3).setText('Opted');

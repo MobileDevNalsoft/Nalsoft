@@ -8,6 +8,7 @@ class SignatureProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Uint8List? _imagebytes;
+  String? _url;
 
   Future<void> uploadImage(Uint8List pngBytes) async {
     _imagebytes = pngBytes;
@@ -15,11 +16,12 @@ class SignatureProvider extends ChangeNotifier {
         DateTime.now().toString().substring(0, 10));
   }
 
-  Future<void> getSignature() async {
-    _imagebytes = await _signRepo.getSignatureFromDb(
+  Future<void> setSignatureUrl() async {
+    _url = await _signRepo.getSignatureURLFromDb(
         _auth.currentUser!.uid, DateTime.now().toString().substring(0, 10));
     notifyListeners();
   }
 
-  get imageBytes => _imagebytes;
+  get getImageBytes => _imagebytes;
+  get getURL => _url;
 }
