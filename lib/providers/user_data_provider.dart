@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
@@ -12,8 +10,8 @@ class UserDataProvider extends ChangeNotifier {
   Map<String, dynamic> _optedDateswithURL = {};
   Map<String, dynamic> _notOptedDatesWithReasons = {};
   List<dynamic> _holidays = [];
-  Uint8List? signImage;
 
+  // gets
   List<dynamic> get getHolidays=>_holidays;
   String? get getUsername => _user!.userName;
   bool? get getIsAdmin => _user!.isAdmin;
@@ -63,39 +61,5 @@ class UserDataProvider extends ChangeNotifier {
 
   Future<void> setHolidays() async {
     _holidays = await _db.readHolidays();
-  }
-
-  Future<Uint8List?> fetchImageAndConvert(String imageUrl) async {
-    final response = await http.get(Uri.parse(imageUrl));
-
-    if (response.statusCode == 200) {
-      signImage = response.bodyBytes;
-      return signImage;
-    } else {
-      throw Exception('Failed to fetch image');
-    }
-  }
-
-
-  // pushes date to db to opted or notOpted category
-  void pushDate(
-      {required DateTime date,
-      required int radioValue,
-      String? reason,
-      String? url}) {
-    _db.pushDatetoDB(
-        date: date, radioValue: radioValue, reason: reason, url: url);
-  }
-
-  // pushes dates to db to notopted category
-  void pushDates(
-      {required List<DateTime> dates,
-      required int radioValue,
-      String? reason}) {
-    _db.pushDatestoDB(dates: dates, radioValue: radioValue, reason: reason);
-  }
-
-  Future<void> removeNotOptedDateFromDB(DateTime date) async {
-    _db.removeDateFromDb(date);
   }
 }

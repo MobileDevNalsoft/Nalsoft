@@ -9,8 +9,18 @@ class UserEventsRepo {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //creates a new user document in firestore collection
-  Future<void> createUser(String docID, UserModel userData) async {
-    await _db.collection('employees').doc(docID).set(userData.toJson());
+  void createUser(String docID, UserModel userData) {
+    _db.collection('employees').doc(docID).set(userData.toJson());
+  }
+
+  void pushOpted(Map<String, dynamic> dates) {
+    final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
+    ref.update({'opted': dates});
+  }
+
+  void pushNotOpted(Map<String, dynamic> dates) {
+    final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
+    ref.update({'notOpted': dates});
   }
 
   //retrieves the user data from firestore collection
@@ -20,14 +30,22 @@ class UserEventsRepo {
     return UserModel.fromSnapshot(userCollection);
   }
 
-  Future<void> pushOpted(Map<String, dynamic> dates) async {
-    final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
-    ref.update({'opted': dates});
+  //retrieves list of departments from firestore doc
+  Future<List<dynamic>> readDepartments() async {
+    final depts =
+        await _db.collection('departments').doc('departments_nalsoft').get();
+    return depts.data()!.values.toList();
   }
 
-  Future<void> pushNotOpted(Map<String, dynamic> dates) async {
-    final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
-    ref.update({'notOpted': dates});
+  // retrieves list of floors and its details from firestore
+  Future<List<Map<String, Map<String, dynamic>>>> readFloors() async {
+    final snapshot = await _db.collection('floors').get();
+    return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
+  }
+
+  Future<List<dynamic>> readHolidays() async {
+    final snapshot = await _db.collection('holidays').doc('holiday_list').get();
+    return snapshot.data()!['dates'];
   }
 
   Future<List<Map<String, dynamic>>> readUsers() async {
@@ -48,24 +66,6 @@ class UserEventsRepo {
 
     final userCollection = await _db.collection("employees").doc(docid).get();
     return UserModel.fromSnapshot(userCollection);
-  }
-
-  //retrieves list of departments from firestore doc
-  Future<List<dynamic>> readDepartments() async {
-    final depts =
-        await _db.collection('departments').doc('departments_nalsoft').get();
-    return depts.data()!.values.toList();
-  }
-
-  // retrieves list of floors and its details from firestore
-  Future<List<Map<String, Map<String, dynamic>>>> readFloors() async {
-    final snapshot = await _db.collection('floors').get();
-    return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
-  }
-
-  Future<List<dynamic>> readHolidays() async {
-    final snapshot = await _db.collection('holidays').doc('holiday_list').get();
-    return snapshot.data()!['dates'];
   }
 
   Future<List<dynamic>> getEmployees({String search = ''}) async {

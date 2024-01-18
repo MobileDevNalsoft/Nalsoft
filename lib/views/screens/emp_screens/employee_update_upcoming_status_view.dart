@@ -31,15 +31,19 @@ class UpdateLunchStatus extends StatelessWidget {
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back)),
-          // title: const Text("Lunch Status"),
+          title: const Text("Upcoming Status", style: TextStyle(fontSize: 18),),
           centerTitle: true,
+          backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
           actions: [
-            IconButton(
-                onPressed: () {}, icon: const Icon(Icons.account_circle_sharp))
+          Icon(
+            Icons.account_circle_sharp,
+            size: 30,
+          ),
+          SizedBox(
+            width: 10,
+          )
           ],
-          backgroundColor: const Color.fromARGB(100, 179, 110, 234),
           elevation: 4,
-          toolbarHeight: 65,
           shape: const ContinuousRectangleBorder(
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(50),
@@ -49,10 +53,13 @@ class UpdateLunchStatus extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              height: size.height * 0.01,
+              height: size.height * 0.05,
             ),
-            const Text(
-              'Select Category :',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+              'Select Category   :     ',
               style: TextStyle(fontSize: 13),
             ),
             DropdownButton<String>(
@@ -71,11 +78,14 @@ class UpdateLunchStatus extends StatelessWidget {
                   )
                   .toList(),
             ),
+              ],
+            ),
             SizedBox(
-              height: size.height*0.08,
+              height: size.height*0.05,
             ),
             SizedBox(
               width: size.width * 0.95,
+              height: size.height*0.52,
               child: Card(
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -104,8 +114,9 @@ class UpdateLunchStatus extends StatelessWidget {
                         enablePastDates: false,
                         controller: datesController,
                         // toggleDaySelection: true,
-
-                        selectionColor: Colors.deepPurple.shade200,
+                        minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                        maxDate:DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                        selectionColor: Colors.deepPurple.shade100,
                         selectionShape: DateRangePickerSelectionShape.circle,
                         selectableDayPredicate: (date) {
                           return date.weekday != DateTime.saturday &&
@@ -121,36 +132,31 @@ class UpdateLunchStatus extends StatelessWidget {
                         cellBuilder: (BuildContext context,
                             DateRangePickerCellDetails details) {
                           Color circleColor = provider.getOptedWithURL.keys
-                                  .contains(details.date.toString())
-                              ? Colors.green.shade200
-                              : provider.getNotOptedWithReasons.keys
-                                      .contains(details.date.toString())
-                                  ? Colors.orange.shade200
-                                  : provider.getHolidays.contains(details.date
-                                          .toString()
-                                          .substring(0, 10))
-                                      ? Colors.red.shade100
-                                      : (details.date.weekday ==
-                                                  DateTime.sunday ||
-                                              details.date.weekday ==
-                                                  DateTime.saturday)
-                                          ? Colors.blueGrey.shade200
-                                          : ((details.date.day == now.day &&
-                                                      details.date.month <=
-                                                          now.month &&
-                                                      now.hour >= 15 &&
-                                                      !Provider.of<UserDataProvider>(context, listen: false)
-                                                          .getOptedWithURL
-                                                          .keys
-                                                          .contains(
-                                                              '${now.toString().substring(0, 10)} 00:00:00.000') &&
-                                                      !Provider.of<UserDataProvider>(context, listen: false)
-                                                          .getNotOptedWithReasons
-                                                          .keys
-                                                          .contains('${now.toString().substring(0, 10)} 00:00:00.000')) ||
-                                                  (details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000') && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000'))
-                                              ? Colors.grey.shade300
-                                              : Colors.white30;
+                                              .contains(details.date.toString())
+                                          ? Colors.green.shade200
+                                          : provider.getNotOptedWithReasons.keys
+                                                  .contains(
+                                                      details.date.toString())
+                                              ? Colors.orange.shade200
+                                              : provider.getHolidays.contains(
+                                                      details.date
+                                                          .toString()
+                                                          .substring(0, 10))
+                                                  ? Colors.red.shade100
+                                                  : (details.date.weekday ==
+                                                              DateTime.sunday ||
+                                                          details.date.weekday ==
+                                                              DateTime.saturday)
+                                                      ? Colors.blueGrey.shade200
+                                                      : ((details.date.day == now.day &&
+                                                                  details.date.month <=
+                                                                      now.month &&
+                                                                  now.hour >= 15 &&
+                                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
+                                                                  !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
+                                                              ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
+                                                          ? Colors.grey.shade300
+                                                          : Colors.white30;
                           return Padding(
                             padding: const EdgeInsets.all(2),
                             child: Container(
@@ -364,12 +370,6 @@ class UpdateLunchStatus extends StatelessWidget {
                                     .setNotOptedDatesWithReason(
                                         dates: [dates!],
                                         reason: notOptController.text);
-                                Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .pushDate(
-                                        date: dates as DateTime,
-                                        radioValue: 2,
-                                        reason: notOptController.text);
                               }
                             } else {
                               List<DateTime> datesList =
@@ -389,12 +389,6 @@ class UpdateLunchStatus extends StatelessWidget {
                                         listen: false)
                                     .setNotOptedDatesWithReason(
                                         dates: dates,
-                                        reason: notOptController.text);
-                                Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .pushDates(
-                                        dates: datesList,
-                                        radioValue: 2,
                                         reason: notOptController.text);
                               }
                             }
@@ -451,8 +445,6 @@ class UpdateLunchStatus extends StatelessWidget {
                         onPressed: () {
                           Provider.of<UserDataProvider>(context, listen: false)
                               .removeNotOptedDate(dates);
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .removeNotOptedDateFromDB(dates);
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;

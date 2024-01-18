@@ -130,22 +130,22 @@ class _LoginViewState extends State<LoginView> {
                                 onPressed: () async {
                                   if (_emailController.text.isEmpty) {
                                     CustomSnackBar.showSnackBar(
-                                        context, 'email cannot be empty');
+                                        context, 'Email cannot be empty', Colors.red);
                                   } else if (!_emailController.text
                                       .contains('@nalsoft.net')) {
                                     CustomSnackBar.showSnackBar(context,
-                                        'email must contain @nalsoft.net');
+                                        'Email must contain @nalsoft.net', Colors.red);
                                   } else if (_passwordController.text.isEmpty) {
                                     CustomSnackBar.showSnackBar(
-                                        context, 'password cannot be empty');
+                                        context, 'Password cannot be empty', Colors.red);
                                   } else if (_passwordController.text.length <
                                       10) {
                                     CustomSnackBar.showSnackBar(context,
-                                        'password must be atleast 10 characters');
+                                        'Password must be atleast 10 characters', Colors.red);
                                   } else if (!Constants.regex
                                       .hasMatch(_passwordController.text)) {
                                     CustomSnackBar.showSnackBar(context,
-                                        'password must include atleast one special symbol, lowercase and uppercase letter');
+                                        'Password must include atleast one special symbol, lowercase and uppercase letter', Colors.red);
                                   } else {
                                     var isSuccess = await Provider.of<
                                                 AuthenticationProvider>(context,
@@ -161,16 +161,12 @@ class _LoginViewState extends State<LoginView> {
                                           RouteManagement.employeeHomePage,
                                           (route) => false);
                                       // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content:
-                                                  Text('Login Successful')));
+                                      CustomSnackBar.showSnackBar(context,
+                                        'Logged in Successfully', Colors.green);
                                     } else {
                                       // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content: Text(
-                                                  'Some error has occurred')));
+                                      CustomSnackBar.showSnackBar(context,
+                                        'Error', Colors.red);
                                     }
                                   }
                                 },

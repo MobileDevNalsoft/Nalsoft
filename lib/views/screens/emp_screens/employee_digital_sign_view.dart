@@ -98,7 +98,6 @@ class DigitalSignView extends StatelessWidget {
                                 Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .setOptedDateWithURL(date: date!, url: signatureProvider.getURL);
-                                Provider.of<UserDataProvider>(context, listen: false).fetchImageAndConvert(signatureProvider.getURL);
                                 var bytes =  pngBytes;
                                 final file = await getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg'));
                                 await file.writeAsBytes(bytes);

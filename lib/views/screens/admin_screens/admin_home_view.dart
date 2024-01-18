@@ -1,8 +1,10 @@
 import "dart:io";
 import "dart:typed_data";
+import "package:flutter_spinkit/flutter_spinkit.dart";
 import 'package:http/http.dart' as http;
 import "dart:ui";
 import "package:meals_management/providers/digital_signature_provider.dart";
+import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
@@ -20,12 +22,37 @@ import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import '../../../providers/home_status_provider.dart';
 import '../../../repositories/firebase_auth_repo.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   AdminHomePage({super.key});
 
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
   late SharedPreferences sharedPreferences;
 
   DateTime now = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initData();
+  }
+
+  Future<void> initData() async{
+    try{
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpList();
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpData();
+    }finally{
+      setState(() {
+        Constants.admHomeIsLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +63,12 @@ class AdminHomePage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Column(
+        body: Constants.admHomeIsLoading
+            ? const Center(
+                child: SpinKitCircle(
+                    color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
+              )
+            :  Constants.admHomeIsLoading ? Center(child: CircularProgressIndicator(),) : Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -184,7 +216,9 @@ class AdminHomePage extends StatelessWidget {
                         return Expanded(
                             child: SfDateRangePicker(
                           controller: datesController,
-                          selectionColor: Colors.deepPurple.shade200,
+                          minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                          maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                          selectionColor: Colors.deepPurple.shade100,
                           selectionShape: DateRangePickerSelectionShape.circle,
                           selectableDayPredicate: (date) {
                             return date.weekday != DateTime.saturday &&
@@ -244,10 +278,21 @@ class AdminHomePage extends StatelessWidget {
                           },
                         ));
                       },
-                    )
+                    ),
                   ],
                 ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _options(
+                                color: Colors.red.shade100,
+                                text: const Text(
+                                  'Holiday',
+                                  style: TextStyle(fontSize: 10),
+                                ))
+              ],
             ),
             Image.asset("assets/images/food.png")
           ],
@@ -345,5 +390,17 @@ class AdminHomePage extends StatelessWidget {
       // Handle the error
       print('Error sending email: $error');
     }
+  }
+
+  Widget _options({required color, required text}) {
+    return Row(
+      children: [
+        Icon(
+          Icons.circle,
+          color: color,
+        ),
+        text,
+      ],
+    );
   }
 }

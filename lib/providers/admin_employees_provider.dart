@@ -20,9 +20,14 @@ class AdminEmployeesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // void setEmpListN() async {
+  //   for(var data in _empData){
+  //     empList.add(data['username']);
+  //   }
+  // }
+
   Future<void> setEmpData() async {
     _empData = await _db.readUsers();
-    print(_empData);
     notifyListeners();
   }
 

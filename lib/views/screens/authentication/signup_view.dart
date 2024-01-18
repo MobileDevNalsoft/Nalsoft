@@ -234,41 +234,41 @@ class _SignUpViewState extends State<SignUpView> {
                         onPressed: () async {
                           if (_usernameController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
-                                context, 'username cannot be empty');
+                                context, 'Username cannot be empty', Colors.red);
                           } else if (_usernameController.text.length > 20) {
                             CustomSnackBar.showSnackBar(context,
-                                'username cannot have greater than 20 characters');
+                                'Username cannot have greater than 20 characters', Colors.red);
                           } else if (_emailController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
-                                context, 'email cannot be empty');
+                                context, 'Email cannot be empty', Colors.red);
                           } else if (!_emailController.text
                               .contains('@nalsoft.net')) {
                             CustomSnackBar.showSnackBar(
-                                context, 'email must contain @nalsoft.net');
+                                context, 'Email must contain @nalsoft.net', Colors.red);
                           } else if (_empIdController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
-                                context, 'employee id cannot be empty');
+                                context, 'Employee id cannot be empty', Colors.red);
                           } else if (!Constants.empIDRegex
                                   .hasMatch(_empIdController.text) ||
                               _empIdController.text.length != 5 ||
                               _empIdController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(context,
-                                'please enter your 5 digit employee id');
+                                'Please enter your 5 digit employee id', Colors.red);
                           } else if (_confirmPasswordController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
-                                context, 'password cannot be empty');
+                                context, 'Password cannot be empty', Colors.red);
                           } else if (_confirmPasswordController.text.length <
                               10) {
                             CustomSnackBar.showSnackBar(context,
-                                'password must be atleast 10 characters');
+                                'Password must be atleast 10 characters', Colors.red);
                           } else if (!Constants.regex
                               .hasMatch(_confirmPasswordController.text)) {
                             CustomSnackBar.showSnackBar(context,
-                                'password must include atleast one special symbol, lowercase and uppercase letter');
+                                'Password must include atleast one special symbol, lowercase and uppercase letter', Colors.red);
                           } else if (_createPasswordController.text !=
                               _confirmPasswordController.text) {
                             CustomSnackBar.showSnackBar(
-                                context, 'passwords must match');
+                                context, 'Passwords must match', Colors.red);
                           } else if (Provider.of<AuthenticationProvider>(
                                           context,
                                           listen: false)
@@ -279,7 +279,7 @@ class _SignUpViewState extends State<SignUpView> {
                                       .getFloor ==
                                   null) {
                             CustomSnackBar.showSnackBar(context,
-                                'please select your department and floor');
+                                'Please select your department and floor', Colors.black);
                           } else {
                             var isSuccess =
                                 await Provider.of<AuthenticationProvider>(
@@ -292,10 +292,8 @@ class _SignUpViewState extends State<SignUpView> {
                                         _confirmPasswordController.text);
                             if (isSuccess) {
                               // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'You have successfully registered')));
+                              CustomSnackBar.showSnackBar(
+                                context, 'You have Registered Successfully', Colors.green);
                               // ignore: use_build_context_synchronously
                               sharedPreferences.setString('islogged', 'true');
                               // ignore: use_build_context_synchronously

@@ -1,13 +1,9 @@
 import "dart:io";
 import 'package:http/http.dart' as http;
-import "package:firebase_auth/firebase_auth.dart";
-import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
-import "package:meals_management/models/user_model.dart";
 import "package:meals_management/providers/admin_employees_provider.dart";
 import "package:meals_management/providers/user_data_provider.dart";
-import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
@@ -49,7 +45,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back)),
-        title: const Text("Lunch Status"),
+        title: const Text("Lunch Status", style: TextStyle(fontSize: 18),),
         centerTitle: true,
         actions: [
           Icon(
@@ -130,8 +126,14 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                 children: [
                   Expanded(
                     child: SfDateRangePicker(
-                      selectionColor: Colors.deepPurple.shade200,
+                      minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                      maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                      selectionColor: Colors.deepPurple.shade100,
                       selectionShape: DateRangePickerSelectionShape.circle,
+                      showActionButtons: true,
+                      selectableDayPredicate: (date) {
+                        return Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(date.toString());
+                      },
                       cellBuilder: (BuildContext context,
                           DateRangePickerCellDetails details) {
                         Color circleColor = thisEmpData['opted']
@@ -154,15 +156,15 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                                         now.month &&
                                                     now.hour >= 15 &&
                                                     !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(
-                                                        '${now.toString().substring(0, 10)} 00:00:00.000') &&
+                                                        details.date.toString()) &&
                                                     !Provider.of<UserDataProvider>(context, listen: false)
                                                         .getNotOptedWithReasons
                                                         .keys
                                                         .contains(
-                                                            '${now.toString().substring(0, 10)} 00:00:00.000')) ||
-                                                (details.date.day < now.day && details.date.month <= now.month) &&
-                                                    !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000') &&
-                                                    !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000'))
+                                                            details.date.toString())) ||
+                                                ((details.date.day < now.day && details.date.month <= now.month) &&
+                                                    !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
+                                                    !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
                                             ? Colors.grey.shade300
                                             : Colors.white30;
                         return Padding(
@@ -174,6 +176,9 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                               shape: BoxShape.circle,
                               color: circleColor,
                             ),
+                            child: Center(
+                                              child: Text(
+                                                  details.date.day.toString())),
                           ));
                         },
                         allowViewNavigation: true,
@@ -212,18 +217,11 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                             );
                           }
                         },
+                        cancelText: '',
+                        confirmText: 'Send Mail',
+                        onSubmit: (p0) => sendMail(context, thisEmpData),
                       ),
                   ),
-                  
-                  Row(
-                    children: [
-                      Expanded(child: SizedBox()),
-                      TextButton(
-                        onPressed: () => sendMail(context, thisEmpData),
-                        child: Text('Send Mail'),
-                      )
-                    ],
-                  )
                 ],
               ),
             ),

@@ -9,10 +9,9 @@ class UserModel {
   bool isAdmin;
   Map<String ,dynamic> opted;
   Map<String, dynamic> notOpted;
-  List<dynamic> unSigned;
 
   UserModel(this.userName, this.email, this.employee_id, this.department,
-      this.floor, this.isAdmin, this.opted, this.notOpted, this.unSigned);
+      this.floor, this.isAdmin, this.opted, this.notOpted);
 
   static UserModel fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -24,8 +23,7 @@ class UserModel {
         snapshot['floor'],
         snapshot['isAdmin'],
         snapshot['opted'],
-        snapshot['notOpted'],
-        snapshot['unSigned']);
+        snapshot['notOpted']);
   }
 
   Map<String, dynamic> toJson() {
@@ -38,7 +36,6 @@ class UserModel {
       'isAdmin': isAdmin,
       'opted': opted,
       'notOpted': notOpted,
-      'unSigned': unSigned,
     };
   }
 }

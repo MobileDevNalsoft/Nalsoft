@@ -55,7 +55,7 @@ class AuthenticationProvider extends ChangeNotifier {
     User? user = await _auth.signUpwithEmailandPassword(email, password);
     if (user != null) {
       final userData = UserModel(
-          userName, email, employee_id, _dept!, _floor!, false, {}, {}, []);
+          userName, email, employee_id, _dept!, _floor!, false, {}, {});
       _db.createUser(user.uid, userData);
       return true;
     }

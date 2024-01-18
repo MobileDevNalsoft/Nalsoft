@@ -9,6 +9,7 @@ import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -21,6 +22,7 @@ class EmployeeHomeView extends StatefulWidget {
 }
 
 class _EmployeeHomeViewState extends State<EmployeeHomeView> {
+
   DateTime now = DateTime.now();
 
   TextEditingController notOptController = TextEditingController();
@@ -40,24 +42,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Future<void> initData() async {
     try {
       sharedPreferences = await SharedPreferences.getInstance();
-      await Provider.of<UserDataProvider>(context, listen: false)
-          .getUserFromDB();
+      await Provider.of<UserDataProvider>(context, listen: false).getUserFromDB();
+      await Provider.of<HomeStatusProvider>(context, listen: false).setFloorDetails();
+      await Provider.of<HomeStatusProvider>(context, listen: false).checkRadius();
       await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
-      await Provider.of<HomeStatusProvider>(context, listen: false)
-          .setFloorDetails();
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpList();
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpData();
-      await Provider.of<HomeStatusProvider>(context, listen: false)
-          .checkRadius();
-      Provider.of<UserDataProvider>(context, listen: false)
-          .setNotOptedDatesWithReason();
-      Provider.of<UserDataProvider>(context, listen: false)
-          .setOptedDateWithURL();
+      Provider.of<UserDataProvider>(context, listen: false).setNotOptedDatesWithReason();
+      Provider.of<UserDataProvider>(context, listen: false).setOptedDateWithURL();
     } finally {
       setState(() {
-        Constants.homeIsLoading = false;
+        Constants.empHomeIsLoading = false;
       });
     }
   }
@@ -68,7 +61,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
     List<Map<String, Map<String, dynamic>>> floorDetails =
         Provider.of<HomeStatusProvider>(context, listen: false).getFloorDetails;
-    Map<String, dynamic> timings = Constants.homeIsLoading
+    Map<String, dynamic> timings = Constants.empHomeIsLoading
         ? {}
         : floorDetails
             .map((e) => e[
@@ -76,12 +69,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
             .nonNulls
             .toList()[0];
 
-    Provider.of<UserDataProvider>(context, listen: false).setHolidays();
-
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Constants.homeIsLoading
+        body: Constants.empHomeIsLoading
             ? const Center(
                 child: SpinKitCircle(
                     color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
@@ -190,14 +181,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                               Consumer<UserDataProvider>(
                                 builder: (context, provider, child) {
                                   return SfDateRangePicker(
-                                    
                                     controller: datesController,
                                     minDate:
                                         DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
                                     maxDate: DateTime(
                                         now.year, 12, 31, 23, 59, 0, 0, 0),
-                                    enablePastDates: false,
-                                    selectionColor: Colors.deepPurple.shade200,
+                                    selectionColor: Colors.deepPurple.shade100,
                                     selectionShape:
                                         DateRangePickerSelectionShape.circle,
                                     selectableDayPredicate: (date) {
@@ -227,9 +216,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                   details.date.month <=
                                                                       now.month &&
                                                                   now.hour >= 15 &&
-                                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000') &&
-                                                                  !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000')) ||
-                                                              (details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000') && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000'))
+                                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
+                                                                  !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
+                                                              ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
                                                           ? Colors.grey.shade300
                                                           : Colors.white30;
                                       return Padding(
@@ -257,21 +246,20 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       if (date == null) {
                                         CustomSnackBar.showSnackBar(context,
                                             'Please select today' 's date',Colors.red);
-                                      } else if ([
-                                        DateTime.sunday,
-                                        DateTime.saturday
-                                      ].contains(DateTime.parse(date.toString())
-                                          .weekday)) {
-                                        CustomSnackBar.showSnackBar(context,
-                                            'Cannot opt on weekoff' 's',Colors.red);
+                                      } else if(provider.getNotOptedWithReasons.keys
+                                          .contains(date.toString()) && now.hour < 10){
+                                        removeDialog(context, size, date);
                                       } else if (provider.getOptedWithURL.keys
                                           .contains(date.toString())) {
                                         Navigator.pushNamed(context,
                                             RouteManagement.previewPage);
-                                      } 
-                                      else if (now.hour >19){
+                                      } else if (now.hour > 15){
                                         CustomSnackBar.showSnackBar(context,
-                                            "You cannot change status after lunch hours",Colors.red);
+                                            "You cannot update status after 3.00pm",Colors.red);
+                                        }
+                                        else if((now.hour >= 10 && (now.hour < 12 || (now.hour == 12 && now.minute < 30)))){
+                                          CustomSnackBar.showSnackBar(context,
+                                            "Wait till 12.30pm to Sign",Colors.red);
                                         }
                                         else {
                                         notOptController.clear();
@@ -302,18 +290,19 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                               .getRadioValue ==
                                                           2
                                                       ? size.height * 0.36
-                                                      : size.height * 0.22
+                                                      : size.height * 0.15
                                                   : size.height * 0.15,
                                               child: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
                                                         .spaceEvenly,
                                                 children: [
-                                                  _radioButtons(
-                                                      context: context,
-                                                      text: 'Opt and Sign',
-                                                      value: 1),
-                                                  if (now.hour < 9)
+                                                  if(now.hour == 12 && now.minute >= 30)
+                                                    _radioButtons(
+                                                        context: context,
+                                                        text: 'Opt and Sign',
+                                                        value: 1),
+                                                  if (now.hour < 10)
                                                     _radioButtons(
                                                         context: context,
                                                         text: 'Not opt',
@@ -331,7 +320,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           border:
                                                               const OutlineInputBorder(),
                                                           hintText:
-                                                              'reason for not opting...',
+                                                              'Reason...',
                                                           hintStyle:
                                                               const TextStyle(
                                                                   color: Colors
@@ -409,7 +398,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                             CustomSnackBar
                                                                 .showSnackBar(
                                                                     context,
-                                                                    'reason cannot be empty',Colors.red);
+                                                                    'Reason cannot be empty',Colors.red);
                                                           } else {
                                                             if (Provider.of<HomeStatusProvider>(
                                                                         context,
@@ -417,14 +406,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                             false)
                                                                     .getRadioValue ==
                                                                 1) {
-                                                              if ((now.hour ==
-                                                                          12 &&
-                                                                      now.minute >=
-                                                                          30) ||
-                                                                  (now.hour >=
-                                                                          13 &&
-                                                                      now.hour <
-                                                                          19)) {
                                                                 if (Provider.of<
                                                                             HomeStatusProvider>(
                                                                         context,
@@ -442,19 +423,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                             date
                                                                       });
                                                                 } else {
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(const SnackBar(
-                                                                          content:
-                                                                              Text('Please be inside the office premesis to sign')));
+                                                                  CustomSnackBar.showSnackBar(context, 'Please be in the Office premises to sign', Colors.red);
                                                                 }
-                                                              } else {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(const SnackBar(
-                                                                        content:
-                                                                            Text('You can only sign during lunch hours')));
-                                                              }
                                                             } else {
                                                               Navigator.pop(
                                                                   context);
@@ -684,5 +654,67 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setRadioValue(value);
         });
+  }
+
+  void removeDialog(context, size, dates) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(content: Consumer<HomeStatusProvider>(
+          builder: (context, dialogProvider, child) {
+            return SizedBox(
+              width: size.width * 0.6,
+              height: size.height * 0.13,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Do you want to remove this date\nfrom NotOpted ?'),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CustomButton(
+                        onPressed: () {
+                          Provider.of<UserDataProvider>(context, listen: false)
+                              .removeNotOptedDate(dates);
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                          Navigator.pop(context);
+                        },
+                        color: const MaterialStatePropertyAll(Colors.white),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      CustomButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                        },
+                        color: MaterialStatePropertyAll(
+                            Colors.deepPurpleAccent.shade200),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+        ));
+      },
+    );
   }
 }
