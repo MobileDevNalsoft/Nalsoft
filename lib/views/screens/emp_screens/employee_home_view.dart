@@ -256,19 +256,24 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                     onSubmit: (date) {
                                       if (date == null) {
                                         CustomSnackBar.showSnackBar(context,
-                                            'Please select today' 's date');
+                                            'Please select today' 's date',Colors.red);
                                       } else if ([
                                         DateTime.sunday,
                                         DateTime.saturday
                                       ].contains(DateTime.parse(date.toString())
                                           .weekday)) {
                                         CustomSnackBar.showSnackBar(context,
-                                            'Cannot opt on weekoff' 's');
+                                            'Cannot opt on weekoff' 's',Colors.red);
                                       } else if (provider.getOptedWithURL.keys
                                           .contains(date.toString())) {
                                         Navigator.pushNamed(context,
                                             RouteManagement.previewPage);
-                                      } else {
+                                      } 
+                                      else if (now.hour >19){
+                                        CustomSnackBar.showSnackBar(context,
+                                            "You cannot change status after lunch hours",Colors.red);
+                                        }
+                                        else {
                                         notOptController.clear();
                                         showDialog(
                                           context: context,
@@ -404,7 +409,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                             CustomSnackBar
                                                                 .showSnackBar(
                                                                     context,
-                                                                    'reason cannot be empty');
+                                                                    'reason cannot be empty',Colors.red);
                                                           } else {
                                                             if (Provider.of<HomeStatusProvider>(
                                                                         context,
@@ -419,7 +424,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                   (now.hour >=
                                                                           13 &&
                                                                       now.hour <
-                                                                          15)) {
+                                                                          19)) {
                                                                 if (Provider.of<
                                                                             HomeStatusProvider>(
                                                                         context,

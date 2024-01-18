@@ -92,6 +92,7 @@ class DigitalSignView extends StatelessWidget {
                                         format: ui.ImageByteFormat.png);
                                 Uint8List pngBytes =
                                     byteData!.buffer.asUint8List();
+                                    
                                 await signatureProvider.uploadImage(pngBytes);
                                 await signatureProvider.setSignatureUrl();
                                 Provider.of<UserDataProvider>(context,

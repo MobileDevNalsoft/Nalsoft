@@ -188,7 +188,7 @@ class AdminHomePage extends StatelessWidget {
                           selectionShape: DateRangePickerSelectionShape.circle,
                           selectableDayPredicate: (date) {
                             return date.weekday != DateTime.saturday &&
-                                date.weekday != DateTime.sunday &&
+                                date.weekday != DateTime.sunday && date.day <= now.day&& date.month <= now.month &&
                                 !Provider.of<UserDataProvider>(context,
                                         listen: false)
                                     .getHolidays
@@ -235,7 +235,7 @@ class AdminHomePage extends StatelessWidget {
                               sendMail(date, context);
                             } else {
                               CustomSnackBar.showSnackBar(
-                                  context, 'please select a date');
+                                  context, 'please select a date',Colors.red);
                             }
                           },
                           onCancel: () {

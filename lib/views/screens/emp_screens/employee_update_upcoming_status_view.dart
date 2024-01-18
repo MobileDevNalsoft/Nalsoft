@@ -72,6 +72,9 @@ class UpdateLunchStatus extends StatelessWidget {
                   .toList(),
             ),
             SizedBox(
+              height: size.height*0.08,
+            ),
+            SizedBox(
               width: size.width * 0.95,
               child: Card(
                 shape: const RoundedRectangleBorder(
@@ -186,7 +189,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                   DateTime.parse(dates.toString()).weekday ==
                                       DateTime.sunday) {
                                 CustomSnackBar.showSnackBar(
-                                    context, 'remove weekoffs from selection');
+                                    context, 'remove weekoffs from selection',Colors.red);
                               } else {
                                 if (provider.getNotOptedWithReasons.keys
                                     .contains(dates.toString())) {
@@ -199,7 +202,7 @@ class UpdateLunchStatus extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text(
-                                          'You can only update upcoming status')));
+                                          'You can only update upcoming status',)));
                             }
                            
                           } else if (Provider.of<HomeStatusProvider>(context,
@@ -211,7 +214,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                 .getNotOptedWithReasons.keys
                                 .contains(element.toString()))) {
                               CustomSnackBar.showSnackBar(context,
-                                  'Remove NotOptedDates from selection');
+                                  'Remove NotOptedDates from selection',Colors.red);
                             } else {
                               dialog(context, size, dates);
                             }
@@ -223,14 +226,57 @@ class UpdateLunchStatus extends StatelessWidget {
                           datesController.selectedRange = null;
                         },
                       );
-                    })
+                    }),
+                    
                   ],
                 ),
               ),
             ),
+            Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _options(
+                                color: Colors.green.shade200,
+                                text: const Text(
+                                  'Signed',
+                                  style: TextStyle(fontSize: 10),
+                                )),
+                            _options(
+                                color: Colors.grey.shade300,
+                                text: const Text(
+                                  'Not Signed',
+                                  style: TextStyle(fontSize: 10),
+                                )),
+                            _options(
+                                color: Colors.orange.shade200,
+                                text: const Text(
+                                  'Not Opted',
+                                  style: TextStyle(fontSize: 10),
+                                )),
+                            _options(
+                                color: Colors.red.shade100,
+                                text: const Text(
+                                  'Holiday',
+                                  style: TextStyle(fontSize: 10),
+                                )),
+                          ],
+                        ),
+                      ),
             Image.asset("assets/images/food.png"),
           ],
         ));
+  }
+  Widget _options({required color, required text}) {
+    return Row(
+      children: [
+        Icon(
+          Icons.circle,
+          color: color,
+        ),
+        text,
+      ],
+    );
   }
 
   void dialog(context, size, dates) {
@@ -250,7 +296,7 @@ class UpdateLunchStatus extends StatelessWidget {
           builder: (context, dialogProvider, child) {
             return SizedBox(
               width: size.width * 0.6,
-              height: size.height * 0.218,
+              height: size.height * 0.22,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -300,7 +346,7 @@ class UpdateLunchStatus extends StatelessWidget {
                         onPressed: () {
                           if (notOptController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
-                                context, 'reason cannot be empty');
+                                context, 'reason cannot be empty',Colors.red);
                           } else {
                             if (Provider.of<HomeStatusProvider>(context,
                                         listen: false)
@@ -311,7 +357,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                   DateTime.parse(dates.toString()).weekday ==
                                       DateTime.sunday) {
                                 CustomSnackBar.showSnackBar(
-                                    context, 'remove weekoffs from selection');
+                                    context, 'remove weekoffs from selection',Colors.red);
                               } else {
                                 Provider.of<UserDataProvider>(context,
                                         listen: false)
@@ -337,7 +383,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                       .toList()
                                       .contains(7)) {
                                 CustomSnackBar.showSnackBar(
-                                    context, 'remove weekoffs from selection');
+                                    context, 'remove weekoffs from selection',Colors.red);
                               } else {
                                 Provider.of<UserDataProvider>(context,
                                         listen: false)
