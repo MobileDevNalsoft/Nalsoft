@@ -184,6 +184,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                               Consumer<UserDataProvider>(
                                 builder: (context, provider, child) {
                                   return SfDateRangePicker(
+                                    
                                     controller: datesController,
                                     selectionColor: Colors.deepPurple.shade200,
                                     selectionShape:
@@ -219,6 +220,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         ),
                                       );
                                     },
+                                    // toggleDaySelection: true,
                                     showActionButtons: true,
                                     allowViewNavigation: true,
                                     selectionMode:
@@ -357,7 +359,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                           false)
                                                                   .getRadioValue ==
                                                               1) {
-                                                            // if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=9 && now.hour <17)) {
+                                                            if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=9 && now.hour <17)) {
                                                               if (Provider.of<HomeStatusProvider>(context, listen: false).isWithinRadius) {
                                                                 Navigator.pop(
                                                                     context);
@@ -376,15 +378,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                         content:
                                                                             Text('Please be inside the office premesis to sign')));
                                                               }
-                                                            // } else {
-                                                            //   ScaffoldMessenger
-                                                            //           .of(
-                                                            //               context)
-                                                            //       .showSnackBar(
-                                                            //           const SnackBar(
-                                                            //               content:
-                                                            //                   Text('You can only sign during lunch hours')));
-                                                            // }
+                                                            } else {
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      const SnackBar(
+                                                                          content:
+                                                                              Text('You can only sign during lunch hours')));
+                                                            }
                                                           } else {
                                                             Navigator.pop(
                                                                 context);
@@ -467,8 +469,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                     ],
                   ),
                   Positioned(
-                    top: -480,
-                    bottom: 100,
+                    top: (size.height*0.12),
+                    // bottom: ,
                     left: 0,
                     right: 0,
                     child: Row(

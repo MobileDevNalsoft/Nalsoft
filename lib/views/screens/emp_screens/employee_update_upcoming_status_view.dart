@@ -74,7 +74,9 @@ class UpdateLunchStatus extends StatelessWidget {
             SizedBox(
               width: size.width * 0.95,
               child: Card(
-                // ignore: sort_child_properties_last
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                elevation: 8,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -97,6 +99,9 @@ class UpdateLunchStatus extends StatelessWidget {
                         builder: (context, provider, child) {
                       return SfDateRangePicker(
                         controller: datesController,
+                        enablePastDates: false,
+                        // toggleDaySelection: true,
+
                         selectionColor: Colors.deepPurple.shade200,
                         selectionShape: DateRangePickerSelectionShape.circle,
                         cellBuilder: (BuildContext context,
@@ -128,6 +133,7 @@ class UpdateLunchStatus extends StatelessWidget {
                             ),
                           );
                         },
+                        
                         showActionButtons: true,
                         allowViewNavigation: true,
                         selectionMode: Provider.of<HomeStatusProvider>(context,
@@ -138,11 +144,14 @@ class UpdateLunchStatus extends StatelessWidget {
                             : DateRangePickerSelectionMode.single,
                         showNavigationArrow: true,
                         onSubmit: (dates) {
+                          print(dates.runtimeType);
+                          print(dates);
                           if (Provider.of<HomeStatusProvider>(context,
                                       listen: false)
                                   .getReason ==
                               'Single day') {
-                            if ((dates as DateTime).isAfter(now)) {
+                            if (dates.toString().substring(0,10)!=now.toString().substring(0,10)){ 
+                              
                               if (DateTime.parse(dates.toString()).weekday ==
                                       DateTime.saturday ||
                                   DateTime.parse(dates.toString()).weekday ==
@@ -156,13 +165,14 @@ class UpdateLunchStatus extends StatelessWidget {
                                 } else {
                                   dialog(context, size, dates);
                                 }
-                              }
-                            } else {
+                              }}
+                             else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text(
                                           'You can only update upcoming status')));
                             }
+                           
                           } else if (Provider.of<HomeStatusProvider>(context,
                                       listen: false)
                                   .getReason ==
@@ -192,9 +202,6 @@ class UpdateLunchStatus extends StatelessWidget {
                     })
                   ],
                 ),
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                elevation: 8,
               ),
             ),
             Image.asset("assets/images/food.png"),

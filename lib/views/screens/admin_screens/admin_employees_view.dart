@@ -48,7 +48,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
               padding: const EdgeInsets.only(left: 10.0, right: 10, top: 15),
               child: Container(
                 padding: const EdgeInsets.only(
-                  left: 15,
+                  left: 4,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
@@ -56,9 +56,9 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.groups),
+                    IconButton(onPressed: () => Navigator.pop(context),icon: Icon(Icons.arrow_back)),
                     SizedBox(
-                      width: size.width * 0.04,
+                      width: size.width * 0.06,
                     ),
                     Expanded(
                       child: TextField(

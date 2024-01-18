@@ -2,6 +2,7 @@ import "dart:io";
 import "dart:typed_data";
 import "dart:ui";
 import "package:meals_management/providers/digital_signature_provider.dart";
+import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
@@ -118,8 +119,21 @@ class AdminHomePage extends StatelessWidget {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(
-                        context, RouteManagement.adminEmployees);
+                    // Navigator.pushNamed(
+                    //     context, RouteManagement.adminEmployees);
+                   Navigator.push(
+  context,
+  PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => EmployeeSearch(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  ),
+);
+
                   },
                   child: Row(
                     children: [

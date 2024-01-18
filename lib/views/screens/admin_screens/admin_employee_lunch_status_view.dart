@@ -126,75 +126,77 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SfDateRangePicker(
-                    selectionColor: Colors.deepPurple.shade200,
-                    selectionShape: DateRangePickerSelectionShape.circle,
-                    cellBuilder: (BuildContext context,
-                        DateRangePickerCellDetails details) {
-                      bool isOpted = thisEmpData['opted']
-                          .keys
-                          .contains(details.date.toString());
-                      bool isNotOpted = thisEmpData['notOpted']
-                          .keys
-                          .contains(details.date.toString());
-                      Color circleColor = isOpted
-                          ? Colors.green.shade200
-                          : isNotOpted
-                              ? Colors.orange.shade200
-                              : (details.date.weekday == DateTime.sunday ||
-                                      details.date.weekday == DateTime.saturday)
-                                  ? Colors.blueGrey.shade200
-                                  : Colors.white30;
-                      return Padding(
-                        padding: const EdgeInsets.all(2),
-                        child: Container(
-                          width: details.bounds.width / 2,
-                          height: details.bounds.width / 2,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: circleColor,
+                  Expanded(
+                    child: SfDateRangePicker(
+                      selectionColor: Colors.deepPurple.shade200,
+                      selectionShape: DateRangePickerSelectionShape.circle,
+                      cellBuilder: (BuildContext context,
+                          DateRangePickerCellDetails details) {
+                        bool isOpted = thisEmpData['opted']
+                            .keys
+                            .contains(details.date.toString());
+                        bool isNotOpted = thisEmpData['notOpted']
+                            .keys
+                            .contains(details.date.toString());
+                        Color circleColor = isOpted
+                            ? Colors.green.shade200
+                            : isNotOpted
+                                ? Colors.orange.shade200
+                                : (details.date.weekday == DateTime.sunday ||
+                                        details.date.weekday == DateTime.saturday)
+                                    ? Colors.blueGrey.shade200
+                                    : Colors.white30;
+                        return Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Container(
+                            width: details.bounds.width / 2,
+                            height: details.bounds.width / 2,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: circleColor,
+                            ),
+                            child:
+                                Center(child: Text(details.date.day.toString())),
                           ),
-                          child:
-                              Center(child: Text(details.date.day.toString())),
-                        ),
-                      );
-                    },
-                    allowViewNavigation: true,
-                    selectionMode: DateRangePickerSelectionMode.single,
-                    showNavigationArrow: true,
-                    onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                      if (thisEmpData['notOpted'].keys.contains(
-                          dateRangePickerSelectionChangedArgs.value
-                              .toString())) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              content: SizedBox(
-                                  width: size.width * 0.6,
-                                  height: size.height * 0.08,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Reason',
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      SizedBox(
-                                        height: size.height * 0.02,
-                                      ),
-                                      Text(thisEmpData['notOpted'][
-                                          dateRangePickerSelectionChangedArgs
-                                              .value
-                                              .toString()]!),
-                                    ],
-                                  )),
-                            );
-                          },
                         );
-                      }
-                    },
+                      },
+                      allowViewNavigation: true,
+                      selectionMode: DateRangePickerSelectionMode.single,
+                      showNavigationArrow: true,
+                      onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                        if (thisEmpData['notOpted'].keys.contains(
+                            dateRangePickerSelectionChangedArgs.value
+                                .toString())) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: SizedBox(
+                                    width: size.width * 0.6,
+                                    height: size.height * 0.08,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Reason',
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        SizedBox(
+                                          height: size.height * 0.02,
+                                        ),
+                                        Text(thisEmpData['notOpted'][
+                                            dateRangePickerSelectionChangedArgs
+                                                .value
+                                                .toString()]!),
+                                      ],
+                                    )),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
                   ),
                   Row(
                     children: [

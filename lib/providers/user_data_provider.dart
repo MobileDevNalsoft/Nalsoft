@@ -14,6 +14,14 @@ class UserDataProvider extends ChangeNotifier {
   List<DateTime> _unSignedDates = [];
   Uint8List? signImage;
 
+  
+  String? get getUsername => _user!.userName;
+  bool? get getIsAdmin => _user!.isAdmin;
+  String? get getFloor => _user!.floor;
+  String? get getEmpID => _user!.employee_id;
+  Map<String, dynamic> get getOptedWithURL => _optedDateswithURL;
+  Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
+
   // getting user data from firestore collection
   Future<void> getUserFromDB() async {
     _user = await _db.readData();
@@ -31,7 +39,7 @@ class UserDataProvider extends ChangeNotifier {
       _db.pushOpted(_optedDateswithURL);
       _db.pushNotOpted(_notOptedDatesWithReasons);
     }
-  }
+  } 
 
   void setNotOptedDatesWithReason({List<DateTime>? dates, String? reason}) {
     if (dates == null) {
@@ -64,12 +72,6 @@ class UserDataProvider extends ChangeNotifier {
     }
   }
 
-  String? get getUsername => _user!.userName;
-  bool? get getIsAdmin => _user!.isAdmin;
-  String? get getFloor => _user!.floor;
-  String? get getEmpID => _user!.employee_id;
-  Map<String, dynamic> get getOptedWithURL => _optedDateswithURL;
-  Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
 
   // pushes date to db to opted or notOpted category
   void pushDate(
