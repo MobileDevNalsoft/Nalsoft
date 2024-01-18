@@ -39,8 +39,8 @@ class UserDataProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       dates.forEach((e) {
-         _notOptedDatesWithReasons.remove(e.toString());
-         _notOptedDatesWithReasons[e.toString()] = reason;
+        _notOptedDatesWithReasons.remove(e.toString());
+        _notOptedDatesWithReasons[e.toString()] = reason;
       });
       notifyListeners();
       _db.pushNotOpted(_notOptedDatesWithReasons);
@@ -53,23 +53,23 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchImageAndConvert(String imageUrl) async {
+  Future<Uint8List?> fetchImageAndConvert(String imageUrl) async {
     final response = await http.get(Uri.parse(imageUrl));
 
     if (response.statusCode == 200) {
       signImage = response.bodyBytes;
+      return signImage;
     } else {
       throw Exception('Failed to fetch image');
     }
   }
 
-
   String? get getUsername => _user!.userName;
   bool? get getIsAdmin => _user!.isAdmin;
   String? get getFloor => _user!.floor;
   String? get getEmpID => _user!.employee_id;
-  Map<String,dynamic> get getOptedWithURL => _optedDateswithURL;
-  Map<String,dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
+  Map<String, dynamic> get getOptedWithURL => _optedDateswithURL;
+  Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
 
   // pushes date to db to opted or notOpted category
   void pushDate(

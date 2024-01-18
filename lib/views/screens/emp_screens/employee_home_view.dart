@@ -26,6 +26,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   DateRangePickerController datesController = DateRangePickerController();
 
+  final FocusNode _focusNode = FocusNode();
+
   late SharedPreferences sharedPreferences;
 
   @override
@@ -63,8 +65,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     final size = MediaQuery.of(context).size;
 
     List<Map<String, Map<String, dynamic>>> floorDetails =
-        Provider.of<HomeStatusProvider>(context, listen: false)
-            .getFloorDetails;
+        Provider.of<HomeStatusProvider>(context, listen: false).getFloorDetails;
     Map<String, dynamic> timings = Constants.homeIsLoading
         ? {}
         : floorDetails
@@ -72,6 +73,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                 Provider.of<UserDataProvider>(context, listen: false).getFloor])
             .nonNulls
             .toList()[0];
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -245,6 +247,20 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         showDialog(
                                           context: context,
                                           builder: (context) {
+                                            if (Provider.of<HomeStatusProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .getRadioValue ==
+                                                    2 &&
+                                                notOptController.text.isEmpty) {
+                                              Future.delayed(
+                                                Duration.zero,
+                                                () {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(_focusNode);
+                                                },
+                                              );
+                                            }
                                             return AlertDialog(
                                                 content: Container(
                                               width: size.width * 0.6,
@@ -272,16 +288,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                       text: 'Opt and Sign',
                                                       value: 1),
                                                   if (now.hour < 23)
-                                                  _radioButtons(
-                                                      context: context,
-                                                      text: 'Not opt',
-                                                      value: 2),
+                                                    _radioButtons(
+                                                        context: context,
+                                                        text: 'Not opt',
+                                                        value: 2),
                                                   if (Provider.of<HomeStatusProvider>(
                                                               context,
                                                               listen: true)
                                                           .getRadioValue ==
                                                       2)
                                                     TextFormField(
+                                                      focusNode: _focusNode,
                                                       controller:
                                                           notOptController,
                                                       decoration: InputDecoration(
@@ -331,7 +348,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           datesController
                                                                   .selectedDate =
                                                               null;
-                                                          Provider.of<HomeStatusProvider>(context, listen: false).setReasonHomeEmpty(false);
+                                                          Provider.of<HomeStatusProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .setReasonHomeEmpty(
+                                                                  false);
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -350,63 +371,72 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                       ),
                                                       CustomButton(
                                                         onPressed: () {
-                                                          if(Provider.of<HomeStatusProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .getRadioValue ==
-                                                              2 && notOptController.text.isEmpty){
-                                                            CustomSnackBar.showSnackBar(context, 'reason cannot be empty');
-                                                          }else{
-                                                            if (Provider.of<HomeStatusProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .getRadioValue ==
-                                                              1) {
-                                                            if ((now.hour == 12 &&now.minute >=30) ||(now.hour >=13 && now.hour <17)) {
-                                                              if (Provider.of<HomeStatusProvider>(context, listen: false).isWithinRadius) {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.pushNamed(
+                                                          if (Provider.of<HomeStatusProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .getRadioValue ==
+                                                                  2 &&
+                                                              notOptController
+                                                                  .text
+                                                                  .isEmpty) {
+                                                            CustomSnackBar
+                                                                .showSnackBar(
                                                                     context,
-                                                                    RouteManagement
-                                                                        .digitalSignature,
-                                                                    arguments: {
-                                                                      'date':
-                                                                          date
-                                                                    });
+                                                                    'reason cannot be empty');
+                                                          } else {
+                                                            if (Provider.of<HomeStatusProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .getRadioValue ==
+                                                                1) {
+                                                              if (true) {
+                                                                if (Provider.of<
+                                                                            HomeStatusProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .isWithinRadius) {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.pushNamed(
+                                                                      context,
+                                                                      RouteManagement
+                                                                          .digitalSignature,
+                                                                      arguments: {
+                                                                        'date':
+                                                                            date
+                                                                      });
+                                                                } else {
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(const SnackBar(
+                                                                          content:
+                                                                              Text('Please be inside the office premesis to sign')));
+                                                                }
                                                               } else {
                                                                 ScaffoldMessenger.of(
                                                                         context)
                                                                     .showSnackBar(const SnackBar(
                                                                         content:
-                                                                            Text('Please be inside the office premesis to sign')));
+                                                                            Text('You can only sign during lunch hours')));
                                                               }
                                                             } else {
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      const SnackBar(
-                                                                          content:
-                                                                              Text('You can only sign during lunch hours')));
+                                                              Navigator.pop(
+                                                                  context);
+                                                              provider.setNotOptedDatesWithReason(
+                                                                  dates: [
+                                                                    date
+                                                                        as DateTime
+                                                                  ],
+                                                                  reason:
+                                                                      notOptController
+                                                                          .text);
+                                                              datesController
+                                                                      .selectedDate =
+                                                                  null;
                                                             }
-                                                          } else {
-                                                            Navigator.pop(
-                                                                context);
-                                                            provider.setNotOptedDatesWithReason(
-                                                                dates: [
-                                                                  date
-                                                                      as DateTime
-                                                                ],
-                                                                reason:
-                                                                    notOptController
-                                                                        .text);
-                                                            datesController
-                                                                    .selectedDate =
-                                                                null;
-                                                          }
                                                           }
                                                         },
                                                         color: MaterialStatePropertyAll(
@@ -615,9 +645,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     return RadioListTile<int>(
         title: Text(text),
         value: value,
-        groupValue:
-            Provider.of<HomeStatusProvider>(context, listen: true)
-                .getRadioValue,
+        groupValue: Provider.of<HomeStatusProvider>(context, listen: true)
+            .getRadioValue,
         onChanged: (value) {
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setRadioValue(value);

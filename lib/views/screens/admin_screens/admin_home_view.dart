@@ -91,8 +91,8 @@ class AdminHomePage extends StatelessWidget {
                               height: 10,
                               onTap: () =>
                                   FirebaseAuthRepo().signOutNow().then((value) {
-                                    sharedPreferences
-                                        .setString("islogged", 'false');
+                                    sharedPreferences.setString(
+                                        "islogged", 'false');
                                     Navigator.pushNamedAndRemoveUntil(
                                         context,
                                         RouteManagement.loginPage,
@@ -227,7 +227,8 @@ class AdminHomePage extends StatelessWidget {
 
   Future<void> sendMail(DateTime date, BuildContext context) async {
     List<Map<String, dynamic>> empData =
-        Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpData;
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+            .getAllEmpData;
     Uint8List? imagebytes =
         Provider.of<UserDataProvider>(context, listen: false).signImage;
     print(imagebytes);

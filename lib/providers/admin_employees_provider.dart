@@ -21,11 +21,12 @@ class AdminEmployeesProvider extends ChangeNotifier {
   }
 
   Future<void> setEmpData() async {
-    _empData = await _db.readEmployees();
+    _empData = await _db.readUsers();
+    print(_empData);
     notifyListeners();
   }
 
-  List<Map<String, dynamic>> get getEmpData => _empData;
+  List<Map<String, dynamic>> get getAllEmpData => _empData;
   List<dynamic> get getEmpList => empList;
   get isSearching => _isSearching;
 }

@@ -4,7 +4,6 @@ import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
-import 'package:meals_management/providers/employee_lunch_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +30,6 @@ void main() async {
           create: (context) => AuthenticationProvider()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
           create: (context) => AdminEmployeesProvider()),
-      ChangeNotifierProvider<EmployeeLunchStatusProvider>(
-          create: (context) => EmployeeLunchStatusProvider()),
       ChangeNotifierProvider<HomeStatusProvider>(
           create: (context) => HomeStatusProvider()),
     ],
