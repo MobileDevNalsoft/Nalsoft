@@ -14,7 +14,7 @@ class UserDataProvider extends ChangeNotifier {
   List<dynamic> _holidays = [];
   Uint8List? signImage;
 
-  
+  List<dynamic> get getHolidays=>_holidays;
   String? get getUsername => _user!.userName;
   bool? get getIsAdmin => _user!.isAdmin;
   String? get getFloor => _user!.floor;

@@ -100,7 +100,6 @@ class UpdateLunchStatus extends StatelessWidget {
                       return SfDateRangePicker(
                         enablePastDates: false,
                         controller: datesController,
-                        enablePastDates: false,
                         // toggleDaySelection: true,
 
                         selectionColor: Colors.deepPurple.shade200,
