@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -137,10 +141,37 @@ class _PreviewState extends State<Preview> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                                height: 100,
-                                width: 120,
-                                color: Colors.white,
-                                child: Image(image: NetworkImage(Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()]),)),
+                              height: 100,
+                              width: 120,
+                              color: Colors.white,
+                              child: FutureBuilder<Uint8List>(
+                                future: getTemporaryDirectory().then((dir) =>
+                                    File('${dir.path}/cached_image.jpg')
+                                        .readAsBytes()),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Image.memory(snapshot.data!);
+                                  } else {
+                                    return Center(
+                                        child: SpinKitCircle(color: Colors.blue, size: 50.0),);
+                                  }
+                                },
+                              ),
+                              // child: Image.memory(getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg').readAsBytes()) as Uint8List ),
+                              // child: Image.network(
+                              //    Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
+                              //    loadingBuilder:
+                              //       (context, child, loadingProgress) {
+                              //     if (loadingProgress == null) {
+                              //       print(child);
+                              //       return child;
+                              //     }
+                              //     return const Center(
+                              //       child:SpinKitCircle(color: Colors.blue, size: 50.0),
+                              //     );
+                              //   },
+                              // )
+                            ),
                             const SizedBox(
                               width: 20,
                             ),

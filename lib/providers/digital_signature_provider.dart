@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/repositories/signature_repo.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SignatureProvider extends ChangeNotifier {
   final SignatureRepo _signRepo = SignatureRepo();
@@ -14,6 +16,14 @@ class SignatureProvider extends ChangeNotifier {
     _imagebytes = pngBytes;
     await _signRepo.uploadImageToDb(pngBytes, _auth.currentUser!.uid,
         DateTime.now().toString().substring(0, 10));
+  // final url = await setSignatureUrl();
+  // final bytes = response.bodyBytes;
+  // get
+  // final file = await getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg'));
+  // await file.writeAsBytes(url);
+
+// Load from cache
+// Image.memory(bytes);
   }
 
   Future<void> setSignatureUrl() async {

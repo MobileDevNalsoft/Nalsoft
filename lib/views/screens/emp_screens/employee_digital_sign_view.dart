@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
@@ -96,6 +98,10 @@ class DigitalSignView extends StatelessWidget {
                                       listen: false)
                                   .setOptedDateWithURL(date: date!, url: signatureProvider.getURL);
                                 Provider.of<UserDataProvider>(context, listen: false).fetchImageAndConvert(signatureProvider.getURL);
+                                var bytes =  pngBytes;
+                                final file = await getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg'));
+                                await file.writeAsBytes(bytes);
+
                                 Navigator.pushNamed(
                                     context, RouteManagement.previewPage);
                               }
