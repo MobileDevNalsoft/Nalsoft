@@ -11,7 +11,7 @@ class UserDataProvider extends ChangeNotifier {
   UserModel? _user;
   Map<String, dynamic> _optedDateswithURL = {};
   Map<String, dynamic> _notOptedDatesWithReasons = {};
-  List<DateTime> _unSignedDates = [];
+  List<dynamic> _holidays = [];
   Uint8List? signImage;
 
   // getting user data from firestore collection
@@ -53,6 +53,10 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setHolidays() async {
+    _holidays = await _db.readHolidays();
+  }
+
   Future<Uint8List?> fetchImageAndConvert(String imageUrl) async {
     final response = await http.get(Uri.parse(imageUrl));
 
@@ -70,6 +74,7 @@ class UserDataProvider extends ChangeNotifier {
   String? get getEmpID => _user!.employee_id;
   Map<String, dynamic> get getOptedWithURL => _optedDateswithURL;
   Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
+  List<dynamic> get getHolidays => _holidays;
 
   // pushes date to db to opted or notOpted category
   void pushDate(

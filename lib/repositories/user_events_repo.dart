@@ -7,6 +7,7 @@ import '../models/user_model.dart';
 class UserEventsRepo {
   final _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   //creates a new user document in firestore collection
   Future<void> createUser(String docID, UserModel userData) async {
     await _db.collection('employees').doc(docID).set(userData.toJson());
@@ -20,12 +21,12 @@ class UserEventsRepo {
   }
 
   Future<void> pushOpted(Map<String, dynamic> dates) async {
-    final ref = await _db.collection('employees').doc(_auth.currentUser!.uid);
+    final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
     ref.update({'opted': dates});
   }
 
   Future<void> pushNotOpted(Map<String, dynamic> dates) async {
-    final ref = await _db.collection('employees').doc(_auth.currentUser!.uid);
+    final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
     ref.update({'notOpted': dates});
   }
 
@@ -34,29 +35,6 @@ class UserEventsRepo {
     return userCollection.docs.map((e) => e.data()).toList();
   }
 
-  //   List<Uint8List?> signImgs = [];
-
-  //   for (var docID in data.keys) {
-  //     if (data[docID]['opted'].contains(
-  //         '${DateTime.now().toString().substring(0, 10)} 00:00:00.000')) {
-  //       if (data[docID]['opted'][0].substring(0, 10) ==
-  //           DateTime.now().toString().substring(0, 10)) {
-  //         print('inside if');
-  //         final ref = FirebaseStorage.instanceFor(
-  //                 bucket: "gs://meals-management-app-37e6a.appspot.com")
-  //             .ref()
-  //             .child(
-  //                 "/signatures/$docID/${DateTime.now().toString().substring(0, 10)}");
-  //         var signImg = await ref.getData();
-  //         signImgs.add(signImg);
-  //       }
-  //     }
-  //   }
-  //   print(data);
-  //   print(signImgs);
-  // }
-
-  //retrieves the user data from firestore collection
   Future<UserModel> readDataWithID({String? empid}) async {
     final snapshot = await _db.collection('employees').get();
     List<Map<String, dynamic>> docids =
@@ -83,6 +61,11 @@ class UserEventsRepo {
   Future<List<Map<String, Map<String, dynamic>>>> readFloors() async {
     final snapshot = await _db.collection('floors').get();
     return snapshot.docs.map((doc) => {doc.id: doc.data()}).toList();
+  }
+
+  Future<List<dynamic>> readHolidays() async {
+    final snapshot = await _db.collection('holidays').doc('holiday_list').get();
+    return snapshot.data()!['dates'];
   }
 
   Future<List<dynamic>> getEmployees({String search = ''}) async {

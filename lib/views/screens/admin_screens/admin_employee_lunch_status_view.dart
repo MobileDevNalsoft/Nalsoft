@@ -30,6 +30,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
 
     String empid = widget.empid!;
 
+    DateTime now = DateTime.now();
+
     Map<String, dynamic> thisEmpData =
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllEmpData
@@ -131,20 +133,37 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                     selectionShape: DateRangePickerSelectionShape.circle,
                     cellBuilder: (BuildContext context,
                         DateRangePickerCellDetails details) {
-                      bool isOpted = thisEmpData['opted']
-                          .keys
-                          .contains(details.date.toString());
-                      bool isNotOpted = thisEmpData['notOpted']
-                          .keys
-                          .contains(details.date.toString());
-                      Color circleColor = isOpted
+                      Color circleColor = thisEmpData['opted']
+                              .keys
+                              .contains(details.date.toString())
                           ? Colors.green.shade200
-                          : isNotOpted
+                          : thisEmpData['notOpted']
+                                  .keys
+                                  .contains(details.date.toString())
                               ? Colors.orange.shade200
-                              : (details.date.weekday == DateTime.sunday ||
-                                      details.date.weekday == DateTime.saturday)
-                                  ? Colors.blueGrey.shade200
-                                  : Colors.white30;
+                              : Provider.of<UserDataProvider>(context, listen: false).getHolidays.contains(
+                                      details.date.toString().substring(0, 10))
+                                  ? Colors.red.shade100
+                                  : (details.date.weekday == DateTime.sunday ||
+                                          details.date.weekday ==
+                                              DateTime.saturday)
+                                      ? Colors.blueGrey.shade200
+                                      : ((details.date.day == now.day &&
+                                                  details.date.month <=
+                                                      now.month &&
+                                                  now.hour >= 15 &&
+                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(
+                                                      '${now.toString().substring(0, 10)} 00:00:00.000') &&
+                                                  !Provider.of<UserDataProvider>(context, listen: false)
+                                                      .getNotOptedWithReasons
+                                                      .keys
+                                                      .contains(
+                                                          '${now.toString().substring(0, 10)} 00:00:00.000')) ||
+                                              (details.date.day < now.day && details.date.month <= now.month) &&
+                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000') &&
+                                                  !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000'))
+                                          ? Colors.grey.shade300
+                                          : Colors.white30;
                       return Padding(
                         padding: const EdgeInsets.all(2),
                         child: Container(
@@ -237,26 +256,26 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
         .getRangeByIndex(1, 1)
         .setText('${thisEmpData['username']}(${thisEmpData['employee_id']})');
 
-    sheet.getRangeByIndex(3, 1).setText('Opted Dates');
-    sheet.getRangeByIndex(3, 2).setText('Signature');
-    sheet.getRangeByIndex(3, 4).setText('NotOpted Dates');
-    sheet.getRangeByIndex(3, 5).setText('Reason');
+    sheet.getRangeByIndex(3, 1).setText('Date');
+    sheet.getRangeByIndex(3, 2).setText('Category');
+    sheet.getRangeByIndex(3, 4).setText('Info');
 
     // Append data
     int rowIndex = 4;
     for (var entry in thisEmpData['opted'].entries) {
       sheet.getRangeByIndex(rowIndex, 1).setText(entry.key.substring(0, 10));
+      sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
       final response = await http.get(Uri.parse(entry.value));
       final excel.Picture picture =
-          sheet.pictures.addStream(rowIndex, 2, response.bodyBytes);
+          sheet.pictures.addStream(rowIndex, 3, response.bodyBytes);
       picture.height = 20;
       picture.width = 50;
       rowIndex++;
     }
-    rowIndex = 4;
     for (var entry in thisEmpData['notOpted'].entries) {
-      sheet.getRangeByIndex(rowIndex, 4).setText(entry.key.substring(0, 10));
-      sheet.getRangeByIndex(rowIndex, 5).setText(entry.value);
+      sheet.getRangeByIndex(rowIndex, 1).setText(entry.key.substring(0, 10));
+      sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
+      sheet.getRangeByIndex(rowIndex, 3).setText(entry.value);
       rowIndex++;
     }
 
@@ -292,13 +311,9 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
 
       // Send email
       await FlutterEmailSender.send(email);
-
-      // Show success message
-      CustomSnackBar.showSnackBar(context, 'Email sent successfully');
     } catch (error) {
       // Handle the error
       print('Error sending email: $error');
-      CustomSnackBar.showSnackBar(context, 'Error sending email: $error');
     }
   }
 }

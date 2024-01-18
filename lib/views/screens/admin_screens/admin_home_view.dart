@@ -1,5 +1,6 @@
 import "dart:io";
 import "dart:typed_data";
+import 'package:http/http.dart' as http;
 import "dart:ui";
 import "package:meals_management/providers/digital_signature_provider.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
@@ -171,13 +172,29 @@ class AdminHomePage extends StatelessWidget {
                           controller: datesController,
                           selectionColor: Colors.deepPurple.shade200,
                           selectionShape: DateRangePickerSelectionShape.circle,
+                          selectableDayPredicate: (date) {
+                            return date.weekday != DateTime.saturday &&
+                                date.weekday != DateTime.sunday &&
+                                !Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getHolidays
+                                    .contains(date.toString().substring(0, 10));
+                          },
                           cellBuilder: (BuildContext context,
                               DateRangePickerCellDetails details) {
-                            Color circleColor = (details.date.weekday ==
-                                        DateTime.sunday ||
-                                    details.date.weekday == DateTime.saturday)
-                                ? Colors.blueGrey.shade200
-                                : Colors.white30;
+                            Color circleColor = Provider.of<UserDataProvider>(
+                                        context,
+                                        listen: false)
+                                    .getHolidays
+                                    .contains(details.date
+                                        .toString()
+                                        .substring(0, 10))
+                                ? Colors.red.shade100
+                                : (details.date.weekday == DateTime.sunday ||
+                                        details.date.weekday ==
+                                            DateTime.saturday)
+                                    ? Colors.blueGrey.shade200
+                                    : Colors.white30;
                             return Padding(
                               padding: const EdgeInsets.all(2),
                               child: Container(
@@ -229,9 +246,6 @@ class AdminHomePage extends StatelessWidget {
     List<Map<String, dynamic>> empData =
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllEmpData;
-    Uint8List? imagebytes =
-        Provider.of<UserDataProvider>(context, listen: false).signImage;
-    print(imagebytes);
 
     final dir = await getExternalStorageDirectory();
 
@@ -240,6 +254,10 @@ class AdminHomePage extends StatelessWidget {
 
     // Add a worksheet to the workbook
     final excel.Worksheet sheet = workbook.worksheets[0];
+
+    excel.Style style = workbook.styles.add('style');
+
+    style.wrapText = true;
 
     // Set the worksheet name
     sheet.name = 'Today\'s Meals opted employees';
@@ -257,16 +275,23 @@ class AdminHomePage extends StatelessWidget {
         sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
         sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
         sheet.getRangeByIndex(rowIndex, 3).setText('Opted');
-        if (imagebytes!.isNotEmpty) {
-          final excel.Picture picture =
-              sheet.pictures.addStream(rowIndex, 4, imagebytes);
-          picture.height = 20;
-          picture.width = 50;
-        }
-      } else {
+        final response =
+            await http.get(Uri.parse(data['opted'][date.toString()]));
+        final excel.Picture picture =
+            sheet.pictures.addStream(rowIndex, 4, response.bodyBytes);
+        picture.height = 20;
+        picture.width = 50;
+      } else if (data['notOpted'].keys.contains(date.toString())) {
         sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
         sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
         sheet.getRangeByIndex(rowIndex, 3).setText('Not Opted');
+        sheet
+            .getRangeByIndex(rowIndex, 4)
+            .setText(data['notOpted'][date.toString()]);
+      } else {
+        sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
+        sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
+        sheet.getRangeByIndex(rowIndex, 3).setText('UnSigned');
       }
       rowIndex++;
     }
@@ -302,13 +327,9 @@ class AdminHomePage extends StatelessWidget {
 
       // Send email
       await FlutterEmailSender.send(email);
-
-      // Show success message
-      CustomSnackBar.showSnackBar(context, 'Email sent successfully');
     } catch (error) {
       // Handle the error
       print('Error sending email: $error');
-      CustomSnackBar.showSnackBar(context, 'Error sending email: $error');
     }
   }
 }

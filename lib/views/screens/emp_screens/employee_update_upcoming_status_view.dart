@@ -52,7 +52,7 @@ class UpdateLunchStatus extends StatelessWidget {
               height: size.height * 0.01,
             ),
             const Text(
-              'How many days are you not opting for lunch?',
+              'Select Category :',
               style: TextStyle(fontSize: 13),
             ),
             DropdownButton<String>(
@@ -96,24 +96,54 @@ class UpdateLunchStatus extends StatelessWidget {
                     Consumer<UserDataProvider>(
                         builder: (context, provider, child) {
                       return SfDateRangePicker(
+                        enablePastDates: false,
                         controller: datesController,
                         selectionColor: Colors.deepPurple.shade200,
                         selectionShape: DateRangePickerSelectionShape.circle,
+                        selectableDayPredicate: (date) {
+                          return date.weekday != DateTime.saturday &&
+                              date.weekday != DateTime.sunday &&
+                              ((date.year == now.year &&
+                                      date.month == now.month &&
+                                      date.day > now.day) ||
+                                  (date.year == now.year &&
+                                      date.month > now.month)) &&
+                              !provider.getHolidays
+                                  .contains(date.toString().substring(0, 10));
+                        },
                         cellBuilder: (BuildContext context,
                             DateRangePickerCellDetails details) {
-                          bool isOpted = provider.getOptedWithURL.keys
-                              .contains(details.date.toString());
-                          bool isNotOpted = provider.getNotOptedWithReasons.keys
-                              .contains(details.date.toString());
-                          Color circleColor = isOpted
+                          Color circleColor = provider.getOptedWithURL.keys
+                                  .contains(details.date.toString())
                               ? Colors.green.shade200
-                              : isNotOpted
+                              : provider.getNotOptedWithReasons.keys
+                                      .contains(details.date.toString())
                                   ? Colors.orange.shade200
-                                  : (details.date.weekday == DateTime.sunday ||
-                                          details.date.weekday ==
-                                              DateTime.saturday)
-                                      ? Colors.blueGrey.shade200
-                                      : Colors.white30;
+                                  : provider.getHolidays.contains(details.date
+                                          .toString()
+                                          .substring(0, 10))
+                                      ? Colors.red.shade100
+                                      : (details.date.weekday ==
+                                                  DateTime.sunday ||
+                                              details.date.weekday ==
+                                                  DateTime.saturday)
+                                          ? Colors.blueGrey.shade200
+                                          : ((details.date.day == now.day &&
+                                                      details.date.month <=
+                                                          now.month &&
+                                                      now.hour >= 15 &&
+                                                      !Provider.of<UserDataProvider>(context, listen: false)
+                                                          .getOptedWithURL
+                                                          .keys
+                                                          .contains(
+                                                              '${now.toString().substring(0, 10)} 00:00:00.000') &&
+                                                      !Provider.of<UserDataProvider>(context, listen: false)
+                                                          .getNotOptedWithReasons
+                                                          .keys
+                                                          .contains('${now.toString().substring(0, 10)} 00:00:00.000')) ||
+                                                  (details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000') && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains('${now.toString().substring(0, 10)} 00:00:00.000'))
+                                              ? Colors.grey.shade300
+                                              : Colors.white30;
                           return Padding(
                             padding: const EdgeInsets.all(2),
                             child: Container(
@@ -168,16 +198,11 @@ class UpdateLunchStatus extends StatelessWidget {
                                   .getReason ==
                               'Multiple days') {
                             List<DateTime> datesList = dates as List<DateTime>;
-                            if (datesList
-                                    .map((e) => e.weekday)
-                                    .toList()
-                                    .contains(6) ||
-                                datesList
-                                    .map((e) => e.weekday)
-                                    .toList()
-                                    .contains(7)) {
-                              CustomSnackBar.showSnackBar(
-                                  context, 'remove weekoffs from selection');
+                            if (datesList.any((element) => provider
+                                .getNotOptedWithReasons.keys
+                                .contains(element.toString()))) {
+                              CustomSnackBar.showSnackBar(context,
+                                  'Remove NotOptedDates from selection');
                             } else {
                               dialog(context, size, dates);
                             }
@@ -206,6 +231,7 @@ class UpdateLunchStatus extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
+        notOptController.clear();
         if (notOptController.text.isEmpty) {
           Future.delayed(
             Duration.zero,
@@ -321,7 +347,6 @@ class UpdateLunchStatus extends StatelessWidget {
                               }
                             }
                           }
-
                           // else{
                           //   PickerDateRange range = dates as PickerDateRange;
                           //   List<DateTime> rangeList = List.generate(int.parse(range.endDate!.toString().substring(8,10))+1 - int.parse(range.startDate!.toString().substring(8,10)), (index) => range.startDate!.add(Duration(days : index)));
