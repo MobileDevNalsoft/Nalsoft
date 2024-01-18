@@ -20,39 +20,42 @@ class SignatureRepo {
       print("upload done");
 
       //deleting all the signatures other thsn the latest one
-      // final refToDelete = FirebaseStorage.instanceFor(
-      //         app: FirebaseAuth.instance.app,
-      //         bucket: "gs://meals-management-app-37e6a.appspot.com")
-      //     .ref()
-      //     .child("/signatures/$uid");
-      // ListResult refToImageFiles = await refToDelete.listAll();
+      final refToDelete = FirebaseStorage.instanceFor(
+              app: FirebaseAuth.instance.app,
+              bucket: "gs://meals-management-app-37e6a.appspot.com")
+          .ref()
+          .child("/signatures/$uid");
+      ListResult refToImageFiles = await refToDelete.listAll();
 
-      // for (Reference fileRef in refToImageFiles.items) {
-      //   try {
-      //     if (fileRef != ref) {
-      //       await fileRef.delete();
-      //       print("Deleted file: ${fileRef.name}");
-      //     }
-      //   } on FirebaseException catch (e) {
-      //     print("Error deleting file: $e");
-      //   }
-      // }
-      // print("done deleteing");
+      for (Reference fileRef in refToImageFiles.items) {
+        try {
+          if (fileRef != ref) {
+            await fileRef.delete();
+            print("Deleted file: ${fileRef.name}");
+          }
+        } on FirebaseException catch (e) {
+          print("Error deleting file: $e");
+        }
+      }
+      print("done deleteing");
 
       return true;
+      // final downloadUrl =  ref.getData();
+      // print("download url $downloadUrl");
     } catch (e) {
       print("Upload error: $e");
       return false;
     }
   }
 
-  Future<String> getSignatureURLFromDb(String uid, String imageName) async {
+  Future<Uint8List?> getSignatureFromDb(String uid, String imageName) async {
     try {
-      String? url = await FirebaseStorage.instanceFor(
+      final ref = FirebaseStorage.instanceFor(
               bucket: "gs://meals-management-app-37e6a.appspot.com")
           .ref()
-          .child("/signatures/$uid/$imageName").getDownloadURL().then((value) => value);
-      return url!;
+          .child("/signatures/$uid/$imageName");
+      print("image data ${ref.getData()}");
+      return await ref.getData();
     } catch (e) {
       print("Download error: $e");
       rethrow;
