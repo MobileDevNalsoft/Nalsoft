@@ -1,16 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 
 class SignatureRepo {
-
-  final _db = FirebaseFirestore.instance;
-
   uploadImageToDb(Uint8List imageBytes, String uid, String imageName) async {
     try {
       final ref = FirebaseStorage.instanceFor(
@@ -52,14 +48,14 @@ class SignatureRepo {
     }
   }
 
-  Future<String> getSignatureURLFromDb(String uid, String imageName) async {
+  Future<Uint8List?> getSignatureFromDb(String uid, String imageName) async {
     try {
       final ref = FirebaseStorage.instanceFor(
               bucket: "gs://meals-management-app-37e6a.appspot.com")
           .ref()
-          .child("/signatures/$uid/$imageName").getDownloadURL();
-      print("image data ${ref}");
-      return ref;
+          .child("/signatures/$uid/$imageName");
+      print("image data ${ref.getData()}");
+      return await ref.getData();
     } catch (e) {
       print("Download error: $e");
       rethrow;
