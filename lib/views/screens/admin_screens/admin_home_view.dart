@@ -68,240 +68,256 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 child: SpinKitCircle(
                     color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
               )
-            :  Constants.admHomeIsLoading ? Center(child: CircularProgressIndicator(),) : Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: double.infinity,
-              height: size.height * 0.13,
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(100, 179, 110, 234),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50),
-                  )),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Consumer<HomeStatusProvider>(
-                    builder: (context, provider, child) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 25, top: 15),
-                        child: Text(
-                          'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
-                          style: const TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    },
-                  ),
-                  const Expanded(child: SizedBox()),
-                  Consumer<HomeStatusProvider>(
-                    builder: (context, provider, child) {
-                      return Provider.of<UserDataProvider>(context,
-                                  listen: false)
-                              .getIsAdmin!
-                          ? Switch(
-                              value: true,
-                              onChanged: (value) {
-                                Navigator.pushReplacementNamed(
-                                    context, RouteManagement.employeeHomePage);
-                              },
-                              activeColor:
-                                  const Color.fromARGB(255, 181, 129, 248),
-                            )
-                          : const SizedBox();
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: PopupMenuButton(
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          PopupMenuItem(
-                              value: 'Sign Out',
-                              height: 10,
-                              onTap: () =>
-                                  FirebaseAuthRepo().signOutNow().then((value) {
-                                    sharedPreferences.setString(
-                                        "islogged", 'false');
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        RouteManagement.loginPage,
-                                        (route) => false);
-                                  }),
-                              child: const Text('Sign Out'))
-                        ];
-                      },
-                      child: const Icon(Icons.power_settings_new_sharp),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: const Color.fromRGBO(236, 230, 240, 100),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    // Navigator.pushNamed(
-                    //     context, RouteManagement.adminEmployees);
-                   Navigator.push(
-  context,
-  PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => EmployeeSearch(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
-    },
-  ),
-);
-
-                  },
+            :  Constants.admHomeIsLoading ? Center(child: CircularProgressIndicator(),) : 
+            Stack(
+              children: [
+                Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                Container(
+                  width: double.infinity,
+                  height: size.height * 0.13,
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(100, 179, 110, 234),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(50),
+                        bottomRight: Radius.circular(50),
+                      )),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Icon(Icons.groups),
-                      SizedBox(
-                        width: size.width * 0.04,
+                      Consumer<HomeStatusProvider>(
+                        builder: (context, provider, child) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 25, top: 15),
+                            child: Text(
+                              'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
+                              style: const TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        },
                       ),
-                      const Expanded(
-                          child: Text("Search employee",
-                              style: TextStyle(
-                                  color: Color.fromRGBO(73, 69, 79, 100)))),
-                      const Icon(Icons.search),
+                      const Expanded(child: SizedBox()),
+                      Consumer<HomeStatusProvider>(
+                        builder: (context, provider, child) {
+                          return Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .getIsAdmin!
+                              ? Switch(
+                                  value: true,
+                                  onChanged: (value) {
+                                    Navigator.pushReplacementNamed(
+                                        context, RouteManagement.employeeHomePage);
+                                  },
+                                  activeColor:
+                                      const Color.fromARGB(255, 181, 129, 248),
+                                )
+                              : const SizedBox();
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: PopupMenuButton(
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              PopupMenuItem(
+                                  value: 'Sign Out',
+                                  height: 10,
+                                  onTap: () =>
+                                      FirebaseAuthRepo().signOutNow().then((value) {
+                                        sharedPreferences.setString(
+                                            "islogged", 'false');
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            RouteManagement.loginPage,
+                                            (route) => false);
+                                      }),
+                                  child: const Text('Sign Out'))
+                            ];
+                          },
+                          child: const Icon(Icons.power_settings_new_sharp),
+                        ),
+                      )
                     ],
                   ),
                 ),
-              ),
-            ),
-            const Text("Select Date",
-                style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100))),
-            SizedBox(
-              width: size.width * 0.95,
-              height: size.height * 0.5,
-              child: Card(
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                elevation: 8,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: size.height * 0.01,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      color: const Color.fromRGBO(236, 230, 240, 100),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 18.0, top: 4),
-                      child: Text('Lunch Calendar'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0, left: 18),
-                      child: Text(
-                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
-                        style: const TextStyle(fontSize: 30),
+                    child: InkWell(
+                      onTap: () {
+                        // Navigator.pushNamed(
+                        //     context, RouteManagement.adminEmployees);
+                       Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => EmployeeSearch(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+                
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.groups),
+                          SizedBox(
+                            width: size.width * 0.04,
+                          ),
+                          const Expanded(
+                              child: Text("Search employee",
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(73, 69, 79, 100)))),
+                          const Icon(Icons.search),
+                        ],
                       ),
                     ),
-                    const Divider(),
-                    Consumer<HomeStatusProvider>(
-                      builder: (context, provider, child) {
-                        return Expanded(
-                            child: SfDateRangePicker(
-                          controller: datesController,
-                          minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                          maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
-                          selectionColor: Colors.deepPurple.shade100,
-                          selectionShape: DateRangePickerSelectionShape.circle,
-                          selectableDayPredicate: (date) {
-                            return date.weekday != DateTime.saturday &&
-                                date.weekday != DateTime.sunday && date.day <= now.day&& date.month <= now.month &&
-                                !Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .getHolidays
-                                    .contains(date.toString().substring(0, 10));
+                  ),
+                ),
+                const Text("Select Date",
+                    style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100))),
+                SizedBox(
+                  width: size.width * 0.95,
+                  height: size.height * 0.5,
+                  child: Card(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    elevation: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: size.height * 0.01,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 18.0, top: 4),
+                          child: Text('Lunch Calendar'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15.0, left: 18),
+                          child: Text(
+                            '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                            style: const TextStyle(fontSize: 30),
+                          ),
+                        ),
+                        const Divider(),
+                        Consumer<HomeStatusProvider>(
+                          builder: (context, provider, child) {
+                            return Expanded(
+                                child: SfDateRangePicker(
+                              controller: datesController,
+                              minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                              maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                              selectionColor: Colors.deepPurple.shade100,
+                              selectionShape: DateRangePickerSelectionShape.circle,
+                              selectableDayPredicate: (date) {
+                                return date.weekday != DateTime.saturday &&
+                                    date.weekday != DateTime.sunday && date.day <= now.day&& date.month <= now.month &&
+                                    !Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .getHolidays
+                                        .contains(date.toString().substring(0, 10));
+                              },
+                              cellBuilder: (BuildContext context,
+                                  DateRangePickerCellDetails details) {
+                                Color circleColor = Provider.of<UserDataProvider>(
+                                            context,
+                                            listen: false)
+                                        .getHolidays
+                                        .contains(details.date
+                                            .toString()
+                                            .substring(0, 10))
+                                    ? Colors.red.shade100
+                                    : (details.date.weekday == DateTime.sunday ||
+                                            details.date.weekday ==
+                                                DateTime.saturday)
+                                        ? Colors.blueGrey.shade200
+                                        : Colors.white30;
+                                return Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Container(
+                                    width: details.bounds.width / 2,
+                                    height: details.bounds.width / 2,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: circleColor,
+                                    ),
+                                    child: Center(
+                                        child: Text(details.date.day.toString())),
+                                  ),
+                                );
+                              },
+                              showActionButtons: true,
+                              allowViewNavigation: true,
+                              selectionMode: DateRangePickerSelectionMode.single,
+                              showNavigationArrow: true,
+                              confirmText: 'Send Mail',
+                              cancelText: 'Clear Selection',
+                              onSubmit: (date) {
+                                if (date != null) {
+                                  date = date as DateTime;
+                                  sendMail(date, context);
+                                } else {
+                                  CustomSnackBar.showSnackBar(
+                                      context, 'please select a date',Colors.red);
+                                }
+                              },
+                              onCancel: () {
+                                datesController.selectedDate = null;
+                                datesController.selectedDates = null;
+                              },
+                            ));
                           },
-                          cellBuilder: (BuildContext context,
-                              DateRangePickerCellDetails details) {
-                            Color circleColor = Provider.of<UserDataProvider>(
-                                        context,
-                                        listen: false)
-                                    .getHolidays
-                                    .contains(details.date
-                                        .toString()
-                                        .substring(0, 10))
-                                ? Colors.red.shade100
-                                : (details.date.weekday == DateTime.sunday ||
-                                        details.date.weekday ==
-                                            DateTime.saturday)
-                                    ? Colors.blueGrey.shade200
-                                    : Colors.white30;
-                            return Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Container(
-                                width: details.bounds.width / 2,
-                                height: details.bounds.width / 2,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: circleColor,
-                                ),
-                                child: Center(
-                                    child: Text(details.date.day.toString())),
-                              ),
-                            );
-                          },
-                          showActionButtons: true,
-                          allowViewNavigation: true,
-                          selectionMode: DateRangePickerSelectionMode.single,
-                          showNavigationArrow: true,
-                          confirmText: 'Send Mail',
-                          cancelText: 'Clear Selection',
-                          onSubmit: (date) {
-                            if (date != null) {
-                              date = date as DateTime;
-                              sendMail(date, context);
-                            } else {
-                              CustomSnackBar.showSnackBar(
-                                  context, 'please select a date',Colors.red);
-                            }
-                          },
-                          onCancel: () {
-                            datesController.selectedDate = null;
-                            datesController.selectedDates = null;
-                          },
-                        ));
-                      },
+                        ),
+                      ],
                     ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _options(
+                                    color: Colors.red.shade100,
+                                    text: const Text(
+                                      'Holiday',
+                                      style: TextStyle(fontSize: 10),
+                                    ))
                   ],
                 ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _options(
-                                color: Colors.red.shade100,
-                                text: const Text(
-                                  'Holiday',
-                                  style: TextStyle(fontSize: 10),
-                                ))
+                Image.asset("assets/images/food.png")
+                          ],
+                        ),
+               if (Provider.of<AdminEmployeesProvider>(context,listen: true).isMailLoading) Positioned( 
+                  top: 0,
+                  left:0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.black38,
+                    child: SpinKitCircle(color:  Color.fromARGB(255, 185, 147, 255),),
+                  ),
+                ),
               ],
             ),
-            Image.asset("assets/images/food.png")
-          ],
-        ),
       ),
     );
   }
 
   Future<void> sendMail(DateTime date, BuildContext context) async {
+    Provider.of<AdminEmployeesProvider>(context,listen: false).isMailLoading=true;
     List<Map<String, dynamic>> empData =
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllEmpData;
@@ -366,7 +382,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
       // Print debug information
       print('File saved at: $path');
 
-      // Check email permissions
+      // Check email permissions  
       var status = await Permission.storage.status;
       if (status.isDenied) {
         await Permission.storage.request();
@@ -383,9 +399,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
-
+      Provider.of<AdminEmployeesProvider>(context,listen: false).isMailLoading=false;
       // Send email
       await FlutterEmailSender.send(email);
+      
     } catch (error) {
       // Handle the error
       print('Error sending email: $error');
