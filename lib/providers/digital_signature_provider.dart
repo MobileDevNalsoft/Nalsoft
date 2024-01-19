@@ -6,7 +6,7 @@ import 'package:meals_management/repositories/signature_repo.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SignatureProvider extends ChangeNotifier {
-  final SignatureRepo _signRepo = Sign  atureRepo();
+  final SignatureRepo _signRepo = SignatureRepo();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Uint8List? _imagebytes;
