@@ -297,7 +297,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                     MainAxisAlignment
                                                         .spaceEvenly,
                                                 children: [
-                                                  if(now.hour == 12 && now.minute >= 30)
+                                                  // if(now.hour >= 10)
+                                                  if((now.hour == 12 && now.minute >= 30) || (now.hour>=13 && now.hour<=15))
                                                     _radioButtons(
                                                         context: context,
                                                         text: 'Opt and Sign',
