@@ -1,4 +1,5 @@
 import "dart:io";
+import "package:flutter_spinkit/flutter_spinkit.dart";
 import 'package:http/http.dart' as http;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
@@ -66,175 +67,191 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                 bottomLeft: Radius.circular(25),
                 bottomRight: Radius.circular(25))),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.all(24.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Employee name",
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Employee name",
+                          style: TextStyle(color: Colors.black54, fontSize: 16),
+                        ),
+                        Text(
+                          "Department",
+                          style: TextStyle(color: Colors.black54, fontSize: 16),
+                        ),
+                        Text(
+                          "Floor",
+                          style: TextStyle(color: Colors.black54, fontSize: 16),
+                        )
+                      ],
                     ),
-                    Text(
-                      "Department",
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                    Column(
+                      children: [Text(":"), Text(":"), Text(":")],
                     ),
-                    Text(
-                      "Floor",
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(thisEmpData['username'],
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold)),
+                        Text(thisEmpData['department'],
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold)),
+                        Text(thisEmpData['floor'],
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold))
+                      ],
                     )
                   ],
                 ),
-                Column(
-                  children: [Text(":"), Text(":"), Text(":")],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(thisEmpData['username'],
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold)),
-                    Text(thisEmpData['department'],
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold)),
-                    Text(thisEmpData['floor'],
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold))
-                  ],
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: size.height * 0.45,
-            width: size.width * 0.95,
-            child: Card(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              elevation: 8,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: SfDateRangePicker(
-                      minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                      maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
-                      selectionColor: Colors.deepPurple.shade100,
-                      selectionShape: DateRangePickerSelectionShape.circle,
-                      showActionButtons: true,
-                      selectableDayPredicate: (date) {
-                        return Provider.of<UserDataProvider>(context,
-                                listen: false)
-                            .getNotOptedWithReasons
-                            .keys
-                            .contains(date.toString());
-                      },
-                      cellBuilder: (BuildContext context,
-                          DateRangePickerCellDetails details) {
-                        Color circleColor = thisEmpData['opted']
+              ),
+              SizedBox(
+                height: size.height * 0.45,
+                width: size.width * 0.95,
+                child: Card(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  elevation: 8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SfDateRangePicker(
+                          minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                          maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                          selectionColor: Colors.deepPurple.shade100,
+                          selectionShape: DateRangePickerSelectionShape.circle,
+                          showActionButtons: true,
+                          selectableDayPredicate: (date) {
+                            return Provider.of<UserDataProvider>(context,
+                                    listen: false)
+                                .getNotOptedWithReasons
                                 .keys
-                                .contains(details.date.toString())
-                            ? Colors.green.shade200
-                            : thisEmpData['notOpted']
+                                .contains(date.toString());
+                          },
+                          cellBuilder: (BuildContext context,
+                              DateRangePickerCellDetails details) {
+                            Color circleColor = thisEmpData['opted']
                                     .keys
                                     .contains(details.date.toString())
-                                ? Colors.orange.shade200
-                                : Provider.of<UserDataProvider>(context, listen: false)
-                                        .getHolidays
-                                        .contains(details.date
-                                            .toString()
-                                            .substring(0, 10))
-                                    ? Colors.red.shade100
-                                    : (details.date.weekday == DateTime.sunday ||
-                                            details.date.weekday ==
-                                                DateTime.saturday)
-                                        ? Colors.blueGrey.shade200
-                                        : ((details.date.day == now.day &&
-                                                    details.date.month <=
-                                                        now.month &&
-                                                    now.hour >= 15 &&
-                                                    !Provider.of<UserDataProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .getOptedWithURL
-                                                        .keys
-                                                        .contains(details.date.toString()) &&
-                                                    !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
-                                            ? Colors.grey.shade300
-                                            : Colors.white30;
-                        return Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Container(
-                              width: details.bounds.width / 2,
-                              height: details.bounds.width / 2,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: circleColor,
-                              ),
-                              child: Center(
-                                  child: Text(details.date.day.toString())),
-                            ));
-                      },
-                      allowViewNavigation: true,
-                      selectionMode: DateRangePickerSelectionMode.single,
-                      showNavigationArrow: true,
-                      onSelectionChanged:
-                          (dateRangePickerSelectionChangedArgs) {
-                        if (thisEmpData['notOpted'].keys.contains(
-                            dateRangePickerSelectionChangedArgs.value
-                                .toString())) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: SizedBox(
-                                    width: size.width * 0.6,
-                                    height: size.height * 0.08,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Reason',
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        SizedBox(
-                                          height: size.height * 0.02,
-                                        ),
-                                        Text(thisEmpData['notOpted'][
-                                            dateRangePickerSelectionChangedArgs
-                                                .value
-                                                .toString()]!),
-                                      ],
-                                    )),
+                                ? Colors.green.shade200
+                                : thisEmpData['notOpted']
+                                        .keys
+                                        .contains(details.date.toString())
+                                    ? Colors.orange.shade200
+                                    : Provider.of<UserDataProvider>(context, listen: false)
+                                            .getHolidays
+                                            .contains(details.date
+                                                .toString()
+                                                .substring(0, 10))
+                                        ? Colors.red.shade100
+                                        : (details.date.weekday ==
+                                                    DateTime.sunday ||
+                                                details.date.weekday ==
+                                                    DateTime.saturday)
+                                            ? Colors.blueGrey.shade200
+                                            : ((details.date.day == now.day &&
+                                                        details.date.month <=
+                                                            now.month &&
+                                                        now.hour >= 15 &&
+                                                        !Provider.of<UserDataProvider>(context, listen: false)
+                                                            .getOptedWithURL
+                                                            .keys
+                                                            .contains(details.date.toString()) &&
+                                                        !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
+                                                    ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
+                                                ? Colors.grey.shade300
+                                                : Colors.white30;
+                            return Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: Container(
+                                  width: details.bounds.width / 2,
+                                  height: details.bounds.width / 2,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: circleColor,
+                                  ),
+                                  child: Center(
+                                      child: Text(details.date.day.toString())),
+                                ));
+                          },
+                          allowViewNavigation: true,
+                          selectionMode: DateRangePickerSelectionMode.single,
+                          showNavigationArrow: true,
+                          onSelectionChanged:
+                              (dateRangePickerSelectionChangedArgs) {
+                            if (thisEmpData['notOpted'].keys.contains(
+                                dateRangePickerSelectionChangedArgs.value
+                                    .toString())) {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: SizedBox(
+                                        width: size.width * 0.6,
+                                        height: size.height * 0.08,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Reason',
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                            SizedBox(
+                                              height: size.height * 0.02,
+                                            ),
+                                            Text(thisEmpData['notOpted'][
+                                                dateRangePickerSelectionChangedArgs
+                                                    .value
+                                                    .toString()]!),
+                                          ],
+                                        )),
+                                  );
+                                },
                               );
-                            },
-                          );
-                        }
-                      },
-                      cancelText: '',
-                      confirmText: 'Send Mail',
-                      onSubmit: (p0) => sendMail(context, thisEmpData),
-                    ),
+                            }
+                          },
+                          cancelText: '',
+                          confirmText: 'Send Mail',
+                          onSubmit: (p0) => sendMail(context, thisEmpData),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ),
+              Image.asset("assets/images/food.png"),
+            ],
+          ),
+          if (Provider.of<AdminEmployeesProvider>(context, listen: true).isMailLoading)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.black38,
+                child: SpinKitCircle(
+                  color: Color.fromARGB(255, 185, 147, 255),
+                ),
               ),
             ),
-          ),
-          Image.asset("assets/images/food.png"),
         ],
       ),
     ));
@@ -242,6 +259,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
 
   Future<void> sendMail(
       BuildContext context, Map<String, dynamic> thisEmpData) async {
+    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading = true;
     final dir = await getExternalStorageDirectory();
 
     DateTime now = DateTime.now();
@@ -354,7 +372,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
-
+      Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading = false;
       // Send email
       await FlutterEmailSender.send(email);
     } catch (error) {
