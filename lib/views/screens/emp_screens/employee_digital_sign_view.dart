@@ -111,7 +111,8 @@ class DigitalSignView extends StatelessWidget {
                                 backgroundColor: MaterialStatePropertyAll(
                                     Colors.deepPurpleAccent.shade200),
                                 elevation: MaterialStatePropertyAll(5)),
-                          ):SpinKitCircle(size: 50,color: Colors.blue,);
+                          ):SpinKitCircle(size: 50, color:Color.fromARGB(
+                                              255, 179, 157, 219),);
                         },
                       ))
                 ],

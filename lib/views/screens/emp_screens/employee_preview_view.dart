@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -139,6 +140,12 @@ class _PreviewState extends State<Preview> {
                               height: 100,
                               width: 120,
                               color: Colors.white,
+                              child:  CachedNetworkImage(
+  imageUrl: Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
+  placeholder: (context, url) =>  SpinKitCircle(color:  Color.fromARGB(
+                                              255, 179, 157, 219), size: 50.0),),
+  // errorWidget: (context, url, error) => Icon(Icons.error),
+
                               // child: FutureBuilder<Uint8List>(
                               //   future: getTemporaryDirectory().then((dir) =>
                               //       File('${dir.path}/cached_image.jpg')
@@ -153,26 +160,26 @@ class _PreviewState extends State<Preview> {
                               //   },
                               // ),
                               // child: Image.memory(getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg').readAsBytes()) as Uint8List ),
-                              child: Image.network(
-                                Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .getOptedWithURL[DateTime(now.year,
-                                        now.month, now.day, 0, 0, 0, 0)
-                                    .toString()],
-                                loadingBuilder: (BuildContext context,
-                                    Widget child, loadingProgress) {
-                                  if (loadingProgress != null) {
-                                    print(loadingProgress);
-                                    return Center(
-                                      child: SpinKitCircle(
-                                          color: Color.fromARGB(
-                                              255, 179, 157, 219),
-                                          size: 50.0),
-                                    );
-                                  }
-                                  return child;
-                                },
-                              ),
+                              // child: Image.network(
+                              //   Provider.of<UserDataProvider>(context,
+                              //           listen: false)
+                              //       .getOptedWithURL[DateTime(now.year,
+                              //           now.month, now.day, 0, 0, 0, 0)
+                              //       .toString()],
+                              //   loadingBuilder: (BuildContext context,
+                              //       Widget child, loadingProgress) {
+                              //     if (loadingProgress != null) {
+                              //       print(loadingProgress);
+                              //       return Center(
+                              //         child: SpinKitCircle(
+                              //             color: Color.fromARGB(
+                              //                 255, 179, 157, 219),
+                              //             size: 50.0),
+                              //       );
+                              //     }
+                              //     return child;
+                              //   },
+                              // ),
                               // child: Image.network(
                               //    Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
                               //    loadingBuilder:
