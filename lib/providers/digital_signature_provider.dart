@@ -27,7 +27,7 @@ class SignatureProvider extends ChangeNotifier {
   }
 
   Future<void> setSignatureUrl() async {
-    _url = await _signRepo.getSignatureURLFromDb(
+    _url = await _signRepo.getSignatureFromDb(
         _auth.currentUser!.uid, DateTime.now().toString().substring(0, 10));
     notifyListeners();
   }

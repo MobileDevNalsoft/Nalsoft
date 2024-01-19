@@ -48,14 +48,14 @@ class SignatureRepo {
     }
   }
 
-  Future<Uint8List?> getSignatureFromDb(String uid, String imageName) async {
+  Future<String?> getSignatureFromDb(String uid, String imageName) async {
     try {
       final ref = FirebaseStorage.instanceFor(
               bucket: "gs://meals-management-app-37e6a.appspot.com")
           .ref()
           .child("/signatures/$uid/$imageName");
       print("image data ${ref.getData()}");
-      return await ref.getData();
+      return await ref.getDownloadURL();
     } catch (e) {
       print("Download error: $e");
       rethrow;
