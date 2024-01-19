@@ -292,6 +292,8 @@ class AdminHomePage extends StatelessWidget {
   Future<void> sendMail(DateTime date, BuildContext context) async {
     Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
         true;
+    await Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .setAllEmpData();
     List<Map<String, dynamic>> empData =
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllEmpData;
@@ -344,6 +346,10 @@ class AdminHomePage extends StatelessWidget {
       }
       rowIndex++;
     }
+
+    sheet.autoFitColumn(1);
+    sheet.autoFitColumn(2);
+    sheet.autoFitColumn(3);
 
     try {
       // Save the workbook to external storage

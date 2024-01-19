@@ -398,8 +398,6 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
       }
     }
 
-    sortedMap.forEach((key, value) async {});
-
     sheet.autoFitColumn(1);
     sheet.autoFitColumn(2);
     sheet.autoFitColumn(3);
