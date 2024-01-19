@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/firebase_auth_repo.dart';
@@ -9,7 +8,6 @@ import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -289,7 +287,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                   listen: true)
                                                               .getRadioValue ==
                                                           2
-                                                      ? size.height * 0.36
+                                                      ? size.height * 0.3
                                                       : size.height * 0.15
                                                   : size.height * 0.15,
                                               child: Column(
