@@ -58,26 +58,3 @@ class RouteManagement {
     }
   }
 }
-
-/*
-static Route<dynamic>? generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case '/login_page':
-        return MaterialPageRoute(builder: (_) => LoginView());
-      case '/admin_homepage':
-        return MaterialPageRoute(builder: (_) => AdminHomePage());
-      case '/emp_homepage':
-        return MaterialPageRoute(builder: (_) => EmployeeHomeView());
-      case '/admin_employees':
-        return MaterialPageRoute(builder: (_) => EmployeeSearch());
-      
-      case '/register':
-        return MaterialPageRoute(builder: (_) => SignUpView());
-      
-      
-      case '/preview':
-        return MaterialPageRoute(builder: (_) => Preview());
-      default:
-        return null;
-    }
-*/

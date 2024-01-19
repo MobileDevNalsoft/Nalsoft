@@ -22,37 +22,12 @@ import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import '../../../providers/home_status_provider.dart';
 import '../../../repositories/firebase_auth_repo.dart';
 
-class AdminHomePage extends StatefulWidget {
+class AdminHomePage extends StatelessWidget {
   AdminHomePage({super.key});
 
-  @override
-  State<AdminHomePage> createState() => _AdminHomePageState();
-}
-
-class _AdminHomePageState extends State<AdminHomePage> {
   late SharedPreferences sharedPreferences;
 
   DateTime now = DateTime.now();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    initData();
-  }
-
-  Future<void> initData() async{
-    try{
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpList();
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpData();
-    }finally{
-      setState(() {
-        Constants.admHomeIsLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +38,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Constants.admHomeIsLoading
-            ? const Center(
-                child: SpinKitCircle(
-                    color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
-              )
-            :  Constants.admHomeIsLoading ? Center(child: CircularProgressIndicator(),) : Column(
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -154,19 +124,20 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   onTap: () {
                     // Navigator.pushNamed(
                     //     context, RouteManagement.adminEmployees);
-                   Navigator.push(
-  context,
-  PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => EmployeeSearch(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
-    },
-  ),
-);
-
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            EmployeeSearch(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
                   },
                   child: Row(
                     children: [
@@ -216,13 +187,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         return Expanded(
                             child: SfDateRangePicker(
                           controller: datesController,
-                          minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                          minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
                           maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
                           selectionColor: Colors.deepPurple.shade100,
                           selectionShape: DateRangePickerSelectionShape.circle,
                           selectableDayPredicate: (date) {
                             return date.weekday != DateTime.saturday &&
-                                date.weekday != DateTime.sunday && date.day <= now.day&& date.month <= now.month &&
+                                date.weekday != DateTime.sunday &&
+                                date.day <= now.day &&
+                                date.month <= now.month &&
                                 !Provider.of<UserDataProvider>(context,
                                         listen: false)
                                     .getHolidays
@@ -263,13 +236,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           showNavigationArrow: true,
                           confirmText: 'Send Mail',
                           cancelText: 'Clear Selection',
-                          onSubmit: (date) {
+                          onSubmit: (date) async {
                             if (date != null) {
+                              // ignore: use_build_context_synchronously
+                              await Provider.of<AdminEmployeesProvider>(context,
+                                      listen: false)
+                                  .setAllEmpData();
                               date = date as DateTime;
                               sendMail(date, context);
                             } else {
                               CustomSnackBar.showSnackBar(
-                                  context, 'please select a date',Colors.red);
+                                  context, 'please select a date', Colors.red);
                             }
                           },
                           onCancel: () {
@@ -282,17 +259,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ],
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _options(
-                                color: Colors.red.shade100,
-                                text: const Text(
-                                  'Holiday',
-                                  style: TextStyle(fontSize: 10),
-                                ))
-              ],
             ),
             Image.asset("assets/images/food.png")
           ],
@@ -390,17 +356,5 @@ class _AdminHomePageState extends State<AdminHomePage> {
       // Handle the error
       print('Error sending email: $error');
     }
-  }
-
-  Widget _options({required color, required text}) {
-    return Row(
-      children: [
-        Icon(
-          Icons.circle,
-          color: color,
-        ),
-        text,
-      ],
-    );
   }
 }

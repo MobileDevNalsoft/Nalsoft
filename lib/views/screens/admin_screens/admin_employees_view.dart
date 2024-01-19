@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 class EmployeeSearch extends StatefulWidget {
@@ -24,6 +26,18 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
         FocusScope.of(context).requestFocus(_focusNode);
       },
     );
+    initData();
+  }
+
+  Future<void> initData() async {
+    try {
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpList();
+    } finally {
+      setState(() {
+        Constants.empSearchIsLoading = false;
+      });
+    }
   }
 
   @override
@@ -56,7 +70,9 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                 ),
                 child: Row(
                   children: [
-                    IconButton(onPressed: () => Navigator.pop(context),icon: Icon(Icons.arrow_back)),
+                    IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.arrow_back)),
                     SizedBox(
                       width: size.width * 0.06,
                     ),
@@ -109,53 +125,68 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                 : Text(''),
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
-                return provider.empList.length == 0 &&
-                        employeeSearchController.text != 0
-                    ? Expanded(child: Text("No employee found"))
-                    : provider.isSearching
-                        ? CircularProgressIndicator()
-                        : Expanded(
-                            child: Scrollbar(
-                              child: ListView(
-                                children: provider.empList
-                                    .map((item) => Container(
-                                          margin: const EdgeInsets.only(
-                                              left: 10.0,
-                                              right: 10.0,
-                                              bottom: 4.0),
-                                          height: size.height * 0.1,
-                                          child: Card(
-                                            elevation: 3,
-                                            child: TextButton(
-                                              onPressed: () {
-                                                // Provider.of<EmployeeProvider>(context,listen:false).setUid();
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    RouteManagement
-                                                        .employeeLunchStatus,
-                                                    arguments: {
-                                                      'empid': item[1]
-                                                    });
-                                              },
-                                              style: TextButton.styleFrom(
-                                                  alignment:
-                                                      Alignment.centerLeft),
-                                              child: Row(
-                                                children: [
-                                                  Text(item[0]),
-                                                  Expanded(child: SizedBox()),
-                                                  Text(
-                                                    item[1],
+                return Constants.empSearchIsLoading
+                    ? Expanded(
+                        child: SizedBox(
+                          child: const Center(
+                            child: SpinKitCircle(
+                                color: Color.fromARGB(255, 179, 157, 219),
+                                size: 50.0),
+                          ),
+                        ),
+                      )
+                    : provider.empList.length == 0 &&
+                            employeeSearchController.text != 0
+                        ? Expanded(child: Text("No employee found"))
+                        : provider.isSearching
+                            ? const Center(
+                                child: SpinKitCircle(
+                                    color: Color.fromARGB(255, 179, 157, 219),
+                                    size: 50.0),
+                              )
+                            : Expanded(
+                                child: Scrollbar(
+                                  child: ListView(
+                                    children: provider.empList
+                                        .map((item) => Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 10.0,
+                                                  right: 10.0,
+                                                  bottom: 4.0),
+                                              height: size.height * 0.1,
+                                              child: Card(
+                                                elevation: 3,
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    // Provider.of<EmployeeProvider>(context,listen:false).setUid();
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        RouteManagement
+                                                            .employeeLunchStatus,
+                                                        arguments: {
+                                                          'empid': item[1]
+                                                        });
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                      alignment:
+                                                          Alignment.centerLeft),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(item[0]),
+                                                      Expanded(
+                                                          child: SizedBox()),
+                                                      Text(
+                                                        item[1],
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            ),
-                          );
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
+                              );
               },
             ),
             MediaQuery.of(context).viewInsets.bottom == 0

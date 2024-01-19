@@ -20,7 +20,6 @@ class EmployeeHomeView extends StatefulWidget {
 }
 
 class _EmployeeHomeViewState extends State<EmployeeHomeView> {
-
   DateTime now = DateTime.now();
 
   TextEditingController notOptController = TextEditingController();
@@ -40,12 +39,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Future<void> initData() async {
     try {
       sharedPreferences = await SharedPreferences.getInstance();
-      await Provider.of<UserDataProvider>(context, listen: false).getUserFromDB();
-      await Provider.of<HomeStatusProvider>(context, listen: false).setFloorDetails();
-      await Provider.of<HomeStatusProvider>(context, listen: false).checkRadius();
+      await Provider.of<UserDataProvider>(context, listen: false)
+          .getUserFromDB();
+      await Provider.of<HomeStatusProvider>(context, listen: false)
+          .setFloorDetails();
+      await Provider.of<HomeStatusProvider>(context, listen: false)
+          .checkRadius();
       await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
-      Provider.of<UserDataProvider>(context, listen: false).setNotOptedDatesWithReason();
-      Provider.of<UserDataProvider>(context, listen: false).setOptedDateWithURL();
+      Provider.of<UserDataProvider>(context, listen: false)
+          .setNotOptedDatesWithReason();
+      Provider.of<UserDataProvider>(context, listen: false)
+          .setOptedDateWithURL();
     } finally {
       setState(() {
         Constants.empHomeIsLoading = false;
@@ -242,117 +246,133 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                     showNavigationArrow: true,
                                     onSubmit: (date) {
                                       if (date == null) {
-                                        CustomSnackBar.showSnackBar(context,
-                                            'Please select today' 's date',Colors.red);
-                                      } else if(provider.getNotOptedWithReasons.keys
-                                          .contains(date.toString()) && now.hour < 10){
-                                        removeDialog(context, size, date);
-                                      } else if (provider.getOptedWithURL.keys
+                                        CustomSnackBar.showSnackBar(
+                                            context,
+                                            'Please select today' 's date',
+                                            Colors.red);
+                                      }
+                                      // else if (provider
+                                      //         .getNotOptedWithReasons.keys
+                                      //         .contains(date.toString()) &&
+                                      //     now.hour < 10) {
+                                      //   removeDialog(context, size, date);
+                                      // }
+                                      else if (provider.getOptedWithURL.keys
                                           .contains(date.toString())) {
                                         Navigator.pushNamed(context,
                                             RouteManagement.previewPage);
-                                      } else if (now.hour > 15){
-                                        CustomSnackBar.showSnackBar(context,
-                                            "You cannot update status after 3.00pm",Colors.red);
-                                        }
-                                        else if((now.hour >= 10 && (now.hour < 12 || (now.hour == 12 && now.minute < 30)))){
-                                          CustomSnackBar.showSnackBar(context,
-                                            "Wait till 12.30pm to Sign",Colors.red);
-                                        }
-                                        else {
+                                      } else if ((now.hour > 14 ||
+                                          (now.hour == 14 &&
+                                              now.minute > 30))) {
+                                        CustomSnackBar.showSnackBar(
+                                            context,
+                                            "You cannot update status after 2.30pm",
+                                            Colors.red);
+                                      } else if ((now.hour < 12 ||
+                                          (now.hour == 12 &&
+                                              now.minute < 30))) {
+                                        CustomSnackBar.showSnackBar(
+                                            context,
+                                            "Wait till 12.30pm to Sign",
+                                            Colors.red);
+                                      } else {
                                         notOptController.clear();
                                         showDialog(
                                           context: context,
                                           builder: (context) {
-                                            if (notOptController.text.isEmpty &&
-                                                Provider.of<HomeStatusProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .getRadioValue ==
-                                                    2) {
-                                              Future.delayed(
-                                                Duration.zero,
-                                                () {
-                                                  FocusScope.of(context)
-                                                      .requestFocus(_focusNode);
-                                                },
-                                              );
-                                            }
+                                            // if (notOptController.text.isEmpty &&
+                                            //     Provider.of<HomeStatusProvider>(
+                                            //                 context,
+                                            //                 listen: false)
+                                            //             .getRadioValue ==
+                                            //         2) {
+                                            //   Future.delayed(
+                                            //     Duration.zero,
+                                            //     () {
+                                            //       FocusScope.of(context)
+                                            //           .requestFocus(_focusNode);
+                                            //     },
+                                            //   );
+                                            // }
                                             return AlertDialog(
                                                 content: Container(
                                               width: size.width * 0.6,
-                                              height: now.hour < 10
-                                                  ? Provider.of<HomeStatusProvider>(
-                                                                  context,
-                                                                  listen: true)
-                                                              .getRadioValue ==
-                                                          2
-                                                      ? size.height * 0.3
-                                                      : size.height * 0.15
-                                                  : size.height * 0.15,
+                                              height:
+                                                  // now.hour < 10
+                                                  //     ? Provider.of<HomeStatusProvider>(
+                                                  //                     context,
+                                                  //                     listen: true)
+                                                  //                 .getRadioValue ==
+                                                  //             2
+                                                  //         ? size.height * 0.3
+                                                  //         : size.height * 0.15
+                                                  //     :
+                                                  size.height * 0.15,
                                               child: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
                                                         .spaceEvenly,
                                                 children: [
                                                   // if(now.hour >= 10)
-                                                  if((now.hour == 12 && now.minute >= 30) || (now.hour>=13 && now.hour<=15))
-                                                    _radioButtons(
-                                                        context: context,
-                                                        text: 'Opt and Sign',
-                                                        value: 1),
-                                                  if (now.hour < 10)
-                                                    _radioButtons(
-                                                        context: context,
-                                                        text: 'Not opt',
-                                                        value: 2),
-                                                  if (Provider.of<HomeStatusProvider>(
-                                                              context,
-                                                              listen: true)
-                                                          .getRadioValue ==
-                                                      2)
-                                                    TextFormField(
-                                                      focusNode: _focusNode,
-                                                      controller:
-                                                          notOptController,
-                                                      decoration: InputDecoration(
-                                                          border:
-                                                              const OutlineInputBorder(),
-                                                          hintText:
-                                                              'Reason...',
-                                                          hintStyle:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .black38),
-                                                          errorText: Provider.of<
-                                                                          HomeStatusProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          true)
-                                                                  .getReasonHomeEmpty
-                                                              ? 'reason cannot be empty'
-                                                              : null),
-                                                      maxLines: 2,
-                                                      maxLength: 30,
-                                                      onChanged: (value) {
-                                                        if (value.isEmpty) {
-                                                          Provider.of<HomeStatusProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setReasonHomeEmpty(
-                                                                  true);
-                                                        } else {
-                                                          Provider.of<HomeStatusProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setReasonHomeEmpty(
-                                                                  false);
-                                                        }
-                                                      },
-                                                    ),
-                                                  const SizedBox(
-                                                    height: 12,
-                                                  ),
+                                                  // if ((now.hour == 12 &&
+                                                  //         now.minute >= 30) ||
+                                                  //     (now.hour >= 13 &&
+                                                  //         now.hour <= 15))
+                                                  _radioButtons(
+                                                      context: context,
+                                                      text: 'Opt and Sign',
+                                                      value: 1),
+                                                  // if (now.hour < 10)
+                                                  //   _radioButtons(
+                                                  //       context: context,
+                                                  //       text: 'Not opt',
+                                                  //       value: 2),
+                                                  // if (Provider.of<HomeStatusProvider>(
+                                                  //             context,
+                                                  //             listen: true)
+                                                  //         .getRadioValue ==
+                                                  //     2)
+                                                  //   TextFormField(
+                                                  //     focusNode: _focusNode,
+                                                  //     controller:
+                                                  //         notOptController,
+                                                  //     decoration: InputDecoration(
+                                                  //         border:
+                                                  //             const OutlineInputBorder(),
+                                                  //         hintText: 'Reason...',
+                                                  //         hintStyle:
+                                                  //             const TextStyle(
+                                                  //                 color: Colors
+                                                  //                     .black38),
+                                                  //         errorText: Provider.of<
+                                                  //                         HomeStatusProvider>(
+                                                  //                     context,
+                                                  //                     listen:
+                                                  //                         true)
+                                                  //                 .getReasonHomeEmpty
+                                                  //             ? 'reason cannot be empty'
+                                                  //             : null),
+                                                  //     maxLines: 2,
+                                                  //     maxLength: 30,
+                                                  //     onChanged: (value) {
+                                                  //       if (value.isEmpty) {
+                                                  //         Provider.of<HomeStatusProvider>(
+                                                  //                 context,
+                                                  //                 listen: false)
+                                                  //             .setReasonHomeEmpty(
+                                                  //                 true);
+                                                  //       } else {
+                                                  //         Provider.of<HomeStatusProvider>(
+                                                  //                 context,
+                                                  //                 listen: false)
+                                                  //             .setReasonHomeEmpty(
+                                                  //                 false);
+                                                  //       }
+                                                  //     },
+                                                  //   ),
+                                                  // const SizedBox(
+                                                  //   height: 12,
+                                                  // ),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.end,
@@ -362,13 +382,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           datesController
                                                                   .selectedDate =
                                                               null;
-                                                          Provider.of<HomeStatusProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setReasonHomeEmpty(
-                                                                  false);
-                                                          Navigator.pop(
-                                                              context);
+                                                          // Provider.of<HomeStatusProvider>(
+                                                          //         context,
+                                                          //         listen: false)
+                                                          //     .setReasonHomeEmpty(
+                                                          //         false);
+                                                          // Navigator.pop(
+                                                          //     context);
                                                         },
                                                         color:
                                                             const MaterialStatePropertyAll(
@@ -385,62 +405,65 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                       ),
                                                       CustomButton(
                                                         onPressed: () {
-                                                          if (Provider.of<HomeStatusProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .getRadioValue ==
-                                                                  2 &&
-                                                              notOptController
-                                                                  .text
-                                                                  .isEmpty) {
+                                                          // if (Provider.of<HomeStatusProvider>(
+                                                          //                 context,
+                                                          //                 listen:
+                                                          //                     false)
+                                                          //             .getRadioValue ==
+                                                          //         2 &&
+                                                          //     notOptController
+                                                          //         .text
+                                                          //         .isEmpty) {
+                                                          //   CustomSnackBar
+                                                          //       .showSnackBar(
+                                                          //           context,
+                                                          //           'Reason cannot be empty',
+                                                          //           Colors.red);
+                                                          // } else {
+                                                          // if (Provider.of<HomeStatusProvider>(
+                                                          //             context,
+                                                          //             listen:
+                                                          //                 false)
+                                                          //         .getRadioValue ==
+                                                          //     1) {
+                                                          if (Provider.of<
+                                                                      HomeStatusProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .isWithinRadius) {
+                                                            Navigator.pop(
+                                                                context);
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                RouteManagement
+                                                                    .digitalSignature,
+                                                                arguments: {
+                                                                  'date': date
+                                                                });
+                                                          } else {
                                                             CustomSnackBar
                                                                 .showSnackBar(
                                                                     context,
-                                                                    'Reason cannot be empty',Colors.red);
-                                                          } else {
-                                                            if (Provider.of<HomeStatusProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .getRadioValue ==
-                                                                1) {
-                                                                if (Provider.of<
-                                                                            HomeStatusProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .isWithinRadius) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  Navigator.pushNamed(
-                                                                      context,
-                                                                      RouteManagement
-                                                                          .digitalSignature,
-                                                                      arguments: {
-                                                                        'date':
-                                                                            date
-                                                                      });
-                                                                } else {
-                                                                  CustomSnackBar.showSnackBar(context, 'Please be in the Office premises to sign', Colors.red);
-                                                                }
-                                                            } else {
-                                                              Navigator.pop(
-                                                                  context);
-                                                              provider.setNotOptedDatesWithReason(
-                                                                  dates: [
-                                                                    date
-                                                                        as DateTime
-                                                                  ],
-                                                                  reason:
-                                                                      notOptController
-                                                                          .text);
-                                                              datesController
-                                                                      .selectedDate =
-                                                                  null;
-                                                            }
+                                                                    'Please be in the Office premises to sign',
+                                                                    Colors.red);
                                                           }
+                                                          // } else {
+                                                          //   Navigator.pop(
+                                                          //       context);
+                                                          //   provider.setNotOptedDatesWithReason(
+                                                          //       dates: [
+                                                          //         date
+                                                          //             as DateTime
+                                                          //       ],
+                                                          //       reason:
+                                                          //           notOptController
+                                                          //               .text);
+                                                          //   datesController
+                                                          //           .selectedDate =
+                                                          //       null;
+                                                          // }
                                                         },
+                                                        // },
                                                         color: MaterialStatePropertyAll(
                                                             Colors
                                                                 .deepPurpleAccent
@@ -506,7 +529,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                     ],
                   ),
                   Positioned(
-                    top: (size.height*0.12),
+                    top: (size.height * 0.12),
                     // bottom: ,
                     left: 0,
                     right: 0,
@@ -647,11 +670,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     return RadioListTile<int>(
         title: Text(text),
         value: value,
-        groupValue: Provider.of<HomeStatusProvider>(context, listen: true)
-            .getRadioValue,
+        groupValue: 1,
+        // Provider.of<HomeStatusProvider>(context, listen: true)
+        //     .getRadioValue,
         onChanged: (value) {
-          Provider.of<HomeStatusProvider>(context, listen: false)
-              .setRadioValue(value);
+          // Provider.of<HomeStatusProvider>(context, listen: false)
+          //     .setRadioValue(value);
         });
   }
 

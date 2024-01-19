@@ -55,12 +55,14 @@ class UserEventsRepo {
 
   Future<UserModel> readDataWithID({String? empid}) async {
     final snapshot = await _db.collection('employees').get();
-    List<Map<String, dynamic>> docids =
-        snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
+    Map<String, dynamic> docids = {};
+    snapshot.docs.forEach((doc) {
+      docids[doc.id] = doc.data()['employee_id'];
+    });
     String? docid;
-    for (var item in docids) {
-      if (empid == item.values.first) {
-        docid = item.keys.first;
+    for (var entry in docids.entries) {
+      if (empid == entry.value) {
+        docid = entry.key;
       }
     }
 
@@ -81,151 +83,151 @@ class UserEventsRepo {
   }
 
   //push date to db from employee home provider
-  Future<void> pushDatetoDB(
-      {required DateTime date,
-      required int radioValue,
-      String? reason,
-      String? url}) async {
-    final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
-    Map<String, dynamic>? data =
-        await docRef.get().then((value) => value.data());
-    // var date = DateTime.parse('2024-01-16 00:00:00.000');
+  // Future<void> pushDatetoDB(
+  //     {required DateTime date,
+  //     required int radioValue,
+  //     String? reason,
+  //     String? url}) async {
+  //   final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
+  //   Map<String, dynamic>? data =
+  //       await docRef.get().then((value) => value.data());
+  //   // var date = DateTime.parse('2024-01-16 00:00:00.000');
 
-    if (radioValue == 2) {
-      if (data!['opted'].keys.contains(date.toString())) {
-        data['opted'].remove(date.toString());
-        docRef.update({
-          'opted': data['opted'],
-        });
-      }
-      if (data['notOpted'].keys.contains(date.toString())) {
-        data['notOpted'].remove(date.toString());
-        docRef.update({'notOpted': data['notOpted']});
-      }
-      data['notOpted'][date.toString()] = reason;
-      docRef.update({'notOpted': data['notOpted']});
-    } else {
-      if (data!['notOpted'].keys.contains(date.toString())) {
-        data['notOpted'].remove(date.toString());
-        docRef.update({'notOpted': data['notOpted']});
-      }
-      if (data['opted'].keys.contains(date.toString())) {
-        data['opted'].remove(date.toString());
-        docRef.update({
-          'opted': data['opted'],
-        });
-      }
-      data['opted'][date.toString()] = url;
-      docRef.update({
-        'opted': data['opted'],
-      });
-    }
-  }
+  //   if (radioValue == 2) {
+  //     if (data!['opted'].keys.contains(date.toString())) {
+  //       data['opted'].remove(date.toString());
+  //       docRef.update({
+  //         'opted': data['opted'],
+  //       });
+  //     }
+  //     if (data['notOpted'].keys.contains(date.toString())) {
+  //       data['notOpted'].remove(date.toString());
+  //       docRef.update({'notOpted': data['notOpted']});
+  //     }
+  //     data['notOpted'][date.toString()] = reason;
+  //     docRef.update({'notOpted': data['notOpted']});
+  //   } else {
+  //     if (data!['notOpted'].keys.contains(date.toString())) {
+  //       data['notOpted'].remove(date.toString());
+  //       docRef.update({'notOpted': data['notOpted']});
+  //     }
+  //     if (data['opted'].keys.contains(date.toString())) {
+  //       data['opted'].remove(date.toString());
+  //       docRef.update({
+  //         'opted': data['opted'],
+  //       });
+  //     }
+  //     data['opted'][date.toString()] = url;
+  //     docRef.update({
+  //       'opted': data['opted'],
+  //     });
+  //   }
+  // }
 
-  Future<void> pushDatestoDB(
-      {required List<DateTime> dates,
-      required int radioValue,
-      String? reason}) async {
-    final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
-    Map<String, dynamic>? data =
-        await docRef.get().then((value) => value.data());
-    for (var date in dates) {
-      if (data!['notOpted'].keys.contains(date.toString())) {
-        data['notOpted'].remove(date.toString());
-        docRef.update({'notOpted': data['notOpted']});
-      }
-      data['notOpted'][date.toString()] = reason;
-      docRef.update({'notOpted': data['notOpted']});
-    }
-  }
+  // Future<void> pushDatestoDB(
+  //     {required List<DateTime> dates,
+  //     required int radioValue,
+  //     String? reason}) async {
+  //   final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
+  //   Map<String, dynamic>? data =
+  //       await docRef.get().then((value) => value.data());
+  //   for (var date in dates) {
+  //     if (data!['notOpted'].keys.contains(date.toString())) {
+  //       data['notOpted'].remove(date.toString());
+  //       docRef.update({'notOpted': data['notOpted']});
+  //     }
+  //     data['notOpted'][date.toString()] = reason;
+  //     docRef.update({'notOpted': data['notOpted']});
+  //   }
+  // }
 
-  Future<Map<DateTime, String>> readNotOptedWithReasons() async {
-    Map<String, dynamic> dates = await _db
-        .collection('employees')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((value) => value.data()!['notOpted']);
-    Map<DateTime, String> dateReasons = {};
-    dates.forEach((key, value) {
-      dateReasons[DateTime.parse(key)] = value.toString();
-    });
-    return dateReasons;
-  }
+  // Future<Map<DateTime, String>> readNotOptedWithReasons() async {
+  //   Map<String, dynamic> dates = await _db
+  //       .collection('employees')
+  //       .doc(_auth.currentUser!.uid)
+  //       .get()
+  //       .then((value) => value.data()!['notOpted']);
+  //   Map<DateTime, String> dateReasons = {};
+  //   dates.forEach((key, value) {
+  //     dateReasons[DateTime.parse(key)] = value.toString();
+  //   });
+  //   return dateReasons;
+  // }
 
   //get opted dates from db for all pages
-  Future<List<DateTime>> readOptedWithID({String? empid}) async {
-    final snapshot = await _db.collection('employees').get();
-    List<Map<String, dynamic>> docids =
-        snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
-    String? docid;
-    for (var item in docids) {
-      if (empid == item.values.first) {
-        docid = item.keys.first;
-      }
-    }
+  // Future<List<DateTime>> readOptedWithID({String? empid}) async {
+  //   final snapshot = await _db.collection('employees').get();
+  //   List<Map<String, dynamic>> docids =
+  //       snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
+  //   String? docid;
+  //   for (var item in docids) {
+  //     if (empid == item.values.first) {
+  //       docid = item.keys.first;
+  //     }
+  //   }
 
-    List<dynamic> dates = await _db
-        .collection('employees')
-        .doc(docid)
-        .get()
-        .then((value) => value.data()!['opted']);
-    List<DateTime> dateTimelist = dates.map((e) => DateTime.parse(e)).toList();
-    return dateTimelist;
-  }
+  //   List<dynamic> dates = await _db
+  //       .collection('employees')
+  //       .doc(docid)
+  //       .get()
+  //       .then((value) => value.data()!['opted']);
+  //   List<DateTime> dateTimelist = dates.map((e) => DateTime.parse(e)).toList();
+  //   return dateTimelist;
+  // }
 
   //get notopted dates from db for all pages
-  Future<List<DateTime>> readNotOptedWithID({String? empid}) async {
-    final snapshot = await _db.collection('employees').get();
-    List<Map<String, dynamic>> docids =
-        snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
-    String? docid;
-    for (var item in docids) {
-      if (empid == item.values.first) {
-        docid = item.keys.first;
-      }
-    }
+  // Future<List<DateTime>> readNotOptedWithID({String? empid}) async {
+  //   final snapshot = await _db.collection('employees').get();
+  //   List<Map<String, dynamic>> docids =
+  //       snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
+  //   String? docid;
+  //   for (var item in docids) {
+  //     if (empid == item.values.first) {
+  //       docid = item.keys.first;
+  //     }
+  //   }
 
-    List<dynamic> dates = await _db
-        .collection('employees')
-        .doc(docid)
-        .get()
-        .then((value) => value.data()!['notOpted'].keys.toList());
-    List<DateTime> dateTimelist = dates.map((e) => DateTime.parse(e)).toList();
-    return dateTimelist;
-  }
+  //   List<dynamic> dates = await _db
+  //       .collection('employees')
+  //       .doc(docid)
+  //       .get()
+  //       .then((value) => value.data()!['notOpted'].keys.toList());
+  //   List<DateTime> dateTimelist = dates.map((e) => DateTime.parse(e)).toList();
+  //   return dateTimelist;
+  // }
 
-  Future<Map<DateTime, String>> readNotOptedWithReasonsWithID(
-      {String? empid}) async {
-    final snapshot = await _db.collection('employees').get();
-    List<Map<String, dynamic>> docids =
-        snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
-    String? docid;
-    for (var item in docids) {
-      if (empid == item.values.first) {
-        docid = item.keys.first;
-      }
-    }
+  // Future<Map<DateTime, String>> readNotOptedWithReasonsWithID(
+  //     {String? empid}) async {
+  //   final snapshot = await _db.collection('employees').get();
+  //   List<Map<String, dynamic>> docids =
+  //       snapshot.docs.map((e) => {e.id: e.data()['employee_id']}).toList();
+  //   String? docid;
+  //   for (var item in docids) {
+  //     if (empid == item.values.first) {
+  //       docid = item.keys.first;
+  //     }
+  //   }
 
-    Map<String, dynamic> dates = await _db
-        .collection('employees')
-        .doc(docid)
-        .get()
-        .then((value) => value.data()!['notOpted']);
-    Map<DateTime, String> dateReasons = {};
-    dates.forEach((key, value) {
-      dateReasons[DateTime.parse(key)] = value.toString();
-    });
-    return dateReasons;
-  }
+  //   Map<String, dynamic> dates = await _db
+  //       .collection('employees')
+  //       .doc(docid)
+  //       .get()
+  //       .then((value) => value.data()!['notOpted']);
+  //   Map<DateTime, String> dateReasons = {};
+  //   dates.forEach((key, value) {
+  //     dateReasons[DateTime.parse(key)] = value.toString();
+  //   });
+  //   return dateReasons;
+  // }
 
-  Future<void> removeDateFromDb(DateTime date) async {
-    final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
-    Map<String, dynamic>? data =
-        await docRef.get().then((value) => value.data());
+  // Future<void> removeDateFromDb(DateTime date) async {
+  //   final docRef = _db.collection('employees').doc(_auth.currentUser!.uid);
+  //   Map<String, dynamic>? data =
+  //       await docRef.get().then((value) => value.data());
 
-    data!['notOpted'].remove(date.toString());
-    docRef.update({'notOpted': data['notOpted']});
-  }
+  //   data!['notOpted'].remove(date.toString());
+  //   docRef.update({'notOpted': data['notOpted']});
+  // }
 
   // void _updateData(UserModel userModel){
   //   final userCollection = FirebaseFirestore.instance.collection("employees");

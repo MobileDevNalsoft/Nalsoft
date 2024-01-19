@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
@@ -7,6 +8,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _empData = [];
   List<dynamic> empList = [];
   bool _isSearching = false;
+  UserModel? _user;
 
   set isSearching(value) {
     _isSearching = value;
@@ -20,18 +22,18 @@ class AdminEmployeesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void setEmpListN() async {
-  //   for(var data in _empData){
-  //     empList.add(data['username']);
-  //   }
-  // }
-
-  Future<void> setEmpData() async {
+  Future<void> setAllEmpData() async {
     _empData = await _db.readUsers();
+    notifyListeners();
+  }
+
+  Future<void> setEmpDataWithID({String? empid}) async {
+    _user = await _db.readDataWithID(empid: empid);
     notifyListeners();
   }
 
   List<Map<String, dynamic>> get getAllEmpData => _empData;
   List<dynamic> get getEmpList => empList;
   get isSearching => _isSearching;
+  UserModel? get getEmpWithID => _user;
 }

@@ -3,5 +3,5 @@ class Constants {
       r'(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{":;\' '?/<>,.])');
   static final empIDRegex = RegExp(r'^\d+$');
   static bool empHomeIsLoading = true;
-  static bool admHomeIsLoading = true;
+  static bool empSearchIsLoading = true;
 }
