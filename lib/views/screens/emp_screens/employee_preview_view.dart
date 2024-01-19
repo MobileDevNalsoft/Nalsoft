@@ -1,13 +1,8 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -158,20 +153,26 @@ class _PreviewState extends State<Preview> {
                               //   },
                               // ),
                               // child: Image.memory(getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg').readAsBytes()) as Uint8List ),
-                               child:Image.network(
-        Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
-        loadingBuilder: (BuildContext context, Widget child,
-            ImageChunkEvent? loadingProgress) {
-          if (loadingProgress != null) {
-            print(loadingProgress);
-           return Center(
-            
-            child:SpinKitCircle(color:Color.fromARGB(255, 179, 157, 219), size: 50.0),
-          );
-          }
-          return child;
-        },
-      ),
+                              child: Image.network(
+                                Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getOptedWithURL[DateTime(now.year,
+                                        now.month, now.day, 0, 0, 0, 0)
+                                    .toString()],
+                                loadingBuilder: (BuildContext context,
+                                    Widget child, loadingProgress) {
+                                  if (loadingProgress != null) {
+                                    print(loadingProgress);
+                                    return Center(
+                                      child: SpinKitCircle(
+                                          color: Color.fromARGB(
+                                              255, 179, 157, 219),
+                                          size: 50.0),
+                                    );
+                                  }
+                                  return child;
+                                },
+                              ),
                               // child: Image.network(
                               //    Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
                               //    loadingBuilder:
@@ -179,16 +180,15 @@ class _PreviewState extends State<Preview> {
                               //       if (loadingProgress==null){
                               //         print(child);
                               //         return SpinKitCircle(color: Colors.blue, size: 50.0);
-                              //       }return 
+                              //       }return
                               //     // print("progress $loadingProgress $child");
                               //     // return ;
                               //     }),
-                                  // return const Center(
-                                  //   child:SpinKitCircle(color: Colors.blue, size: 50.0),
-                                  // );
-                                // },
-                              )
-                            ,
+                              // return const Center(
+                              //   child:SpinKitCircle(color: Colors.blue, size: 50.0),
+                              // );
+                              // },
+                            ),
                             const SizedBox(
                               width: 20,
                             ),

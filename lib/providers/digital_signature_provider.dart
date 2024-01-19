@@ -8,14 +8,20 @@ import 'package:path_provider/path_provider.dart';
 class SignatureProvider extends ChangeNotifier {
   final SignatureRepo _signRepo = SignatureRepo();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  bool isUploaded = true;
   Uint8List? _imagebytes;
   String? _url;
 
   Future<void> uploadImage(Uint8List pngBytes) async {
+    isUploaded =false;
+    notifyListeners();
     _imagebytes = pngBytes;
     await _signRepo.uploadImageToDb(pngBytes, _auth.currentUser!.uid,
         DateTime.now().toString().substring(0, 10));
+    isUploaded =false;
+    print(isUploaded);
+    notifyListeners();   
+
   // final url = await setSignatureUrl();
   // final bytes = response.bodyBytes;
   // get
@@ -27,8 +33,9 @@ class SignatureProvider extends ChangeNotifier {
   }
 
   Future<void> setSignatureUrl() async {
-    _url = await _signRepo.getSignatureURLFromDb(
+    _url = await _signRepo.getSignatureFromDb(
         _auth.currentUser!.uid, DateTime.now().toString().substring(0, 10));
+     print("url $_url")   ;
     notifyListeners();
   }
 

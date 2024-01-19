@@ -57,7 +57,7 @@ class HomeStatusProvider extends ChangeNotifier {
         currentPosition.longitude,
         officeLatitude,
         officeLongitude);
-
+    print("${currentPosition.longitude} ${currentPosition.latitude} $distancefromOffice");
     isWithinRadius = distancefromOffice <= radius;
   }
 

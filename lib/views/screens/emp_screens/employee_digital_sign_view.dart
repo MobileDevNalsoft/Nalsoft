@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
@@ -78,7 +79,7 @@ class DigitalSignView extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 20.0),
                       child: Consumer<SignatureProvider>(
                         builder: (context, signatureProvider, child) {
-                          return ElevatedButton(
+                          return signatureProvider.isUploaded? ElevatedButton(
                             child: Text(
                               'Save',
                               style: TextStyle(color: Colors.white),
@@ -98,9 +99,9 @@ class DigitalSignView extends StatelessWidget {
                                 Provider.of<UserDataProvider>(context,
                                       listen: false)
                                   .setOptedDateWithURL(date: date!, url: signatureProvider.getURL);
-                                var bytes =  pngBytes;
-                                final file = await getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg'));
-                                await file.writeAsBytes(bytes);
+                                // var bytes =  pngBytes;
+                                // final file = await getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg'));
+                                // await file.writeAsBytes(bytes);
 
                                 Navigator.pushNamed(
                                     context, RouteManagement.previewPage);
@@ -110,11 +111,15 @@ class DigitalSignView extends StatelessWidget {
                                 backgroundColor: MaterialStatePropertyAll(
                                     Colors.deepPurpleAccent.shade200),
                                 elevation: MaterialStatePropertyAll(5)),
-                          );
+                          ):SpinKitCircle(size: 50,color: Colors.blue,);
                         },
                       ))
                 ],
-              )
+              ),
+              // Consumer<SignatureProvider>(
+              //           builder: (context, signatureProvider, child) {return
+              //             signatureProvider.isUploaded?SizedBox():SpinKitCircle(size: 50,color: Colors.blue,);
+              //           }),
             ],
           ),
         ),
