@@ -9,9 +9,21 @@ class AdminEmployeesProvider extends ChangeNotifier {
   List<dynamic> empList = [];
   bool _isSearching = false;
   UserModel? _user;
+  bool _isMailLoading = false;
+
+  List<Map<String, dynamic>> get getAllEmpData => _empData;
+  List<dynamic> get getEmpList => empList;
+  get isSearching => _isSearching;
+  get isMailLoading => _isMailLoading;
+  UserModel? get getEmpWithID => _user;
 
   set isSearching(value) {
     _isSearching = value;
+    notifyListeners();
+  }
+
+  set isMailLoading(value) {
+    _isMailLoading = value;
     notifyListeners();
   }
 
@@ -32,8 +44,8 @@ class AdminEmployeesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Map<String, dynamic>> get getAllEmpData => _empData;
-  List<dynamic> get getEmpList => empList;
-  get isSearching => _isSearching;
-  UserModel? get getEmpWithID => _user;
+  Future<void> setEmpData() async {
+    _empData = await _db.readUsers();
+    notifyListeners();
+  }
 }

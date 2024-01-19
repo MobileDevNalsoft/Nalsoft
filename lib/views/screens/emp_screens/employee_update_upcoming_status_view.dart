@@ -108,131 +108,133 @@ class UpdateLunchStatus extends StatelessWidget {
                       ),
                     ),
                     const Divider(),
-                    Consumer<UserDataProvider>(
-                        builder: (context, provider, child) {
-                      return SfDateRangePicker(
-                        enablePastDates: false,
-                        controller: datesController,
-                        // toggleDaySelection: true,
-                        minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                        maxDate:DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
-                        selectionColor: Colors.deepPurple.shade100,
-                        selectionShape: DateRangePickerSelectionShape.circle,
-                        selectableDayPredicate: (date) {
-                          return date.weekday != DateTime.saturday &&
-                              date.weekday != DateTime.sunday &&
-                              ((date.year == now.year &&
-                                      date.month == now.month &&
-                                      date.day > now.day) ||
-                                  (date.year == now.year &&
-                                      date.month > now.month)) &&
-                              !provider.getHolidays
-                                  .contains(date.toString().substring(0, 10));
-                        },
-                        cellBuilder: (BuildContext context,
-                            DateRangePickerCellDetails details) {
-                          Color circleColor = provider.getOptedWithURL.keys
-                                              .contains(details.date.toString())
-                                          ? Colors.green.shade200
-                                          : provider.getNotOptedWithReasons.keys
-                                                  .contains(
-                                                      details.date.toString())
-                                              ? Colors.orange.shade200
-                                              : provider.getHolidays.contains(
-                                                      details.date
-                                                          .toString()
-                                                          .substring(0, 10))
-                                                  ? Colors.red.shade100
-                                                  : (details.date.weekday ==
-                                                              DateTime.sunday ||
-                                                          details.date.weekday ==
-                                                              DateTime.saturday)
-                                                      ? Colors.blueGrey.shade200
-                                                      : ((details.date.day == now.day &&
-                                                                  details.date.month <=
-                                                                      now.month &&
-                                                                  now.hour >= 15 &&
-                                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
-                                                                  !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                              ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
-                                                          ? Colors.grey.shade300
-                                                          : Colors.white30;
-                          return Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Container(
-                              width: details.bounds.width / 2,
-                              height: details.bounds.width / 2,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: circleColor,
+                    Expanded(
+                      child: Consumer<UserDataProvider>(
+                          builder: (context, provider, child) {
+                        return SfDateRangePicker(
+                          enablePastDates: false,
+                          controller: datesController,
+                          // toggleDaySelection: true,
+                          minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                          maxDate:DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                          selectionColor: Colors.deepPurple.shade100,
+                          selectionShape: DateRangePickerSelectionShape.circle,
+                          selectableDayPredicate: (date) {
+                            return date.weekday != DateTime.saturday &&
+                                date.weekday != DateTime.sunday &&
+                                ((date.year == now.year &&
+                                        date.month == now.month &&
+                                        date.day > now.day) ||
+                                    (date.year == now.year &&
+                                        date.month > now.month)) &&
+                                !provider.getHolidays
+                                    .contains(date.toString().substring(0, 10));
+                          },
+                          cellBuilder: (BuildContext context,
+                              DateRangePickerCellDetails details) {
+                            Color circleColor = provider.getOptedWithURL.keys
+                                                .contains(details.date.toString())
+                                            ? Colors.green.shade200
+                                            : provider.getNotOptedWithReasons.keys
+                                                    .contains(
+                                                        details.date.toString())
+                                                ? Colors.orange.shade200
+                                                : provider.getHolidays.contains(
+                                                        details.date
+                                                            .toString()
+                                                            .substring(0, 10))
+                                                    ? Colors.red.shade100
+                                                    : (details.date.weekday ==
+                                                                DateTime.sunday ||
+                                                            details.date.weekday ==
+                                                                DateTime.saturday)
+                                                        ? Colors.blueGrey.shade200
+                                                        : ((details.date.day == now.day &&
+                                                                    details.date.month <=
+                                                                        now.month &&
+                                                                    now.hour >= 15 &&
+                                                                    !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
+                                                                    !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
+                                                                ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
+                                                            ? Colors.grey.shade300
+                                                            : Colors.white30;
+                            return Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: Container(
+                                width: details.bounds.width / 2,
+                                height: details.bounds.width / 2,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: circleColor,
+                                ),
+                                child: Center(
+                                    child: Text(details.date.day.toString())),
                               ),
-                              child: Center(
-                                  child: Text(details.date.day.toString())),
-                            ),
-                          );
-                        },
-                        
-                        showActionButtons: true,
-                        allowViewNavigation: true,
-                        selectionMode: Provider.of<HomeStatusProvider>(context,
-                                        listen: true)
+                            );
+                          },
+                          
+                          showActionButtons: true,
+                          allowViewNavigation: true,
+                          selectionMode: Provider.of<HomeStatusProvider>(context,
+                                          listen: true)
+                                      .getReason ==
+                                  'Multiple days'
+                              ? DateRangePickerSelectionMode.multiple
+                              : DateRangePickerSelectionMode.single,
+                          showNavigationArrow: true,
+                          onSubmit: (dates) {
+                            print(dates.runtimeType);
+                            print(dates);
+                            if (Provider.of<HomeStatusProvider>(context,
+                                        listen: false)
                                     .getReason ==
-                                'Multiple days'
-                            ? DateRangePickerSelectionMode.multiple
-                            : DateRangePickerSelectionMode.single,
-                        showNavigationArrow: true,
-                        onSubmit: (dates) {
-                          print(dates.runtimeType);
-                          print(dates);
-                          if (Provider.of<HomeStatusProvider>(context,
-                                      listen: false)
-                                  .getReason ==
-                              'Single day') {
-                            if (dates.toString().substring(0,10)!=now.toString().substring(0,10)){ 
-                              
-                              if (DateTime.parse(dates.toString()).weekday ==
-                                      DateTime.saturday ||
-                                  DateTime.parse(dates.toString()).weekday ==
-                                      DateTime.sunday) {
-                                CustomSnackBar.showSnackBar(
-                                    context, 'remove weekoffs from selection',Colors.red);
-                              } else {
-                                if (provider.getNotOptedWithReasons.keys
-                                    .contains(dates.toString())) {
-                                  removeDialog(context, size, dates);
+                                'Single day') {
+                              if (dates.toString().substring(0,10)!=now.toString().substring(0,10)){ 
+                                
+                                if (DateTime.parse(dates.toString()).weekday ==
+                                        DateTime.saturday ||
+                                    DateTime.parse(dates.toString()).weekday ==
+                                        DateTime.sunday) {
+                                  CustomSnackBar.showSnackBar(
+                                      context, 'remove weekoffs from selection',Colors.red);
                                 } else {
-                                  dialog(context, size, dates);
-                                }
-                              }}
-                             else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'You can only update upcoming status',)));
+                                  if (provider.getNotOptedWithReasons.keys
+                                      .contains(dates.toString())) {
+                                    removeDialog(context, size, dates);
+                                  } else {
+                                    dialog(context, size, dates);
+                                  }
+                                }}
+                               else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'You can only update upcoming status',)));
+                              }
+                             
+                            } else if (Provider.of<HomeStatusProvider>(context,
+                                        listen: false)
+                                    .getReason ==
+                                'Multiple days') {
+                              List<DateTime> datesList = dates as List<DateTime>;
+                              if (datesList.any((element) => provider
+                                  .getNotOptedWithReasons.keys
+                                  .contains(element.toString()))) {
+                                CustomSnackBar.showSnackBar(context,
+                                    'Remove NotOptedDates from selection',Colors.red);
+                              } else {
+                                dialog(context, size, dates);
+                              }
                             }
-                           
-                          } else if (Provider.of<HomeStatusProvider>(context,
-                                      listen: false)
-                                  .getReason ==
-                              'Multiple days') {
-                            List<DateTime> datesList = dates as List<DateTime>;
-                            if (datesList.any((element) => provider
-                                .getNotOptedWithReasons.keys
-                                .contains(element.toString()))) {
-                              CustomSnackBar.showSnackBar(context,
-                                  'Remove NotOptedDates from selection',Colors.red);
-                            } else {
-                              dialog(context, size, dates);
-                            }
-                          }
-                        },
-                        onCancel: () {
-                          datesController.selectedDate = null;
-                          datesController.selectedDates = null;
-                          datesController.selectedRange = null;
-                        },
-                      );
-                    }),
+                          },
+                          onCancel: () {
+                            datesController.selectedDate = null;
+                            datesController.selectedDates = null;
+                            datesController.selectedRange = null;
+                          },
+                        );
+                      }),
+                    ),
                     
                   ],
                 ),
