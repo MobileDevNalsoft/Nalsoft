@@ -1,5 +1,7 @@
 import "dart:io";
 import "dart:typed_data";
+import "package:flutter/services.dart";
+import "package:flutter_barcode_scanner/flutter_barcode_scanner.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import 'package:http/http.dart' as http;
 import "dart:ui";
@@ -22,12 +24,43 @@ import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import '../../../providers/home_status_provider.dart';
 import '../../../repositories/firebase_auth_repo.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   AdminHomePage({super.key});
+
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
+
+  DateTime now = DateTime.now();
 
   late SharedPreferences sharedPreferences;
 
-  DateTime now = DateTime.now();
+  String qrResult = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initData();
+  }
+
+  Future<void> initData() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+  }
+
+  Future<void> scanQR() async{
+    try{
+      final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR); 
+      if(!mounted) return;
+      setState(() {
+        this.qrResult = qrCode.toString();
+      });
+    }on PlatformException{
+      qrResult = 'Failed to read QR';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +103,12 @@ class AdminHomePage extends StatelessWidget {
                         },
                       ),
                       const Expanded(child: SizedBox()),
+                      IconButton(
+                        onPressed: () {
+                          scanQR();
+                        },
+                        icon: Icon(Icons.qr_code_scanner),
+                      ),
                       Consumer<HomeStatusProvider>(
                         builder: (context, provider, child) {
                           return Provider.of<UserDataProvider>(context,

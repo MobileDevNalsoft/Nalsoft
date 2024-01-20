@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -59,6 +61,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   @override
   Widget build(BuildContext context) {
+
     final size = MediaQuery.of(context).size;
 
     List<Map<String, Map<String, dynamic>>> floorDetails =
@@ -191,10 +194,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                     selectionColor: Colors.deepPurple.shade100,
                                     selectionShape:
                                         DateRangePickerSelectionShape.circle,
-                                    selectableDayPredicate: (date) {
-                                      return date.toString().substring(0, 10) ==
-                                          now.toString().substring(0, 10);
-                                    },
+                                    // selectableDayPredicate: (date) {
+                                    //   return date.toString().substring(0, 10) ==
+                                    //       now.toString().substring(0, 10) && ![DateTime.saturday, DateTime.sunday].contains(date.weekday)
+                                    //       && !provider.getHolidays.contains(date.toString());
+                                    // },
                                     cellBuilder: (BuildContext context,
                                         DateRangePickerCellDetails details) {
                                       Color circleColor = provider.getOptedWithURL.keys
@@ -261,16 +265,20 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                           .contains(date.toString())) {
                                         Navigator.pushNamed(context,
                                             RouteManagement.previewPage);
-                                      } else if ((now.hour > 14 ||
-                                          (now.hour == 14 &&
-                                              now.minute > 30))) {
+                                      } else if (
+                                        // (now.hour > 14 ||
+                                        //   (now.hour == 14 &&
+                                        //       now.minute > 30))
+                                              false) {
                                         CustomSnackBar.showSnackBar(
                                             context,
                                             "You cannot update status after 2.30pm",
                                             Colors.red);
-                                      } else if ((now.hour < 12 ||
-                                          (now.hour == 12 &&
-                                              now.minute < 30))) {
+                                      } else if (
+                                        // (now.hour < 12 ||
+                                        //   (now.hour == 12 &&
+                                        //       now.minute < 30))
+                                              false) {
                                         CustomSnackBar.showSnackBar(
                                             context,
                                             "Wait till 12.30pm to Sign",
@@ -426,11 +434,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                           //                 false)
                                                           //         .getRadioValue ==
                                                           //     1) {
-                                                          if (Provider.of<
-                                                                      HomeStatusProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .isWithinRadius) {
+                                                          if (
+                                                            // Provider.of<
+                                                            //           HomeStatusProvider>(
+                                                            //       context,
+                                                            //       listen: false)
+                                                            //   .isWithinRadius
+                                                              true) {
                                                             Navigator.pop(
                                                                 context);
                                                             Navigator.pushNamed(

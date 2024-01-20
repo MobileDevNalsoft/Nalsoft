@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 // ignore: must_be_immutable
 class Preview extends StatefulWidget {
@@ -81,53 +82,48 @@ class _PreviewState extends State<Preview> {
                         color: Color.fromARGB(255, 247, 242, 250),
                         thickness: 4,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 20, right: 20, bottom: 20),
-                        child: Row(
-                          children: [
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Employee Name'),
-                                Text('Employee ID'),
-                                Text('Employee Floor no.')
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            const Column(
-                              children: [Text(':'), Text(':'), Text(':')],
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .getUsername!),
-                                Text(Provider.of<UserDataProvider>(
-                                  context,
-                                ).getEmpID!),
-                                Text(Provider.of<UserDataProvider>(
-                                  context,
-                                ).getFloor!)
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      const Text(
-                        'Successfully Signed\n         for today',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Icon(
-                        Icons.task_alt_sharp,
-                        color: Colors.green.shade800,
-                        size: 40,
+                      // Padding(
+                      //   padding: const EdgeInsets.only(
+                      //       top: 20.0, left: 20, right: 20, bottom: 20),
+                      //   child: Row(
+                      //     children: [
+                      //       const Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text('Employee Name'),
+                      //           Text('Employee ID'),
+                      //           Text('Employee Floor no.')
+                      //         ],
+                      //       ),
+                      //       const SizedBox(
+                      //         width: 20,
+                      //       ),
+                      //       const Column(
+                      //         children: [Text(':'), Text(':'), Text(':')],
+                      //       ),
+                      //       const SizedBox(
+                      //         width: 20,
+                      //       ),
+                      //       Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(Provider.of<UserDataProvider>(context,
+                      //                   listen: false)
+                      //               .getUsername!),
+                      //           Text(Provider.of<UserDataProvider>(
+                      //             context,
+                      //           ).getEmpID!),
+                      //           Text(Provider.of<UserDataProvider>(
+                      //             context,
+                      //           ).getFloor!)
+                      //         ],
+                      //       )
+                      //     ],
+                      //   ),
+                      // ),
+                      QrImageView(
+                        data: Provider.of<UserDataProvider>(context,listen: false).getUsername!,
+                        size: 180,
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.015,
@@ -135,7 +131,23 @@ class _PreviewState extends State<Preview> {
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Text(
+                        'Successfully Signed\n         for today',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Icon(
+                        Icons.task_alt_sharp,
+                        color: Colors.green.shade800,
+                        size: 40,
+                      ),
+                              ],
+                            ),
+                            SizedBox(width: MediaQuery.of(context).size.width*0.03,),
                             Container(
                               height: 100,
                               width: 120,
