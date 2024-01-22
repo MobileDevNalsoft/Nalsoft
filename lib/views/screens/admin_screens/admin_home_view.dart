@@ -1,12 +1,8 @@
 import "dart:io";
-import "dart:typed_data";
 import "package:flutter/services.dart";
-import "package:flutter_barcode_scanner/flutter_barcode_scanner.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import 'package:http/http.dart' as http;
 import "dart:ui";
-import "package:meals_management/providers/digital_signature_provider.dart";
-import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";

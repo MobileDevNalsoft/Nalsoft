@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 
 class HomeStatusProvider extends ChangeNotifier {

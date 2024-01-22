@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
@@ -33,11 +33,16 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   DateRangePickerController datesController = DateRangePickerController();
 
+  QRViewController? qrController;
+
   late SharedPreferences sharedPreferences;
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  bool _showQR = false;
+  bool _hasShownSnackbar = false;
 
   String? qrResult;
 
@@ -55,6 +60,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
       await Provider.of<HomeStatusProvider>(context, listen: false)
           .setFloorDetails();
       await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
+      Provider.of<UserDataProvider>(context, listen: false)
+          .setOptedDate();
       Provider.of<UserDataProvider>(context, listen: false)
           .setNotOptedDatesWithReason();
     } finally {
@@ -79,78 +86,124 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
             .toList()[0];
 
     return SafeArea(
-      child: Provider.of<UserDataProvider>(context, listen: false)
-                  .getUsername ==
-              'vendor'
-          ? Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // PopupMenuButton(
-                    //   itemBuilder: (BuildContext context) {
-                    //     return [
-                    //       PopupMenuItem(
-                    //           value: 'Sign Out',
-                    //           height: 10,
-                    //           onTap: () {
-                    //             FirebaseAuthRepo().signOutNow().then((value) {
-                    //               sharedPreferences.setString(
-                    //                   'islogged', 'false');
-                    //               Navigator.pushNamedAndRemoveUntil(
-                    //                   context,
-                    //                   RouteManagement.loginPage,
-                    //                   (route) => false);
-                    //             });
-                    //             // ignore: avoid_print
-                    //             print('navigated to login page');
-                    //           },
-                    //           child: const Text('Sign Out'))
-                    //     ];
-                    //   },
-                    //   child: const Icon(Icons.power_settings_new_sharp),
-                    // ),
-                    // Text(
-                    //   'Scan QR Code',
-                    //   style: TextStyle(fontSize: 25),
-                    // ),
-                    Expanded(
-                      child: QRView(
-                        key: qrKey,
-                        onQRViewCreated: (controller) {
-                          controller.scannedDataStream.listen((data) {
-                            var empData = jsonDecode(data.toString());
-                          });
-                        },
-                        overlay: QrScannerOverlayShape(
-                            borderColor: Colors.red,
-                            borderRadius: 10,
-                            borderLength: 30,
-                            borderWidth: 10,
-                            cutOutSize: 300),
-                      ),
-                    ),
-                    // Icon(
-                    //   Icons.qr_code_scanner_rounded,
-                    //   size: 300,
-                    // ),
-                    // CustomButton(
-                    //   child: Text('Scan'),
-                    //   onPressed: () {},
-                    // ),
-                  ],
-                ),
-              ),
-            )
-          : Scaffold(
-              resizeToAvoidBottomInset: false,
+      child: Scaffold(
               body: Constants.empHomeIsLoading
                   ? const Center(
                       child: SpinKitCircle(
                           color: Color.fromARGB(255, 179, 157, 219),
                           size: 50.0),
                     )
-                  : Stack(
+                  : Provider.of<UserDataProvider>(context, listen: false)
+                  .getUsername ==
+              'vendor'
+          ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PopupMenuButton(
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem(
+                              value: 'Sign Out',
+                              height: 10,
+                              onTap: () {
+                                FirebaseAuthRepo().signOutNow().then((value) {
+                                  sharedPreferences.setString(
+                                      'islogged', 'false');
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      RouteManagement.loginPage,
+                                      (route) => false);
+                                });
+                                // ignore: avoid_print
+                                print('navigated to login page');
+                              },
+                              child: const Text('Sign Out'))
+                        ];
+                      },
+                      child: const Icon(Icons.power_settings_new_sharp),
+                    ),
+                    Text(
+                      'Scan QR Code',
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    SizedBox(height: size.height*0.05,),
+                    if(_showQR)
+                      SizedBox(
+                        height: size.height*0.40,
+                        width: size.width*0.9,
+                        child: QRView(
+                          key: qrKey,
+                          onQRViewCreated: (controller) {
+                            qrController = controller;
+                            controller.scannedDataStream.listen((data) async {
+                              var qrData = jsonDecode(data.code!);
+                              if (qrData['date'] == now.toString().substring(0, 10)) {
+                                bool isAlreadyScanned =
+                                    await Provider.of<UserDataProvider>(context, listen: false)
+                                        .pushOptedDate(uid: qrData['uid']);
+                                if (isAlreadyScanned) {
+                                  if(!_hasShownSnackbar){
+                                    setState(() {
+                                    _showQR = false;
+                                    _hasShownSnackbar = true;
+                                    CustomSnackBar.showSnackBar(
+                                      context, 'QR already scanned', Colors.red);
+                                  });
+                                  }
+                                } else {
+                                  FlutterBeep.beep();
+                                  controller.pauseCamera();
+                                  Timer.periodic(Duration(seconds: 2), (timer) {
+                                    controller.resumeCamera();
+                                  });
+                                }
+                              } else {
+                                CustomSnackBar.showSnackBar(context, 'Invalid QR', Colors.red);
+                              }
+                            });
+                          },
+                          overlay: QrScannerOverlayShape(
+                              borderColor: Colors.red,
+                              borderRadius: 10,
+                              borderLength: 30,
+                              borderWidth: 10,
+                              cutOutSize: 300),
+                        ),
+                      ),
+                    if(_showQR)
+                      SizedBox(height: size.height*0.03,),
+                    if(!_showQR)
+                      Icon(
+                        Icons.qr_code_scanner_rounded,
+                        size: 340,
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomButton(
+                          child: Text('Scan'),
+                          onPressed: () {
+                            setState(() {
+                              _showQR = true;
+                              _hasShownSnackbar = false;
+                            });
+                          },
+                        ),
+                        SizedBox(width: size.width*0.1,),
+                        CustomButton(
+                          child: Text('Stop'),
+                          onPressed: () {
+                            setState(() {
+                              _showQR = false;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ) : Stack(
                       children: [
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -281,21 +334,22 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                           selectionShape:
                                               DateRangePickerSelectionShape
                                                   .circle,
-                                          // selectableDayPredicate: (date) {
-                                          //   return date
-                                          //               .toString()
-                                          //               .substring(0, 10) ==
-                                          //           now
-                                          //               .toString()
-                                          //               .substring(0, 10) &&
-                                          //       ![
-                                          //         DateTime.saturday,
-                                          //         DateTime.sunday
-                                          //       ].contains(date.weekday) &&
-                                          //       !provider.getHolidays
-                                          //           .contains(
-                                          //               date.toString());
-                                          // },
+                                          selectableDayPredicate: (date) {
+                                            return date
+                                                        .toString()
+                                                        .substring(0, 10) ==
+                                                    now
+                                                        .toString()
+                                                        .substring(0, 10) &&
+                                                ![
+                                                  DateTime.saturday,
+                                                  DateTime.sunday
+                                                ].contains(date.weekday) &&
+                                                !Provider.of<UserDataProvider>(context, listen: false).getHolidays
+                                                    .contains(
+                                                        date.toString().substring(0,10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(date.toString().substring(0,10)) 
+                                                        && !snapshot.data!['opted'].contains(date.toString().substring(0,10));
+                                          },
                                           cellBuilder: (BuildContext context,
                                               DateRangePickerCellDetails
                                                   details) {
@@ -364,7 +418,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                 false) {
                                               CustomSnackBar.showSnackBar(
                                                   context,
-                                                  "You cannot update status after 2.30pm",
+                                                  "QR is disabled after 2.30pm",
                                                   Colors.red);
                                             } else if (
                                                 // (now.hour < 12 ||
@@ -373,7 +427,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                 false) {
                                               CustomSnackBar.showSnackBar(
                                                   context,
-                                                  "Wait till 12.30pm to Sign",
+                                                  "Wait till 12.30pm to get QR",
                                                   Colors.red);
                                             } else {
                                               Navigator.pushNamed(context,
@@ -555,7 +609,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                         ),
                       ],
                     ),
-            ),
+            )
     );
   }
 
@@ -569,32 +623,5 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
         text,
       ],
     );
-  }
-
-  Future<void> scanQR() async {
-    try {
-      if (!mounted) return;
-      // FlutterBarcodeScanner.getBarcodeStreamReceiver(
-      //         "#ff6666", "Cancel", false, ScanMode.QR)!
-      //     .listen((barcode) async {
-      //   var qrData = jsonDecode(barcode.toString());
-      //   if (qrData['date'] == now.toString().substring(0, 10)) {
-      //     bool isAlreadyScanned =
-      //         await Provider.of<UserDataProvider>(context, listen: false)
-      //             .pushOptedDate(uid: qrData['uid']);
-      //     if (isAlreadyScanned) {
-      //       CustomSnackBar.showSnackBar(
-      //           context, 'QR already scanned', Colors.red);
-      //       return;
-      //     } else {
-      //       FlutterBeep.beep();
-      //     }
-      //   } else {
-      //     CustomSnackBar.showSnackBar(context, 'Invalid QR', Colors.red);
-      //   }
-      // });
-    } catch (e) {
-      print(e);
-    }
   }
 }

@@ -176,7 +176,6 @@ class UpdateLunchStatus extends StatelessWidget {
                               ),
                             );
                           },
-
                           showActionButtons: true,
                           allowViewNavigation: true,
                           selectionMode: Provider.of<HomeStatusProvider>(
@@ -188,8 +187,6 @@ class UpdateLunchStatus extends StatelessWidget {
                               : DateRangePickerSelectionMode.single,
                           showNavigationArrow: true,
                           onSubmit: (dates) {
-                            print(dates.runtimeType);
-                            print(dates);
                             if (Provider.of<HomeStatusProvider>(context,
                                         listen: false)
                                     .getReason ==
@@ -206,7 +203,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                       Colors.red);
                                 } else {
                                   if (provider.getNotOptedWithReasons.keys
-                                      .contains(dates.toString())) {
+                                      .contains(dates.toString().substring(0,10))) {
                                     removeDialog(context, size, dates);
                                   } else {
                                     dialog(context, size, dates);
@@ -256,13 +253,7 @@ class UpdateLunchStatus extends StatelessWidget {
                   _options(
                       color: Colors.green.shade200,
                       text: const Text(
-                        'Signed',
-                        style: TextStyle(fontSize: 10),
-                      )),
-                  _options(
-                      color: Colors.grey.shade300,
-                      text: const Text(
-                        'Not Signed',
+                        'Opted',
                         style: TextStyle(fontSize: 10),
                       )),
                   _options(
@@ -275,6 +266,12 @@ class UpdateLunchStatus extends StatelessWidget {
                       color: Colors.red.shade100,
                       text: const Text(
                         'Holiday',
+                        style: TextStyle(fontSize: 10),
+                      )),
+                  _options(
+                      color: Colors.grey.shade300,
+                      text: const Text(
+                        'No Status',
                         style: TextStyle(fontSize: 10),
                       )),
                 ],

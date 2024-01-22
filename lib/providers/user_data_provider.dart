@@ -31,9 +31,15 @@ class UserDataProvider extends ChangeNotifier {
     return isAlreadyScanned;
   }
 
-  void setOptedDates() {
-    _optedDates = _user!.opted;
-    notifyListeners();
+  void setOptedDate({DateTime? date}) {
+    if(date == null){
+      _optedDates = _user!.opted;
+      notifyListeners();
+    }else{
+      _optedDates.add(date.toString().substring(0,10));
+      print(_optedDates);
+      notifyListeners();
+    }
   }
 
   void setNotOptedDatesWithReason({List<DateTime>? dates, String? reason}) {
@@ -42,8 +48,8 @@ class UserDataProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       dates.forEach((e) {
-        _notOptedDatesWithReasons.remove(e.toString());
-        _notOptedDatesWithReasons[e.toString()] = reason;
+        _notOptedDatesWithReasons.remove(e.toString().substring(0,10));
+        _notOptedDatesWithReasons[e.toString().substring(0,10)] = reason;
       });
       notifyListeners();
       _db.pushNotOpted(_notOptedDatesWithReasons);
@@ -51,7 +57,7 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   void removeNotOptedDate(DateTime? date) {
-    _notOptedDatesWithReasons.remove(date.toString());
+    _notOptedDatesWithReasons.remove(date.toString().substring(0,10));
     _db.pushNotOpted(_notOptedDatesWithReasons);
     notifyListeners();
   }
