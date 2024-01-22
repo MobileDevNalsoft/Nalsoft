@@ -146,37 +146,31 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                           },
                           cellBuilder: (BuildContext context,
                               DateRangePickerCellDetails details) {
-                            Color circleColor = thisEmpData['opted']
-                                    .keys
-                                    .contains(details.date.toString())
-                                ? Colors.green.shade200
-                                : thisEmpData['notOpted']
-                                        .keys
-                                        .contains(details.date.toString())
-                                    ? Colors.orange.shade200
-                                    : Provider.of<UserDataProvider>(context, listen: false)
-                                            .getHolidays
-                                            .contains(details.date
-                                                .toString()
-                                                .substring(0, 10))
-                                        ? Colors.red.shade100
-                                        : (details.date.weekday ==
-                                                    DateTime.sunday ||
-                                                details.date.weekday ==
-                                                    DateTime.saturday)
-                                            ? Colors.blueGrey.shade200
-                                            : ((details.date.day == now.day &&
-                                                        details.date.month <=
-                                                            now.month &&
-                                                        now.hour >= 15 &&
-                                                        !Provider.of<UserDataProvider>(context, listen: false)
-                                                            .getOptedWithURL
-                                                            .keys
-                                                            .contains(details.date.toString()) &&
-                                                        !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                    ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
-                                                ? Colors.grey.shade300
-                                                : Colors.white30;
+                            Color circleColor = Provider.of<UserDataProvider>(
+                                              context,
+                                              listen: false)
+                                          .getOpted
+                                          .contains(details.date
+                                              .toString()
+                                              .substring(0, 10))
+                                      ? Colors.green.shade200
+                                      : Provider.of<UserDataProvider>(context, listen: false)
+                                              .getNotOptedWithReasons
+                                              .keys
+                                              .contains(details.date
+                                                  .toString()
+                                                  .substring(0, 10))
+                                          ? Colors.orange.shade200
+                                          : Provider.of<UserDataProvider>(context,
+                                                      listen: false)
+                                                  .getHolidays
+                                                  .contains(details.date.toString().substring(0, 10))
+                                              ? Colors.red.shade100
+                                              : (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday)
+                                                  ? Colors.blueGrey.shade200
+                                                  : ((details.date.day == now.day && details.date.month <= now.month && now.hour >= 15 && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))) || ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
+                                                      ? Colors.grey.shade300
+                                                      : Colors.white30;
                             return Padding(
                                 padding: const EdgeInsets.all(2),
                                 child: Container(
@@ -360,6 +354,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
       if (status.isDenied) {
         await Permission.storage.request();
       }
+      
 
       // Permission granted, proceed with sending email
       const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';

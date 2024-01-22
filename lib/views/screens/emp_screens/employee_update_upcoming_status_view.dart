@@ -132,7 +132,7 @@ class UpdateLunchStatus extends StatelessWidget {
                           },
                           cellBuilder: (BuildContext context,
                               DateRangePickerCellDetails details) {
-                            Color circleColor = provider.getOptedWithURL.keys
+                            Color circleColor = provider.getOpted
                                                 .contains(details.date.toString())
                                             ? Colors.green.shade200
                                             : provider.getNotOptedWithReasons.keys
@@ -153,9 +153,9 @@ class UpdateLunchStatus extends StatelessWidget {
                                                                     details.date.month <=
                                                                         now.month &&
                                                                     now.hour >= 15 &&
-                                                                    !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
+                                                                    !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString()) &&
                                                                     !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                                ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
+                                                                ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
                                                             ? Colors.grey.shade300
                                                             : Colors.white30;
                             return Padding(

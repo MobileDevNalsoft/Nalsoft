@@ -7,7 +7,7 @@ class UserDataProvider extends ChangeNotifier {
 
   // for UI updations related to user data
   UserModel? _user;
-  Map<String, dynamic> _optedDateswithURL = {};
+  List<dynamic>_optedDates = [];
   Map<String, dynamic> _notOptedDatesWithReasons = {};
   List<dynamic> _holidays = [];
 
@@ -17,7 +17,7 @@ class UserDataProvider extends ChangeNotifier {
   bool? get getIsAdmin => _user!.isAdmin;
   String? get getFloor => _user!.floor;
   String? get getEmpID => _user!.employee_id;
-  Map<String, dynamic> get getOptedWithURL => _optedDateswithURL;
+  List<dynamic> get getOpted => _optedDates;
   Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
 
   // getting user data from firestore collection
@@ -28,13 +28,13 @@ class UserDataProvider extends ChangeNotifier {
 
   void setOptedDateWithURL({DateTime? date, String? url}) {
     if (date == null) {
-      _optedDateswithURL = _user!.opted;
+      _optedDates = _user!.opted;
       notifyListeners();
     } else {
       _notOptedDatesWithReasons.remove(date.toString());
-      _optedDateswithURL[date.toString()] = url;
+      _optedDates.add(date.toString().substring(0,10));
       notifyListeners();
-      _db.pushOpted(_optedDateswithURL);
+      _db.pushOpted(_optedDates);
       _db.pushNotOpted(_notOptedDatesWithReasons);
     }
   } 

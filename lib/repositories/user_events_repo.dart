@@ -13,7 +13,7 @@ class UserEventsRepo {
     _db.collection('employees').doc(docID).set(userData.toJson());
   }
 
-  void pushOpted(Map<String, dynamic> dates) {
+  void pushOpted(List<dynamic> dates) {
     final ref = _db.collection('employees').doc(_auth.currentUser!.uid);
     ref.update({'opted': dates});
   }

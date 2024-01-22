@@ -195,7 +195,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                     },
                                     cellBuilder: (BuildContext context,
                                         DateRangePickerCellDetails details) {
-                                      Color circleColor = provider.getOptedWithURL.keys
+                                      Color circleColor = provider.getOpted
                                               .contains(details.date.toString())
                                           ? Colors.green.shade200
                                           : provider.getNotOptedWithReasons.keys
@@ -216,9 +216,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                                   details.date.month <=
                                                                       now.month &&
                                                                   now.hour >= 15 &&
-                                                                  !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
+                                                                  !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString()) &&
                                                                   !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                              ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
+                                                              ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
                                                           ? Colors.grey.shade300
                                                           : Colors.white30;
                                       return Padding(
@@ -249,7 +249,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       } else if(provider.getNotOptedWithReasons.keys
                                           .contains(date.toString()) && now.hour < 10){
                                         removeDialog(context, size, date);
-                                      } else if (provider.getOptedWithURL.keys
+                                      } else if (provider.getOpted
                                           .contains(date.toString())) {
                                         Navigator.pushNamed(context,
                                             RouteManagement.previewPage);
@@ -355,7 +355,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                                   const SizedBox(
                                                     height: 12,
                                                   ),
-                                                  Row(
+                                                  Row(  
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.end,
                                                     children: [

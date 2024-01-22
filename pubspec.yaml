@@ -42,6 +42,8 @@ dependencies:
   geolocator: ^10.1.0
   flutter_spinkit: ^5.2.0
   cached_network_image: ^3.3.1
+  http: ^1.2.0
+  oauth2: 2.0.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2 
@@ -51,6 +53,7 @@ dependencies:
   flutter_email_sender: ^6.0.2
   path_provider: ^2.1.2
   syncfusion_flutter_xlsio: ^24.1.45
+  firebase_messaging: ^14.7.10
 
 dev_dependencies:
   flutter_test:

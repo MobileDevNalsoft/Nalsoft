@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_employee_lunch_status_view.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_employees_view.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
+import 'package:meals_management/views/screens/admin_screens/admin_generate_notification_view.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/authentication/signup_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_digital_sign_view.dart';
@@ -21,6 +22,7 @@ class RouteManagement {
   static const String previewPage = '/preview';
   static const String employeeSearch = '/employeeSearch';
   static const String digitalSignature = '/sign';
+  static const String generateNotification = '/generateNotification';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/login_page':
@@ -53,6 +55,8 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => AdminHomePage());
       case '/employeeSearch':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
+      case '/generateNotification':
+        return MaterialPageRoute(builder: (_) => GenerateNotification());  
       default:
         return null;
     }

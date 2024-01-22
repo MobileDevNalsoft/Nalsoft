@@ -141,7 +141,7 @@ class _PreviewState extends State<Preview> {
                               width: 120,
                               color: Colors.white,
                               child:  CachedNetworkImage(
-  imageUrl: Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
+  imageUrl: Provider.of<UserDataProvider>(context, listen: false).getOpted.toString(),
   placeholder: (context, url) =>  SpinKitCircle(color:  Color.fromARGB(
                                               255, 179, 157, 219), size: 50.0),),
   // errorWidget: (context, url, error) => Icon(Icons.error),

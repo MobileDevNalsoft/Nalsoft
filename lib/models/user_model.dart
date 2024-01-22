@@ -7,7 +7,7 @@ class UserModel {
   String department;
   String floor;
   bool isAdmin;
-  Map<String ,dynamic> opted;
+  List<dynamic> opted;
   Map<String, dynamic> notOpted;
 
   UserModel(this.userName, this.email, this.employee_id, this.department,
