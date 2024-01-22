@@ -31,17 +31,20 @@ class UpdateLunchStatus extends StatelessWidget {
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back)),
-          title: const Text("Upcoming Status", style: TextStyle(fontSize: 18),),
+          title: const Text(
+            "Upcoming Status",
+            style: TextStyle(fontSize: 18),
+          ),
           centerTitle: true,
           backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
           actions: [
-          Icon(
-            Icons.account_circle_sharp,
-            size: 30,
-          ),
-          SizedBox(
-            width: 10,
-          )
+            Icon(
+              Icons.account_circle_sharp,
+              size: 30,
+            ),
+            SizedBox(
+              width: 10,
+            )
           ],
           elevation: 4,
           shape: const ContinuousRectangleBorder(
@@ -59,33 +62,33 @@ class UpdateLunchStatus extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-              'Select Category   :     ',
-              style: TextStyle(fontSize: 13),
-            ),
-            DropdownButton<String>(
-              value: Provider.of<HomeStatusProvider>(context, listen: true)
-                  .getReason,
-              onChanged: (String? newValue) {
-                Provider.of<HomeStatusProvider>(context, listen: false)
-                    .setReason(newValue!);
-              },
-              items: <String>['Single day', 'Multiple days']
-                  .map<DropdownMenuItem<String>>(
-                    (String value) => DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    ),
-                  )
-                  .toList(),
-            ),
+                  'Select Category   :     ',
+                  style: TextStyle(fontSize: 13),
+                ),
+                DropdownButton<String>(
+                  value: Provider.of<HomeStatusProvider>(context, listen: true)
+                      .getReason,
+                  onChanged: (String? newValue) {
+                    Provider.of<HomeStatusProvider>(context, listen: false)
+                        .setReason(newValue!);
+                  },
+                  items: <String>['Single day', 'Multiple days']
+                      .map<DropdownMenuItem<String>>(
+                        (String value) => DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        ),
+                      )
+                      .toList(),
+                ),
               ],
             ),
             SizedBox(
-              height: size.height*0.05,
+              height: size.height * 0.05,
             ),
             SizedBox(
               width: size.width * 0.95,
-              height: size.height*0.52,
+              height: size.height * 0.52,
               child: Card(
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -115,8 +118,8 @@ class UpdateLunchStatus extends StatelessWidget {
                           enablePastDates: false,
                           controller: datesController,
                           // toggleDaySelection: true,
-                          minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                          maxDate:DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                          minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                          maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
                           selectionColor: Colors.deepPurple.shade100,
                           selectionShape: DateRangePickerSelectionShape.circle,
                           selectableDayPredicate: (date) {
@@ -132,32 +135,33 @@ class UpdateLunchStatus extends StatelessWidget {
                           },
                           cellBuilder: (BuildContext context,
                               DateRangePickerCellDetails details) {
-                            Color circleColor = provider.getOptedWithURL.keys
-                                                .contains(details.date.toString())
-                                            ? Colors.green.shade200
-                                            : provider.getNotOptedWithReasons.keys
-                                                    .contains(
-                                                        details.date.toString())
-                                                ? Colors.orange.shade200
-                                                : provider.getHolidays.contains(
-                                                        details.date
-                                                            .toString()
-                                                            .substring(0, 10))
-                                                    ? Colors.red.shade100
-                                                    : (details.date.weekday ==
-                                                                DateTime.sunday ||
-                                                            details.date.weekday ==
-                                                                DateTime.saturday)
-                                                        ? Colors.blueGrey.shade200
-                                                        : ((details.date.day == now.day &&
-                                                                    details.date.month <=
-                                                                        now.month &&
-                                                                    now.hour >= 15 &&
-                                                                    !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
-                                                                    !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                                ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
-                                                            ? Colors.grey.shade300
-                                                            : Colors.white30;
+                            Color circleColor = provider.getOpted.contains(
+                                    details.date.toString().substring(0, 10))
+                                ? Colors.green.shade200
+                                : provider.getNotOptedWithReasons.keys.contains(
+                                        details.date
+                                            .toString()
+                                            .substring(0, 10))
+                                    ? Colors.orange.shade200
+                                    : provider.getHolidays.contains(details.date
+                                            .toString()
+                                            .substring(0, 10))
+                                        ? Colors.red.shade100
+                                        : (details.date.weekday == DateTime.sunday ||
+                                                details.date.weekday ==
+                                                    DateTime.saturday)
+                                            ? Colors.blueGrey.shade200
+                                            : ((details.date.day == now.day &&
+                                                        details.date.month <=
+                                                            now.month &&
+                                                        now.hour >= 15 &&
+                                                        !Provider.of<UserDataProvider>(context, listen: false)
+                                                            .getOpted
+                                                            .contains(details.date.toString().substring(0, 10)) &&
+                                                        !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))) ||
+                                                    ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
+                                                ? Colors.grey.shade300
+                                                : Colors.white30;
                             return Padding(
                               padding: const EdgeInsets.all(2),
                               child: Container(
@@ -172,10 +176,11 @@ class UpdateLunchStatus extends StatelessWidget {
                               ),
                             );
                           },
-                          
+
                           showActionButtons: true,
                           allowViewNavigation: true,
-                          selectionMode: Provider.of<HomeStatusProvider>(context,
+                          selectionMode: Provider.of<HomeStatusProvider>(
+                                          context,
                                           listen: true)
                                       .getReason ==
                                   'Multiple days'
@@ -189,14 +194,16 @@ class UpdateLunchStatus extends StatelessWidget {
                                         listen: false)
                                     .getReason ==
                                 'Single day') {
-                              if (dates.toString().substring(0,10)!=now.toString().substring(0,10)){ 
-                                
+                              if (dates.toString().substring(0, 10) !=
+                                  now.toString().substring(0, 10)) {
                                 if (DateTime.parse(dates.toString()).weekday ==
                                         DateTime.saturday ||
                                     DateTime.parse(dates.toString()).weekday ==
                                         DateTime.sunday) {
                                   CustomSnackBar.showSnackBar(
-                                      context, 'remove weekoffs from selection',Colors.red);
+                                      context,
+                                      'remove weekoffs from selection',
+                                      Colors.red);
                                 } else {
                                   if (provider.getNotOptedWithReasons.keys
                                       .contains(dates.toString())) {
@@ -204,24 +211,27 @@ class UpdateLunchStatus extends StatelessWidget {
                                   } else {
                                     dialog(context, size, dates);
                                   }
-                                }}
-                               else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
                                         content: Text(
-                                            'You can only update upcoming status',)));
+                                  'You can only update upcoming status',
+                                )));
                               }
-                             
                             } else if (Provider.of<HomeStatusProvider>(context,
                                         listen: false)
                                     .getReason ==
                                 'Multiple days') {
-                              List<DateTime> datesList = dates as List<DateTime>;
+                              List<DateTime> datesList =
+                                  dates as List<DateTime>;
                               if (datesList.any((element) => provider
                                   .getNotOptedWithReasons.keys
                                   .contains(element.toString()))) {
-                                CustomSnackBar.showSnackBar(context,
-                                    'Remove NotOptedDates from selection',Colors.red);
+                                CustomSnackBar.showSnackBar(
+                                    context,
+                                    'Remove NotOptedDates from selection',
+                                    Colors.red);
                               } else {
                                 dialog(context, size, dates);
                               }
@@ -235,46 +245,46 @@ class UpdateLunchStatus extends StatelessWidget {
                         );
                       }),
                     ),
-                    
                   ],
                 ),
               ),
             ),
             Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _options(
-                                color: Colors.green.shade200,
-                                text: const Text(
-                                  'Signed',
-                                  style: TextStyle(fontSize: 10),
-                                )),
-                            _options(
-                                color: Colors.grey.shade300,
-                                text: const Text(
-                                  'Not Signed',
-                                  style: TextStyle(fontSize: 10),
-                                )),
-                            _options(
-                                color: Colors.orange.shade200,
-                                text: const Text(
-                                  'Not Opted',
-                                  style: TextStyle(fontSize: 10),
-                                )),
-                            _options(
-                                color: Colors.red.shade100,
-                                text: const Text(
-                                  'Holiday',
-                                  style: TextStyle(fontSize: 10),
-                                )),
-                          ],
-                        ),
-                      ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _options(
+                      color: Colors.green.shade200,
+                      text: const Text(
+                        'Signed',
+                        style: TextStyle(fontSize: 10),
+                      )),
+                  _options(
+                      color: Colors.grey.shade300,
+                      text: const Text(
+                        'Not Signed',
+                        style: TextStyle(fontSize: 10),
+                      )),
+                  _options(
+                      color: Colors.orange.shade200,
+                      text: const Text(
+                        'Not Opted',
+                        style: TextStyle(fontSize: 10),
+                      )),
+                  _options(
+                      color: Colors.red.shade100,
+                      text: const Text(
+                        'Holiday',
+                        style: TextStyle(fontSize: 10),
+                      )),
+                ],
+              ),
+            ),
             Image.asset("assets/images/food.png"),
           ],
         ));
   }
+
   Widget _options({required color, required text}) {
     return Row(
       children: [
@@ -354,7 +364,7 @@ class UpdateLunchStatus extends StatelessWidget {
                         onPressed: () {
                           if (notOptController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
-                                context, 'reason cannot be empty',Colors.red);
+                                context, 'reason cannot be empty', Colors.red);
                           } else {
                             if (Provider.of<HomeStatusProvider>(context,
                                         listen: false)
@@ -365,7 +375,9 @@ class UpdateLunchStatus extends StatelessWidget {
                                   DateTime.parse(dates.toString()).weekday ==
                                       DateTime.sunday) {
                                 CustomSnackBar.showSnackBar(
-                                    context, 'remove weekoffs from selection',Colors.red);
+                                    context,
+                                    'remove weekoffs from selection',
+                                    Colors.red);
                               } else {
                                 Provider.of<UserDataProvider>(context,
                                         listen: false)
@@ -385,7 +397,9 @@ class UpdateLunchStatus extends StatelessWidget {
                                       .toList()
                                       .contains(7)) {
                                 CustomSnackBar.showSnackBar(
-                                    context, 'remove weekoffs from selection',Colors.red);
+                                    context,
+                                    'remove weekoffs from selection',
+                                    Colors.red);
                               } else {
                                 Provider.of<UserDataProvider>(context,
                                         listen: false)

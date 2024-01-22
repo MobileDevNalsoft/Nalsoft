@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +17,8 @@ class Preview extends StatefulWidget {
 }
 
 class _PreviewState extends State<Preview> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +51,7 @@ class _PreviewState extends State<Preview> {
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.62,
+              height: MediaQuery.of(context).size.height * 0.65,
               color: const Color.fromARGB(255, 247, 242, 250),
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -80,139 +83,29 @@ class _PreviewState extends State<Preview> {
                       ),
                       const Divider(
                         color: Color.fromARGB(255, 247, 242, 250),
-                        thickness: 4,
+                        thickness: 2,
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(
-                      //       top: 20.0, left: 20, right: 20, bottom: 20),
-                      //   child: Row(
-                      //     children: [
-                      //       const Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text('Employee Name'),
-                      //           Text('Employee ID'),
-                      //           Text('Employee Floor no.')
-                      //         ],
-                      //       ),
-                      //       const SizedBox(
-                      //         width: 20,
-                      //       ),
-                      //       const Column(
-                      //         children: [Text(':'), Text(':'), Text(':')],
-                      //       ),
-                      //       const SizedBox(
-                      //         width: 20,
-                      //       ),
-                      //       Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text(Provider.of<UserDataProvider>(context,
-                      //                   listen: false)
-                      //               .getUsername!),
-                      //           Text(Provider.of<UserDataProvider>(
-                      //             context,
-                      //           ).getEmpID!),
-                      //           Text(Provider.of<UserDataProvider>(
-                      //             context,
-                      //           ).getFloor!)
-                      //         ],
-                      //       )
-                      //     ],
-                      //   ),
-                      // ),
                       QrImageView(
-                        data: Provider.of<UserDataProvider>(context,listen: false).getUsername!,
-                        size: 180,
+                        data:
+                            '{"uid":"${_auth.currentUser!.uid}","date":"${DateTime.now().toString().substring(0, 10)}"}',
+                        size: 200,
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.015,
                       ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Text(
-                        'Successfully Signed\n         for today',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Icon(
-                        Icons.task_alt_sharp,
-                        color: Colors.green.shade800,
-                        size: 40,
-                      ),
-                              ],
-                            ),
-                            SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                            Container(
-                              height: 100,
-                              width: 120,
-                              color: Colors.white,
-                              child:  CachedNetworkImage(
-  imageUrl: Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
-  placeholder: (context, url) =>  SpinKitCircle(color:  Color.fromARGB(
-                                              255, 179, 157, 219), size: 50.0),),
-  // errorWidget: (context, url, error) => Icon(Icons.error),
-
-                              // child: FutureBuilder<Uint8List>(
-                              //   future: getTemporaryDirectory().then((dir) =>
-                              //       File('${dir.path}/cached_image.jpg')
-                              //           .readAsBytes()),
-                              //   builder: (context, snapshot) {
-                              //     if (snapshot.hasData) {
-                              //       return Image.memory(snapshot.data!);
-                              //     } else {
-                              //       return Center(
-                              //           child: SpinKitCircle(color: Colors.blue, size: 50.0),);
-                              //     }
-                              //   },
-                              // ),
-                              // child: Image.memory(getTemporaryDirectory().then((dir) => File('${dir.path}/cached_image.jpg').readAsBytes()) as Uint8List ),
-                              // child: Image.network(
-                              //   Provider.of<UserDataProvider>(context,
-                              //           listen: false)
-                              //       .getOptedWithURL[DateTime(now.year,
-                              //           now.month, now.day, 0, 0, 0, 0)
-                              //       .toString()],
-                              //   loadingBuilder: (BuildContext context,
-                              //       Widget child, loadingProgress) {
-                              //     if (loadingProgress != null) {
-                              //       print(loadingProgress);
-                              //       return Center(
-                              //         child: SpinKitCircle(
-                              //             color: Color.fromARGB(
-                              //                 255, 179, 157, 219),
-                              //             size: 50.0),
-                              //       );
-                              //     }
-                              //     return child;
-                              //   },
-                              // ),
-                              // child: Image.network(
-                              //    Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL[DateTime(now.year, now.month, now.day, 0,0,0,0).toString()],
-                              //    loadingBuilder:
-                              //       (context, child, loadingProgress) {
-                              //       if (loadingProgress==null){
-                              //         print(child);
-                              //         return SpinKitCircle(color: Colors.blue, size: 50.0);
-                              //       }return
-                              //     // print("progress $loadingProgress $child");
-                              //     // return ;
-                              //     }),
-                              // return const Center(
-                              //   child:SpinKitCircle(color: Colors.blue, size: 50.0),
-                              // );
-                              // },
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                          ],
-                        ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text(
+                            'Successfully Opted\n       for today',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Icon(
+                            Icons.task_alt_sharp,
+                            color: Colors.green.shade800,
+                            size: 40,
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 20,

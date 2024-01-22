@@ -32,7 +32,6 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
-
   DateTime now = DateTime.now();
 
   late SharedPreferences sharedPreferences;
@@ -48,18 +47,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> initData() async {
     sharedPreferences = await SharedPreferences.getInstance();
-  }
-
-  Future<void> scanQR() async{
-    try{
-      final qrCode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR); 
-      if(!mounted) return;
-      setState(() {
-        this.qrResult = qrCode.toString();
-      });
-    }on PlatformException{
-      qrResult = 'Failed to read QR';
-    }
   }
 
   @override
@@ -103,12 +90,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         },
                       ),
                       const Expanded(child: SizedBox()),
-                      IconButton(
-                        onPressed: () {
-                          scanQR();
-                        },
-                        icon: Icon(Icons.qr_code_scanner),
-                      ),
                       Consumer<HomeStatusProvider>(
                         builder: (context, provider, child) {
                           return Provider.of<UserDataProvider>(context,

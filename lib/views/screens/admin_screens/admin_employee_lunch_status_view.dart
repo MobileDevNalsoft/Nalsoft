@@ -183,35 +183,29 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                 },
                                 cellBuilder: (BuildContext context,
                                     DateRangePickerCellDetails details) {
-                                  Color circleColor = Provider.of<AdminEmployeesProvider>(context, listen: false)
-                                          .getEmpWithID!
-                                          .opted
-                                          .keys
-                                          .contains(details.date.toString())
+                                  Color circleColor = Provider.of<UserDataProvider>(
+                                              context,
+                                              listen: false)
+                                          .getOpted
+                                          .contains(details.date
+                                              .toString()
+                                              .substring(0, 10))
                                       ? Colors.green.shade200
-                                      : Provider.of<AdminEmployeesProvider>(context, listen: false)
-                                              .getEmpWithID!
-                                              .notOpted
+                                      : Provider.of<UserDataProvider>(context, listen: false)
+                                              .getNotOptedWithReasons
                                               .keys
-                                              .contains(details.date.toString())
+                                              .contains(details.date
+                                                  .toString()
+                                                  .substring(0, 10))
                                           ? Colors.orange.shade200
-                                          : Provider.of<UserDataProvider>(context, listen: false)
+                                          : Provider.of<UserDataProvider>(context,
+                                                      listen: false)
                                                   .getHolidays
-                                                  .contains(details.date
-                                                      .toString()
-                                                      .substring(0, 10))
+                                                  .contains(details.date.toString().substring(0, 10))
                                               ? Colors.red.shade100
-                                              : (details.date.weekday == DateTime.sunday ||
-                                                      details.date.weekday ==
-                                                          DateTime.saturday)
+                                              : (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday)
                                                   ? Colors.blueGrey.shade200
-                                                  : ((details.date.day == now.day &&
-                                                              details.date.month <=
-                                                                  now.month &&
-                                                              now.hour >= 15 &&
-                                                              !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) &&
-                                                              !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())) ||
-                                                          ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOptedWithURL.keys.contains(details.date.toString()) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString())))
+                                                  : ((details.date.day == now.day && details.date.month <= now.month && now.hour >= 15 && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))) || ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
                                                       ? Colors.grey.shade300
                                                       : Colors.white30;
                                   return Padding(
@@ -323,7 +317,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
     DateTime now = DateTime.now();
 
     Map<String, dynamic> mergedMap = {
-      ...thisEmpData.opted,
+      // ...thisEmpData.opted,
       ...thisEmpData.notOpted
     };
 
@@ -368,17 +362,17 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
     int rowIndex = 4;
 
     for (var date in rangeDates) {
-      if (thisEmpData.opted.keys.contains(date.toString())) {
+      if (thisEmpData.opted.contains(date.toString())) {
         sheet
             .getRangeByIndex(rowIndex, 1)
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
-        final response =
-            await http.get(Uri.parse(thisEmpData.opted[date.toString()]));
-        final excel.Picture picture =
-            sheet.pictures.addStream(rowIndex, 3, response.bodyBytes);
-        picture.height = 20;
-        picture.width = 50;
+        // final response =
+        //     await http.get(Uri.parse(thisEmpData.opted[date.toString()]));
+        // final excel.Picture picture =
+        //     sheet.pictures.addStream(rowIndex, 3, response.bodyBytes);
+        // picture.height = 20;
+        // picture.width = 50;
         rowIndex++;
       } else if (thisEmpData.notOpted.keys.contains(date.toString())) {
         sheet

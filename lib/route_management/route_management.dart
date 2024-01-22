@@ -4,8 +4,7 @@ import 'package:meals_management/views/screens/admin_screens/admin_employees_vie
 import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/authentication/signup_view.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_digital_sign_view.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
+import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
 
@@ -27,12 +26,6 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => LoginView());
       case '/homepage':
         return MaterialPageRoute(builder: (_) => EmployeeHomeView());
-      case '/sign':
-        return MaterialPageRoute(builder: (_) {
-          final args = settings.arguments as Map<String, dynamic>;
-          final date = args['date'];
-          return DigitalSignView(date: date);
-        });
       case '/preview':
         return MaterialPageRoute(builder: (_) => Preview());
       case '/userRegistration':
@@ -49,8 +42,6 @@ class RouteManagement {
         });
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) => UpdateLunchStatus());
-      case '/adminHomePage':
-        return MaterialPageRoute(builder: (_) => AdminHomePage());
       case '/employeeSearch':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       default:
