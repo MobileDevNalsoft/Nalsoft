@@ -154,6 +154,9 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                       ),
                     ),
                     SizedBox(
+                      height: size.height * 0.05,
+                    ),
+                    SizedBox(
                       height: size.height * 0.45,
                       width: size.width * 0.95,
                       child: Card(
@@ -183,16 +186,18 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                 },
                                 cellBuilder: (BuildContext context,
                                     DateRangePickerCellDetails details) {
-                                  Color circleColor = Provider.of<UserDataProvider>(
+                                  Color circleColor = Provider.of<AdminEmployeesProvider>(
                                               context,
                                               listen: false)
-                                          .getOpted
+                                          .getEmpWithID!
+                                          .opted
                                           .contains(details.date
                                               .toString()
                                               .substring(0, 10))
                                       ? Colors.green.shade200
-                                      : Provider.of<UserDataProvider>(context, listen: false)
-                                              .getNotOptedWithReasons
+                                      : Provider.of<AdminEmployeesProvider>(context, listen: false)
+                                              .getEmpWithID!
+                                              .notOpted
                                               .keys
                                               .contains(details.date
                                                   .toString()
@@ -205,7 +210,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                               ? Colors.red.shade100
                                               : (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday)
                                                   ? Colors.blueGrey.shade200
-                                                  : ((details.date.day == now.day && details.date.month <= now.month && now.hour >= 15 && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))) || ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
+                                                  : ((details.date.day == now.day && details.date.month <= now.month && now.hour >= 15 && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.opted.contains(details.date.toString().substring(0, 10)) && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.notOpted.keys.contains(details.date.toString().substring(0, 10))) || ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.opted.contains(details.date.toString().substring(0, 10)) && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.notOpted.keys.contains(details.date.toString().substring(0, 10))))
                                                       ? Colors.grey.shade300
                                                       : Colors.white30;
                                   return Padding(
@@ -286,6 +291,37 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                         ),
                       ),
                     ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _options(
+                              color: Colors.green.shade200,
+                              text: const Text(
+                                'Opted',
+                                style: TextStyle(fontSize: 10),
+                              )),
+                          _options(
+                              color: Colors.orange.shade200,
+                              text: const Text(
+                                'Not Opted',
+                                style: TextStyle(fontSize: 10),
+                              )),
+                          _options(
+                              color: Colors.red.shade100,
+                              text: const Text(
+                                'Holiday',
+                                style: TextStyle(fontSize: 10),
+                              )),
+                          _options(
+                              color: Colors.grey.shade300,
+                              text: const Text(
+                                'No Status',
+                                style: TextStyle(fontSize: 10),
+                              )),
+                        ],
+                      ),
+                    ),
                     Image.asset("assets/images/food.png"),
                   ],
                 ),
@@ -308,6 +344,18 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
     ));
   }
 
+  Widget _options({required color, required text}) {
+    return Row(
+      children: [
+        Icon(
+          Icons.circle,
+          color: color,
+        ),
+        text,
+      ],
+    );
+  }
+
   Future<void> sendMail(BuildContext context, UserModel thisEmpData) async {
     Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
         true;
@@ -315,23 +363,6 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
     final dir = await getExternalStorageDirectory();
 
     DateTime now = DateTime.now();
-
-    Map<String, dynamic> mergedMap = {
-      // ...thisEmpData.opted,
-      ...thisEmpData.notOpted
-    };
-
-    Map<DateTime, dynamic> newMap = {};
-
-    mergedMap.forEach((key, value) {
-      newMap[DateTime(
-          int.parse(key.substring(0, 4)),
-          int.parse(key.substring(5, 7)),
-          int.parse(key.substring(8, 10)))] = value;
-    });
-
-    Map<DateTime, dynamic> sortedMap = Map.fromEntries(
-        newMap.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
 
     // Create a new Excel workbook
     final excel.Workbook workbook = excel.Workbook();
@@ -352,42 +383,50 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
         .setText('${thisEmpData.userName}(${thisEmpData.employee_id})');
 
     sheet.getRangeByIndex(3, 1).setText('Date');
-    sheet.getRangeByIndex(3, 2).setText('Category');
-    sheet.getRangeByIndex(3, 3).setText('Info');
+    sheet.getRangeByIndex(3, 2).setText('Status');
+    sheet.getRangeByIndex(3, 3).setText('Reason');
 
     List<DateTime> rangeDates = List.generate(
-        sortedMap.keys.last.difference(sortedMap.keys.first).inDays + 1,
-        (index) => sortedMap.keys.first.add(Duration(days: index)));
+        now.difference(DateTime(now.year, now.month, 1)).inDays + 1,
+        (index) => DateTime(now.year, now.month, 1).add(Duration(days: index)));
 
     int rowIndex = 4;
 
     for (var date in rangeDates) {
-      if (thisEmpData.opted.contains(date.toString())) {
+      if (thisEmpData.opted.contains(date.toString().substring(0, 10))) {
         sheet
             .getRangeByIndex(rowIndex, 1)
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
-        // final response =
-        //     await http.get(Uri.parse(thisEmpData.opted[date.toString()]));
-        // final excel.Picture picture =
-        //     sheet.pictures.addStream(rowIndex, 3, response.bodyBytes);
-        // picture.height = 20;
-        // picture.width = 50;
         rowIndex++;
-      } else if (thisEmpData.notOpted.keys.contains(date.toString())) {
+      } else if (thisEmpData.notOpted.keys
+          .contains(date.toString().substring(0, 10))) {
         sheet
             .getRangeByIndex(rowIndex, 1)
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
         sheet
             .getRangeByIndex(rowIndex, 3)
-            .setText(thisEmpData.notOpted[date.toString()]);
+            .setText(thisEmpData.notOpted[date.toString().substring(0, 10)]);
         rowIndex++;
       } else if (date.day < now.day && date.month <= now.month) {
         sheet
             .getRangeByIndex(rowIndex, 1)
             .setText(date.toString().substring(0, 10));
-        sheet.getRangeByIndex(rowIndex, 2).setText('UnSigned');
+        sheet.getRangeByIndex(rowIndex, 2).setText('No Status');
+        rowIndex++;
+      }
+    }
+
+    for (var entry in thisEmpData.notOpted.entries) {
+      if ((DateTime.parse(entry.key).day > now.day &&
+              DateTime.parse(entry.key).month == now.month) ||
+          DateTime.parse(entry.key).month > now.month) {
+        sheet.getRangeByIndex(rowIndex, 1).setText(entry.key);
+        sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
+        sheet
+            .getRangeByIndex(rowIndex, 3)
+            .setText(thisEmpData.notOpted[entry.key]);
         rowIndex++;
       }
     }

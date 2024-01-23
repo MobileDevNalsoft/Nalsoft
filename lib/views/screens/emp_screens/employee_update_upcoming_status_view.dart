@@ -130,8 +130,14 @@ class UpdateLunchStatus extends StatelessWidget {
                                         date.day > now.day) ||
                                     (date.year == now.year &&
                                         date.month > now.month)) &&
-                                !provider.getHolidays
-                                    .contains(date.toString().substring(0, 10));
+                                !provider.getHolidays.contains(
+                                    date.toString().substring(0, 10)) &&
+                                ((date.day > now.day + 1 &&
+                                        date.month == now.month) ||
+                                    (date.month > now.month) ||
+                                    (date.day == now.day + 1 &&
+                                        date.month == now.month &&
+                                        now.hour < 18));
                           },
                           cellBuilder: (BuildContext context,
                               DateRangePickerCellDetails details) {
@@ -203,8 +209,10 @@ class UpdateLunchStatus extends StatelessWidget {
                                       Colors.red);
                                 } else {
                                   if (provider.getNotOptedWithReasons.keys
-                                      .contains(dates.toString().substring(0,10))) {
-                                    removeDialog(context, size, dates);
+                                      .contains(
+                                          dates.toString().substring(0, 10))) {
+                                    removeDialog(
+                                        context, size, [dates as DateTime]);
                                   } else {
                                     dialog(context, size, dates);
                                   }
@@ -222,13 +230,10 @@ class UpdateLunchStatus extends StatelessWidget {
                                 'Multiple days') {
                               List<DateTime> datesList =
                                   dates as List<DateTime>;
-                              if (datesList.any((element) => provider
-                                  .getNotOptedWithReasons.keys
-                                  .contains(element.toString()))) {
-                                CustomSnackBar.showSnackBar(
-                                    context,
-                                    'Remove NotOptedDates from selection',
-                                    Colors.red);
+                              if (datesList.any((element) =>
+                                  provider.getNotOptedWithReasons.keys.contains(
+                                      element.toString().substring(0, 10)))) {
+                                removeDialog(context, size, dates);
                               } else {
                                 dialog(context, size, dates);
                               }
@@ -435,7 +440,7 @@ class UpdateLunchStatus extends StatelessWidget {
     );
   }
 
-  void removeDialog(context, size, dates) {
+  void removeDialog(context, size, List<DateTime> dates) {
     showDialog(
       context: context,
       builder: (context) {

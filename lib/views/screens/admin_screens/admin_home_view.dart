@@ -332,33 +332,29 @@ class _AdminHomePageState extends State<AdminHomePage> {
     // Append headers
     sheet.getRangeByIndex(1, 1).setText('Employee ID');
     sheet.getRangeByIndex(1, 2).setText('Employee Name');
-    sheet.getRangeByIndex(1, 3).setText(date.toString());
-    sheet.getRangeByIndex(1, 4).setText('Signature');
+    sheet.getRangeByIndex(1, 3).setText(date.toString().substring(0, 10));
+    sheet.getRangeByIndex(1, 4).setText('Reason');
 
     // Append data
     int rowIndex = 2;
     for (var data in empData) {
-      if (data['opted'].keys.contains(date.toString())) {
+      if (data['opted'].contains(date.toString().substring(0, 10))) {
         sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
         sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
         sheet.getRangeByIndex(rowIndex, 3).setText('Opted');
-        final response =
-            await http.get(Uri.parse(data['opted'][date.toString()]));
-        final excel.Picture picture =
-            sheet.pictures.addStream(rowIndex, 4, response.bodyBytes);
-        picture.height = 20;
-        picture.width = 50;
-      } else if (data['notOpted'].keys.contains(date.toString())) {
+      } else if (data['notOpted']
+          .keys
+          .contains(date.toString().substring(0, 10))) {
         sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
         sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
         sheet.getRangeByIndex(rowIndex, 3).setText('Not Opted');
         sheet
             .getRangeByIndex(rowIndex, 4)
-            .setText(data['notOpted'][date.toString()]);
+            .setText(data['notOpted'][date.toString().substring(0, 10)]);
       } else {
         sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
         sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
-        sheet.getRangeByIndex(rowIndex, 3).setText('UnSigned');
+        sheet.getRangeByIndex(rowIndex, 3).setText('No Status');
       }
       rowIndex++;
     }
