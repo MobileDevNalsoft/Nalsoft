@@ -15,33 +15,30 @@ import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences? sharedPreferences = await SharedPreferences.getInstance();
 
   await Firebase.initializeApp(
-    
       options: const FirebaseOptions(
           apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE",
           appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a",
-            messagingSenderId: "1066586839679",
+          messagingSenderId: "1066586839679",
           projectId: "meals-management-app-37e6a"));
 
-  
   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  messaging.subscribeToTopic("mobiles");
   NotificationSettings settings = await messaging.requestPermission(
-  alert: true,
-  announcement: false,
-  badge: true,
-  carPlay: false,
-  criticalAlert: false,
-  provisional: false,
-  sound: true,
-);
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
   print("permissions ");
   print('User granted permission: ${settings.authorizationStatus}');
-  print('Token ${await messaging.getToken()}');
-
+  print('Device Token ${await messaging.getToken()}');
 
   runApp(MultiProvider(
     providers: [
@@ -55,7 +52,7 @@ void main() async {
           create: (context) => AdminEmployeesProvider()),
       ChangeNotifierProvider<HomeStatusProvider>(
           create: (context) => HomeStatusProvider()),
-           ChangeNotifierProvider<GenerateNotificationProvider>(
+      ChangeNotifierProvider<GenerateNotificationProvider>(
           create: (context) => GenerateNotificationProvider()),
     ],
     child: SafeArea(

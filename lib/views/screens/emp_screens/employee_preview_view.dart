@@ -140,11 +140,16 @@ class _PreviewState extends State<Preview> {
                               height: 100,
                               width: 120,
                               color: Colors.white,
-                              child:  CachedNetworkImage(
-  imageUrl: Provider.of<UserDataProvider>(context, listen: false).getOpted.toString(),
-  placeholder: (context, url) =>  SpinKitCircle(color:  Color.fromARGB(
-                                              255, 179, 157, 219), size: 50.0),),
-  // errorWidget: (context, url, error) => Icon(Icons.error),
+                              child: CachedNetworkImage(
+                                imageUrl: Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getOpted
+                                    .toString(),
+                                placeholder: (context, url) => SpinKitCircle(
+                                    color: Color.fromARGB(255, 179, 157, 219),
+                                    size: 50.0),
+                              ),
+                              // errorWidget: (context, url, error) => Icon(Icons.error),
 
                               // child: FutureBuilder<Uint8List>(
                               //   future: getTemporaryDirectory().then((dir) =>

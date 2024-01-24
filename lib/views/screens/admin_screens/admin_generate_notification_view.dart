@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:meals_management/providers/admin_generate_notification_provider.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
@@ -56,7 +57,7 @@ class GenerateNotification extends StatelessWidget {
           ),
           SizedBox(
             width: size.width*0.3,
-            child: CustomButton(
+            child: Provider.of<GenerateNotificationProvider>(context,listen:false).isLoading?SpinKitCircle(  color: Color.fromARGB(255, 185, 147, 255),) :CustomButton(
                 child: Row(
                   children: [Icon(Icons.published_with_changes,color: Colors.white,),
                     Text(
