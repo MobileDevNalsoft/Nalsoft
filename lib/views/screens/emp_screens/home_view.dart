@@ -46,8 +46,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
 
-  String? qrResult;
-
   @override
   void initState() {
     super.initState();
