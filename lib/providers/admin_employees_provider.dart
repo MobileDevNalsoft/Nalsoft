@@ -29,6 +29,9 @@ class AdminEmployeesProvider extends ChangeNotifier {
 
   Future<void> setEmpList({String search = ''}) async {
     var allEmpinfoList = await _db.getEmployees(search: search);
+    // API call 6 for Get Request
+      // here we fetch the entire column of names from company's empoyees table
+      // then for each change in search text field we trigger that get call
     empList = allEmpinfoList;
     isSearching = false;
     notifyListeners();
@@ -36,11 +39,16 @@ class AdminEmployeesProvider extends ChangeNotifier {
 
   Future<void> setAllEmpData() async {
     _empData = await _db.readUsers();
+    // API call 7 for Get Request
+      // we send the date to db using that date we filter rows in events table then we join that events table with
+      // company's employees table using employee id in response we get a list of map(for each user with column names as keys and each row data
+      // as values)  using this in the app we inject data into excel sheet accordingly.
     notifyListeners();
   }
 
   Future<void> setEmpDataWithID({String? empid}) async {
     _user = await _db.readDataWithID(empid: empid);
+    // here we can use API call 1 Get method
     notifyListeners();
   }
 

@@ -57,7 +57,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserFromDB();
       await Provider.of<HomeStatusProvider>(context, listen: false)
-          .setFloorDetails();
+          .setFloorDetails(); 
       await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
       Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
       Provider.of<UserDataProvider>(context, listen: false)
@@ -67,9 +67,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
         DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
             ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
             : DateTime.now();
-        if (now.day != lastResetDate.day) {
+        if(!sharedPreferences.containsKey('lastResetDate')){
           sharedPreferences.setInt('employeeCount', 0);
           sharedPreferences.setString('lastResetDate', now.toString());
+          Provider.of<HomeStatusProvider>(context, listen: false)
+              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+        }
+        else if(now.day != lastResetDate.day) {
+          sharedPreferences.setInt('employeeCount', 0);
+          sharedPreferences.setString('lastResetDate', now.toString());
+          Provider.of<HomeStatusProvider>(context, listen: false)
+              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else {
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
@@ -179,6 +187,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                               context,
                                               listen: false)
                                           .pushOptedDate(uid: qrData['uid']);
+                                  // API call 4 for Post Request 
+                                  // 
                                   if (isAlreadyScanned) {
                                     if (!_hasShownSnackbar) {
                                       setState(() {
@@ -204,8 +214,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       _isIncremented = true;
                                     }
                                     controller.pauseCamera();
-                                    Timer.periodic(Duration(seconds: 2),
-                                        (timer) {
+                                    Future.delayed(Duration(seconds: 2),
+                                        () {
                                       controller.resumeCamera();
                                       _isIncremented = false;
                                     });
@@ -717,3 +727,24 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     );
   }
 }
+
+
+/*
+from company's employee table we required fields like
+1. Employee name,
+2. Employee id,
+3. User Type (E -> Employee, A -> Admin, V -> Vendor),
+(we only get data from this table when user enters into app)
+
+fields for events table ({mail id, date} can be a composite primary key)
+1. Employee mail id
+2. Date
+3. Status => opted or not opted, no status if user dont eat and not updated date in not opted list
+4. Info => scan time for scanned , reason for not opted, empty for not status
+(we get and post the data when user's QR is scanned or when he updates single or multiple dates as not opted in update upcoming status)
+
+holidays table
+1. date 
+(we only get data from this table when user enters into this table)
+*/
+

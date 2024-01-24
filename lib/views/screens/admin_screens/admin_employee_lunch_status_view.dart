@@ -231,6 +231,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                 selectionMode:
                                     DateRangePickerSelectionMode.single,
                                 showNavigationArrow: true,
+                                // this will not be required when we integrate local api to app
                                 onSelectionChanged:
                                     (dateRangePickerSelectionChangedArgs) {
                                   if (Provider.of<AdminEmployeesProvider>(

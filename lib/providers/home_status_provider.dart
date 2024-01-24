@@ -32,6 +32,7 @@ class HomeStatusProvider extends ChangeNotifier {
   // aquires details of floor from db
   Future<void> setFloorDetails() async {
     _floorDetails = await _db.readFloors();
+    // => not required further
     notifyListeners();
   }
 
