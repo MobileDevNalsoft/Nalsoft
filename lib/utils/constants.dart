@@ -4,4 +4,5 @@ class Constants {
   static final empIDRegex = RegExp(r'^\d+$');
   static bool empHomeIsLoading = true;
   static bool empSearchIsLoading = true;
+  static bool admHomeIsLoading = true;
 }

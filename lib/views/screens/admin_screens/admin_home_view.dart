@@ -288,17 +288,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _options(
-                                    color: Colors.red.shade100,
-                                    text: const Text(
-                                      'Holiday',
-                                      style: TextStyle(fontSize: 10),
-                                    ))
-                  ],
-                ),
                 Image.asset("assets/images/food.png")
                           ],
                         ),
