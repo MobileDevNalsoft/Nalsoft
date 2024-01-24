@@ -28,7 +28,7 @@ class GenerateNotificationProvider extends ChangeNotifier {
     };
 
     String accessToken = await notificationRepo.getToken();
-
+  print(accessToken);
     try {
       final url = Uri.parse(
           "https://fcm.googleapis.com/v1/projects/meals-management-app-37e6a/messages:send");
@@ -49,10 +49,14 @@ class GenerateNotificationProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
+        isLoading=false;
+        notifyListeners();
         print("Error sending notification: ${response.body}");
         return false;
       }
     } catch (e) {
+       isLoading=false;
+        notifyListeners();
       print("Error sending notification: $e");
       return false;
     }
