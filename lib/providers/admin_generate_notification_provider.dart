@@ -14,7 +14,7 @@ class GenerateNotificationProvider extends ChangeNotifier {
   String _description = '';
   bool isLoading = false;
 
-  Future<void> sendNotification(String title, String description) async {
+  Future<bool> sendNotification(String title, String description) async {
     isLoading=true;
     notifyListeners();
     _title = title;
@@ -47,11 +47,14 @@ class GenerateNotificationProvider extends ChangeNotifier {
         print("Notification sent successfully!");
         isLoading=false;
         notifyListeners();
+        return true;
       } else {
         print("Error sending notification: ${response.body}");
+        return false;
       }
     } catch (e) {
       print("Error sending notification: $e");
+      return false;
     }
   }
 }

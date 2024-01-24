@@ -22,7 +22,10 @@ class GenerateNotification extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Text("Send notification"),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Send notification",style: TextStyle(fontSize: 20)),
+          ),
           Card(
             elevation: 1,
             margin: EdgeInsets.all(16),
@@ -57,7 +60,7 @@ class GenerateNotification extends StatelessWidget {
           ),
           SizedBox(
             width: size.width*0.3,
-            child: Provider.of<GenerateNotificationProvider>(context,listen:false).isLoading?SpinKitCircle(  color: Color.fromARGB(255, 185, 147, 255),) :CustomButton(
+            child: Provider.of<GenerateNotificationProvider>(context,listen:true).isLoading?SpinKitCircle(  color: Color.fromARGB(255, 185, 147, 255),) :CustomButton(
                 child: Row(
                   children: [Icon(Icons.published_with_changes,color: Colors.white,),
                     Text(
@@ -68,12 +71,18 @@ class GenerateNotification extends StatelessWidget {
                 ),
                 color: MaterialStatePropertyAll(Colors.blue),
                 onPressed: (
-                ) {
+                ) async {
                   if (titleController.text.isEmpty){
                     CustomSnackBar.showSnackBar(context, "Title cannot be empty", Colors.red);  
                   }
                   else{
-                    Provider.of<GenerateNotificationProvider>(context,listen:false).sendNotification(titleController.text,descriptionController.text);
+                   bool result=await Provider.of<GenerateNotificationProvider>(context,listen:false).sendNotification(titleController.text,descriptionController.text);
+                   if (result){
+                    CustomSnackBar.showSnackBar(context, "Successfully sent", Colors.green);  
+                   }
+                   else{
+                    CustomSnackBar.showSnackBar(context, "Could not send notification", Colors.red);  
+                   }
                   }
                 }),
           )
