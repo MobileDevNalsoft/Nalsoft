@@ -3,6 +3,8 @@ import "package:flutter/services.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import 'package:http/http.dart' as http;
 import "dart:ui";
+import "package:meals_management/providers/digital_signature_provider.dart";
+import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
@@ -41,8 +43,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
     initData();
   }
 
-  Future<void> initData() async {
-    sharedPreferences = await SharedPreferences.getInstance();
+  Future<void> initData() async{
+    try{
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpList();
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpData();
+    }finally{
+      setState(() {
+        Constants.admHomeIsLoading = false;
+      });
+    }
   }
 
   @override
@@ -54,12 +65,18 @@ class _AdminHomePageState extends State<AdminHomePage> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+        body: Constants.admHomeIsLoading
+            ? const Center(
+                child: SpinKitCircle(
+                    color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
+              )
+            :  Constants.admHomeIsLoading ? Center(child: CircularProgressIndicator(),) : 
+            Stack(
               children: [
+                Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
                 Container(
                   width: double.infinity,
                   height: size.height * 0.13,
@@ -94,8 +111,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               ? Switch(
                                   value: true,
                                   onChanged: (value) {
-                                    Navigator.pushReplacementNamed(context,
-                                        RouteManagement.employeeHomePage);
+                                    Navigator.pushReplacementNamed(
+                                        context, RouteManagement.employeeHomePage);
                                   },
                                   activeColor:
                                       const Color.fromARGB(255, 181, 129, 248),
@@ -111,9 +128,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               PopupMenuItem(
                                   value: 'Sign Out',
                                   height: 10,
-                                  onTap: () => FirebaseAuthRepo()
-                                          .signOutNow()
-                                          .then((value) {
+                                  onTap: () =>
+                                      FirebaseAuthRepo().signOutNow().then((value) {
                                         sharedPreferences.setString(
                                             "islogged", 'false');
                                         Navigator.pushNamedAndRemoveUntil(
@@ -133,8 +149,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 12),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: const Color.fromRGBO(236, 230, 240, 100),
@@ -143,21 +159,19 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       onTap: () {
                         // Navigator.pushNamed(
                         //     context, RouteManagement.adminEmployees);
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    EmployeeSearch(),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
+                       Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => EmployeeSearch(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+                
                       },
                       child: Row(
                         children: [
@@ -207,39 +221,33 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             return Expanded(
                                 child: SfDateRangePicker(
                               controller: datesController,
-                              minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                              maxDate:
-                                  DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                              minDate:DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                              maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
                               selectionColor: Colors.deepPurple.shade100,
-                              selectionShape:
-                                  DateRangePickerSelectionShape.circle,
+                              selectionShape: DateRangePickerSelectionShape.circle,
                               selectableDayPredicate: (date) {
                                 return date.weekday != DateTime.saturday &&
-                                    date.weekday != DateTime.sunday &&
-                                    date.day <= now.day &&
-                                    date.month <= now.month &&
+                                    date.weekday != DateTime.sunday && date.day <= now.day&& date.month <= now.month &&
                                     !Provider.of<UserDataProvider>(context,
                                             listen: false)
                                         .getHolidays
-                                        .contains(
-                                            date.toString().substring(0, 10));
+                                        .contains(date.toString().substring(0, 10));
                               },
                               cellBuilder: (BuildContext context,
                                   DateRangePickerCellDetails details) {
-                                Color circleColor =
-                                    Provider.of<UserDataProvider>(context,
-                                                listen: false)
-                                            .getHolidays
-                                            .contains(details.date
-                                                .toString()
-                                                .substring(0, 10))
-                                        ? Colors.red.shade100
-                                        : (details.date.weekday ==
-                                                    DateTime.sunday ||
-                                                details.date.weekday ==
-                                                    DateTime.saturday)
-                                            ? Colors.blueGrey.shade200
-                                            : Colors.white30;
+                                Color circleColor = Provider.of<UserDataProvider>(
+                                            context,
+                                            listen: false)
+                                        .getHolidays
+                                        .contains(details.date
+                                            .toString()
+                                            .substring(0, 10))
+                                    ? Colors.red.shade100
+                                    : (details.date.weekday == DateTime.sunday ||
+                                            details.date.weekday ==
+                                                DateTime.saturday)
+                                        ? Colors.blueGrey.shade200
+                                        : Colors.white30;
                                 return Padding(
                                   padding: const EdgeInsets.all(2),
                                   child: Container(
@@ -250,15 +258,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       color: circleColor,
                                     ),
                                     child: Center(
-                                        child:
-                                            Text(details.date.day.toString())),
+                                        child: Text(details.date.day.toString())),
                                   ),
                                 );
                               },
                               showActionButtons: true,
                               allowViewNavigation: true,
-                              selectionMode:
-                                  DateRangePickerSelectionMode.single,
+                              selectionMode: DateRangePickerSelectionMode.single,
                               showNavigationArrow: true,
                               confirmText: 'Send Mail',
                               cancelText: 'Clear Selection',
@@ -267,8 +273,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                   date = date as DateTime;
                                   sendMail(date, context);
                                 } else {
-                                  CustomSnackBar.showSnackBar(context,
-                                      'please select a date', Colors.red);
+                                  CustomSnackBar.showSnackBar(
+                                      context, 'please select a date',Colors.red);
                                 }
                               },
                               onCancel: () {
@@ -282,34 +288,38 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _options(
+                                    color: Colors.red.shade100,
+                                    text: const Text(
+                                      'Holiday',
+                                      style: TextStyle(fontSize: 10),
+                                    ))
+                  ],
+                ),
                 Image.asset("assets/images/food.png")
-              ],
-            ),
-            if (Provider.of<AdminEmployeesProvider>(context, listen: true)
-                .isMailLoading)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  color: Colors.black38,
-                  child: SpinKitCircle(
-                    color: Color.fromARGB(255, 185, 147, 255),
+                          ],
+                        ),
+               if (Provider.of<AdminEmployeesProvider>(context,listen: true).isMailLoading) Positioned( 
+                  top: 0,
+                  left:0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.black38,
+                    child: SpinKitCircle(color:  Color.fromARGB(255, 185, 147, 255),),
                   ),
                 ),
-              ),
-          ],
-        ),
+              ],
+            ),
       ),
     );
   }
 
   Future<void> sendMail(DateTime date, BuildContext context) async {
-    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
-        true;
-    await Provider.of<AdminEmployeesProvider>(context, listen: false)
-        .setAllEmpData();
+    Provider.of<AdminEmployeesProvider>(context,listen: false).isMailLoading=true;
     List<Map<String, dynamic>> empData =
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllEmpData;
