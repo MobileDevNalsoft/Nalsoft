@@ -7,7 +7,7 @@ class UserDataProvider extends ChangeNotifier {
 
   // for UI updations related to user data
   UserModel? _user;
-  Map<String, dynamic> _optedDateswithURL = {};
+  List<dynamic> _optedDates = [];
   Map<String, dynamic> _notOptedDatesWithReasons = {};
   List<dynamic> _holidays = [];
 
@@ -36,11 +36,8 @@ class UserDataProvider extends ChangeNotifier {
       _optedDates = _user!.opted;
       notifyListeners();
     } else {
-      _notOptedDatesWithReasons.remove(date.toString());
-      _optedDateswithURL[date.toString()] = url;
+      _optedDates.add(date.toString().substring(0, 10));
       notifyListeners();
-      _db.pushOpted(_optedDateswithURL);
-      _db.pushNotOpted(_notOptedDatesWithReasons);
     }
   }
 
