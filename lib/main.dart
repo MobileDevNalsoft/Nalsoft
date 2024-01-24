@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:meals_management/inits/init.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/digital_signature_provider.dart';
@@ -13,6 +14,7 @@ import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Initialize().setup();
   SharedPreferences? sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp(
       options: FirebaseOptions(

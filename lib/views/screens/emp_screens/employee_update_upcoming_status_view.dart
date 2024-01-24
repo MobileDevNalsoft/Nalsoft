@@ -161,11 +161,10 @@ class UpdateLunchStatus extends StatelessWidget {
                                                         details.date.month <=
                                                             now.month &&
                                                         now.hour >= 15 &&
-                                                        !Provider.of<UserDataProvider>(context, listen: false)
-                                                            .getOpted
+                                                        provider.getOpted
                                                             .contains(details.date.toString().substring(0, 10)) &&
-                                                        !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))) ||
-                                                    ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<UserDataProvider>(context, listen: false).getOpted.contains(details.date.toString().substring(0, 10)) && !Provider.of<UserDataProvider>(context, listen: false).getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
+                                                        provider.getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))) ||
+                                                    ((details.date.day < now.day && details.date.month <= now.month) && provider.getOpted.contains(details.date.toString().substring(0, 10)) && provider.getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
                                                 ? Colors.grey.shade300
                                                 : Colors.white30;
                             return Padding(

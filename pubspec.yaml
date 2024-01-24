@@ -50,6 +50,7 @@ dependencies:
   syncfusion_flutter_xlsio: ^24.1.46
   flutter_beep: ^1.0.0
   qr_code_scanner: ^1.0.1
+  get_it: ^7.6.7
 
 dev_dependencies:
   flutter_test:

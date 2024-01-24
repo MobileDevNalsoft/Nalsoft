@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -35,7 +36,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   QRViewController? qrController;
 
-  late SharedPreferences sharedPreferences;
+  SharedPreferences sharedPreferences = GetIt.instance.get<SharedPreferences>();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -55,7 +56,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   Future<void> initData() async {
     try {
-      sharedPreferences = await SharedPreferences.getInstance();
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserFromDB();
       await Provider.of<HomeStatusProvider>(context, listen: false)
@@ -64,19 +64,19 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
       Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
       Provider.of<UserDataProvider>(context, listen: false)
           .setNotOptedDatesWithReason();
-
-      DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
-          ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
-          : DateTime.now();
-      if (now.day != lastResetDate.day) {
-        sharedPreferences.setInt('employeeCount', 0);
-        sharedPreferences.setString('lastResetDate', now.toString());
-      } else {
-        Provider.of<HomeStatusProvider>(context, listen: false)
-            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-      }
     } finally {
       setState(() {
+        DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
+            ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+            : DateTime.now();
+        if (now.day != lastResetDate.day) {
+          sharedPreferences.setInt('employeeCount', 0);
+          sharedPreferences.setString('lastResetDate', now.toString());
+        } else {
+          Provider.of<HomeStatusProvider>(context, listen: false)
+              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+        }
+
         Constants.empHomeIsLoading = false;
       });
     }
@@ -134,8 +134,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             RouteManagement.loginPage,
                                             (route) => false);
                                       });
-                                      // ignore: avoid_print
-                                      print('navigated to login page');
                                     },
                                     child: const Text('Sign Out'))
                               ];
@@ -216,9 +214,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   }
                                 } else {
                                   if (!_hasShownSnackbar) {
-                                    _hasShownSnackbar = true;
-                                    CustomSnackBar.showSnackBar(
-                                        context, 'Invalid QR', Colors.red);
+                                    setState(() {
+                                      _showQR = false;
+                                      _hasShownSnackbar = true;
+                                      CustomSnackBar.showSnackBar(
+                                          context, 'Invalid QR', Colors.red);
+                                    });
+                                    controller.pauseCamera();
                                   }
                                 }
                               });
@@ -248,22 +250,30 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                         children: [
                           if (!_showQR)
                             CustomButton(
-                              child: Text('Scan'),
+                              child: Text(
+                                'Scan',
+                                style: TextStyle(color: Colors.black),
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _showQR = true;
                                   _hasShownSnackbar = false;
                                 });
                               },
+                              color: MaterialStatePropertyAll(
+                                  Colors.grey.shade300),
                             ),
                           if (_showQR)
                             CustomButton(
-                              child: Icon(Icons.flip_camera_android),
+                              child: Icon(Icons.flip_camera_android,
+                                  color: Colors.black),
                               onPressed: () {
                                 setState(() {
                                   qrController!.flipCamera();
                                 });
                               },
+                              color: MaterialStatePropertyAll(
+                                  Colors.grey.shade300),
                             ),
                           if (_showQR)
                             SizedBox(
@@ -271,13 +281,18 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             ),
                           if (_showQR)
                             CustomButton(
-                              child: Text('Stop'),
+                              child: Text(
+                                'Stop',
+                                style: TextStyle(color: Colors.black),
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _showQR = false;
                                   qrController!.pauseCamera();
                                 });
                               },
+                              color: MaterialStatePropertyAll(
+                                  Colors.grey.shade300),
                             )
                         ],
                       ),
@@ -432,10 +447,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       },
                                       cellBuilder: (BuildContext context,
                                           DateRangePickerCellDetails details) {
-                                        if (details.date
-                                                .toString()
-                                                .substring(0, 10) ==
-                                            now.toString().substring(0, 10)) {
+                                        if (snapshot.data!['opted'].contains(
+                                            now.toString().substring(0, 10))) {
                                           Future.delayed(
                                             Duration.zero,
                                             () {
