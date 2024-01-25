@@ -57,7 +57,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserFromDB();
       await Provider.of<HomeStatusProvider>(context, listen: false)
-          .setFloorDetails(); 
+          .setFloorDetails();
       await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
       Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
       Provider.of<UserDataProvider>(context, listen: false)
@@ -67,13 +67,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
         DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
             ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
             : DateTime.now();
-        if(!sharedPreferences.containsKey('lastResetDate')){
+        if (!sharedPreferences.containsKey('lastResetDate')) {
           sharedPreferences.setInt('employeeCount', 0);
           sharedPreferences.setString('lastResetDate', now.toString());
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-        }
-        else if(now.day != lastResetDate.day) {
+        } else if (now.day != lastResetDate.day) {
           sharedPreferences.setInt('employeeCount', 0);
           sharedPreferences.setString('lastResetDate', now.toString());
           Provider.of<HomeStatusProvider>(context, listen: false)
@@ -187,8 +186,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                               context,
                                               listen: false)
                                           .pushOptedDate(uid: qrData['uid']);
-                                  // API call 4 for Post Request 
-                                  // 
                                   if (isAlreadyScanned) {
                                     if (!_hasShownSnackbar) {
                                       setState(() {
@@ -214,8 +211,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       _isIncremented = true;
                                     }
                                     controller.pauseCamera();
-                                    Future.delayed(Duration(seconds: 2),
-                                        () {
+                                    Future.delayed(Duration(seconds: 2), () {
                                       controller.resumeCamera();
                                       _isIncremented = false;
                                     });
@@ -728,7 +724,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   }
 }
 
-
 /*
 from company's employee table we required fields like
 1. Employee name,
@@ -747,4 +742,3 @@ holidays table
 1. date 
 (we only get data from this table when user enters into this table)
 */
-

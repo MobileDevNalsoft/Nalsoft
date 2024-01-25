@@ -5,10 +5,10 @@ class UserModel {
   String email;
   String employee_id;
   String department;
-  String floor;
-  bool isAdmin;
+  String floor; //=> will not be used
+  bool isAdmin; //=> data type changes to String
   List<dynamic> opted;
-  Map<String, dynamic> notOpted;
+  Map<String, dynamic> notOpted; //=> data type changes to List<dynamic>
 
   UserModel(this.userName, this.email, this.employee_id, this.department,
       this.floor, this.isAdmin, this.opted, this.notOpted);
