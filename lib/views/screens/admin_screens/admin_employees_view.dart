@@ -49,14 +49,10 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    List<dynamic> empList =
-        Provider.of<AdminEmployeesProvider>(context).getEmpList;
-
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 10, top: 15),
@@ -72,7 +68,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                   children: [
                     IconButton(
                         onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.arrow_back)),
+                        icon: const Icon(Icons.arrow_back)),
                     SizedBox(
                       width: size.width * 0.06,
                     ),
@@ -113,31 +109,29 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
               height: size.height * 0.02,
             ),
             Provider.of<AdminEmployeesProvider>(context, listen: true)
-                            .empList
-                            .length !=
-                        0 &&
+                            .empList.isNotEmpty &&
                     !Provider.of<AdminEmployeesProvider>(context, listen: true)
                         .isSearching
-                ? Text(
+                ? const Text(
                     "Select Employee",
                     style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100)),
                   )
-                : Text(''),
+                : const Text(''),
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
                 return Constants.empSearchIsLoading
-                    ? Expanded(
+                    ? const Expanded(
                         child: SizedBox(
-                          child: const Center(
+                          child: Center(
                             child: SpinKitCircle(
                                 color: Color.fromARGB(255, 179, 157, 219),
                                 size: 50.0),
                           ),
                         ),
                       )
-                    : provider.empList.length == 0 &&
-                            employeeSearchController.text != 0
-                        ? Expanded(child: Text("No employee found"))
+                    : provider.empList.isEmpty &&
+                            employeeSearchController.text != ''
+                        ? const Expanded(child: Text("No employee found"))
                         : provider.isSearching
                             ? const Center(
                                 child: SpinKitCircle(
@@ -158,7 +152,6 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                                                 elevation: 3,
                                                 child: TextButton(
                                                   onPressed: () {
-                                                    // Provider.of<EmployeeProvider>(context,listen:false).setUid();
                                                     Navigator.pushNamed(
                                                         context,
                                                         RouteManagement

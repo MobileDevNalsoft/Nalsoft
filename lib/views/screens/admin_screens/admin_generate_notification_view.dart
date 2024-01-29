@@ -12,79 +12,91 @@ class GenerateNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    FocusNode focusNode = FocusNode();
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back)),
-        backgroundColor: Color.fromARGB(100, 179, 110, 234),
+        backgroundColor: const Color.fromARGB(100, 179, 110, 234),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("Send notification",style: TextStyle(fontSize: 20)),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text("Send notification", style: TextStyle(fontSize: 20)),
           ),
           Card(
             elevation: 1,
-            margin: EdgeInsets.all(16),
-            // width: size.width*0.95,
-            // height: size.height*0.06,
-            // decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(8),
-            //    border: Border.all(color: Colors.black)
-            // ),
+            margin: const EdgeInsets.all(16),
             child: TextField(
-              controller: titleController,
+                controller: titleController,
                 decoration: const InputDecoration(
-              label: Text("Title"),
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 16),
-            )),
+                  label: Text("Title"),
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+                )),
           ),
           Card(
-            margin: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
             child: TextField(
-               keyboardType: TextInputType.multiline,
-               minLines: 1,
-               maxLines: 10,
-              controller: descriptionController,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: 10,
+                controller: descriptionController,
                 decoration: const InputDecoration(
-              label: Text("Description"),
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 16),
-            )),
+                  label: Text("Description"),
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+                )),
           ),
           SizedBox(
-            width: size.width*0.3,
-            child: Provider.of<GenerateNotificationProvider>(context,listen:true).isLoading?SpinKitCircle(  color: Color.fromARGB(255, 185, 147, 255),) :CustomButton(
-                child: Row(
-                  children: [Icon(Icons.published_with_changes,color: Colors.white,),
-                    Text(
-                      "Publish",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-                color: MaterialStatePropertyAll(Colors.blue),
-                onPressed: (
-                ) async {
-                  if (titleController.text.isEmpty){
-                    CustomSnackBar.showSnackBar(context, "Title cannot be empty", Colors.red);  
-                  }
-                  else{
-                   bool result=await Provider.of<GenerateNotificationProvider>(context,listen:false).sendNotification(titleController.text,descriptionController.text);
-                   if (result){
-                    CustomSnackBar.showSnackBar(context, "Successfully sent", Colors.green);  
-                   }
-                   else{
-                    CustomSnackBar.showSnackBar(context, "Could not send notification", Colors.red);  
-                   }
-                  }
-                }),
+            width: size.width * 0.34,
+            child:
+                Provider.of<GenerateNotificationProvider>(context, listen: true)
+                        .isLoading
+                    ? const SpinKitCircle(
+                        color: Color.fromARGB(255, 185, 147, 255),
+                      )
+                    : CustomButton(
+                        color: const MaterialStatePropertyAll(Colors.blue),
+                        onPressed: () async {
+                          FocusScope.of(context).requestFocus(focusNode);
+                          if (titleController.text.isEmpty) {
+                            CustomSnackBar.showSnackBar(
+                                context, "Title cannot be empty", Colors.red);
+                          } else {
+                            bool result =
+                                await Provider.of<GenerateNotificationProvider>(
+                                        context,
+                                        listen: false)
+                                    .sendNotification(titleController.text,
+                                        descriptionController.text);
+                            if (result) {
+                              CustomSnackBar.showSnackBar(
+                                  context, "Successfully sent", Colors.green);
+                            } else {
+                              CustomSnackBar.showSnackBar(context,
+                                  "Could not send notification", Colors.red);
+                            }
+                          }
+                        },
+                        child: const Row(mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.published_with_changes,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              " Publish",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        )),
           )
         ],
       ),

@@ -15,7 +15,6 @@ import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
 
 class EmployeeLunchStatus extends StatefulWidget {
   String? empid;
-
   EmployeeLunchStatus({super.key, this.empid});
 
   @override
@@ -27,7 +26,6 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initData();
   }
@@ -35,8 +33,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
   Future<void> initData() async {
     try {
       String empid = widget.empid!;
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpDataWithID(empid: empid);
+      await Provider.of<AdminEmployeesProvider>(context, listen: false).setEmpDataWithID(empid: empid);
     } finally {
       setState(() {
         _isLoading = false;
