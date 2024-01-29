@@ -9,7 +9,6 @@ import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/views/screens/admin_screens/admin_generate_notification_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
@@ -18,7 +17,7 @@ import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Initialize().setup();
-  SharedPreferences? sharedPreferences = await SharedPreferences.getInstance();
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
   await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -29,7 +28,7 @@ void main() async {
 
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   messaging.subscribeToTopic("mobiles");
-  NotificationSettings settings = await messaging.requestPermission(
+  await messaging.requestPermission(
     alert: true,
     announcement: false,
     badge: true,
@@ -38,9 +37,6 @@ void main() async {
     provisional: false,
     sound: true,
   );
-  print("permissions ");
-  print('User granted permission: ${settings.authorizationStatus}');
-  print('Device Token ${await messaging.getToken()}');
 
   runApp(MultiProvider(
     providers: [
@@ -62,8 +58,8 @@ void main() async {
         debugShowCheckedModeBanner: false,
         onGenerateRoute: RouteManagement.generateRoute,
         home: sharedPreferences.getString("islogged") == "true"
-            ? EmployeeHomeView()
-            : LoginView(),
+            ? const EmployeeHomeView()
+            : const LoginView(),
       ),
     ),
   ));

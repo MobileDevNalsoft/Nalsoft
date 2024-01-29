@@ -30,16 +30,19 @@ class EmployeeHomeView extends StatefulWidget {
 class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   DateTime now = DateTime.now();
 
-  TextEditingController notOptController = TextEditingController();
-
+  // used to work with the selected dates in SfDateRangePicker
   DateRangePickerController datesController = DateRangePickerController();
 
+  // used to modify QR view
   QRViewController? qrController;
 
+  // used to save some data in local storage in key value pairs
   SharedPreferences sharedPreferences = GetIt.instance.get<SharedPreferences>();
 
+  // used to get userID
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // to identify QR widgt in widget tree
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   bool _showQR = false;
@@ -56,10 +59,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
     try {
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserFromDB();
+      // ignore: use_build_context_synchronously
       await Provider.of<HomeStatusProvider>(context, listen: false)
           .setFloorDetails();
+      // ignore: use_build_context_synchronously
       await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
+      // ignore: use_build_context_synchronously
       Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
+      // ignore: use_build_context_synchronously
       Provider.of<UserDataProvider>(context, listen: false)
           .setNotOptedDatesWithReason();
     } finally {
@@ -67,14 +74,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
         DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
             ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
             : DateTime.now();
+
         if (!sharedPreferences.containsKey('lastResetDate')) {
-          sharedPreferences.setInt('employeeCount', 0);
           sharedPreferences.setString('lastResetDate', now.toString());
+          sharedPreferences.setInt('employeeCount', 0);
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else if (now.day != lastResetDate.day) {
-          sharedPreferences.setInt('employeeCount', 0);
           sharedPreferences.setString('lastResetDate', now.toString());
+          sharedPreferences.setInt('employeeCount', 0);
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else {

@@ -1,9 +1,7 @@
 import "dart:io";
-import "package:flutter/services.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
-import 'package:http/http.dart' as http;
+import "package:get_it/get_it.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
-import "dart:ui";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
@@ -22,7 +20,7 @@ import '../../../providers/home_status_provider.dart';
 import '../../../repositories/firebase_auth_repo.dart';
 
 class AdminHomePage extends StatefulWidget {
-  AdminHomePage({super.key});
+  const AdminHomePage({super.key});
 
   @override
   State<AdminHomePage> createState() => _AdminHomePageState();
@@ -37,19 +35,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    initData();
-  }
-
-  Future<void> initData() async {
-    sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences = GetIt.instance.get<SharedPreferences>();
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
     DateRangePickerController datesController = DateRangePickerController();
 
     return SafeArea(
@@ -142,8 +134,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        // Navigator.pushNamed(
-                        //     context, RouteManagement.adminEmployees);
                         Navigator.push(
                           context,
                           PageRouteBuilder(
@@ -284,13 +274,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ),
                 ),
                 CustomButton(
-                    child:
-                        Text("Notify", style: TextStyle(color: Colors.white)),
                     color: MaterialStatePropertyAll(Colors.blue),
                     onPressed: () {
                       Navigator.pushNamed(
                           context, RouteManagement.generateNotification);
-                    }),
+                    },
+                    child:
+                        const Text("Notify", style: TextStyle(color: Colors.white))),
                 Image.asset("assets/images/food.png")
               ],
             ),
@@ -303,7 +293,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 bottom: 0,
                 child: Container(
                   color: Colors.black38,
-                  child: SpinKitCircle(
+                  child: const SpinKitCircle(
                     color: Color.fromARGB(255, 185, 147, 255),
                   ),
                 ),
@@ -315,13 +305,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   Future<void> sendMail(DateTime date, BuildContext context) async {
-    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
-        true;
+    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading = true;
     await Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllEmpData();
     List<Map<String, dynamic>> empData =
-        Provider.of<AdminEmployeesProvider>(context, listen: false)
-            .getAllEmpData;
+        Provider.of<AdminEmployeesProvider>(context, listen: false).getAllEmpData;
 
     final dir = await getExternalStorageDirectory();
 
@@ -400,8 +388,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
-      Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .isMailLoading = false;
+      Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading = false;
+
       // Send email
       await FlutterEmailSender.send(email);
     } catch (error) {
