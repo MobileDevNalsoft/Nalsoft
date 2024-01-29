@@ -448,6 +448,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             onCancel: () {
                               datesController.selectedDate = null;
                             },
+                            confirmText: 'Ok',
+                            cancelText: 'Cancel',
                           ),
                           const CustomLegend(),
                           Image.asset('assets/images/food.png'),

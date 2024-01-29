@@ -170,6 +170,8 @@ class UpdateLunchStatus extends StatelessWidget {
                     datesController.selectedDates = null;
                     datesController.selectedRange = null;
                   },
+                  confirmText: 'Ok',
+                  cancelText: 'Cancel',
                 ),
                 const CustomLegend(),
                 Image.asset("assets/images/food.png"),
