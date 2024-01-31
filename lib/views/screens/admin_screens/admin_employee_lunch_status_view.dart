@@ -1,18 +1,19 @@
 import "dart:io";
 import "package:flutter_spinkit/flutter_spinkit.dart";
-import 'package:http/http.dart' as http;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/providers/admin_employees_provider.dart";
 import "package:meals_management/providers/user_data_provider.dart";
-import "package:meals_management/utils/constants.dart";
+import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
+import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
 
+// ignore: must_be_immutable
 class EmployeeLunchStatus extends StatefulWidget {
   String? empid;
   EmployeeLunchStatus({super.key, this.empid});
@@ -22,6 +23,9 @@ class EmployeeLunchStatus extends StatefulWidget {
 }
 
 class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
+  // used to work with the selected dates in SfDateRangePicker
+  DateRangePickerController datesController = DateRangePickerController();
+
   bool _isLoading = true;
 
   @override
@@ -33,7 +37,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
   Future<void> initData() async {
     try {
       String empid = widget.empid!;
-      await Provider.of<AdminEmployeesProvider>(context, listen: false).setEmpDataWithID(empid: empid);
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .setEmpDataWithID(empid: empid);
     } finally {
       setState(() {
         _isLoading = false;
@@ -61,7 +66,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
           style: TextStyle(fontSize: 18),
         ),
         centerTitle: true,
-        actions: [
+        actions: const [
           Icon(
             Icons.account_circle_sharp,
             size: 30,
@@ -88,11 +93,11 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(24.0),
+                      padding: const EdgeInsets.all(24.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -112,7 +117,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                               )
                             ],
                           ),
-                          Column(
+                          const Column(
                             children: [Text(":"), Text(":"), Text(":")],
                           ),
                           Column(
@@ -123,7 +128,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                           listen: false)
                                       .getEmpWithID!
                                       .userName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -132,7 +137,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                           listen: false)
                                       .getEmpWithID!
                                       .department,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -141,7 +146,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                           listen: false)
                                       .getEmpWithID!
                                       .floor,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold))
@@ -151,175 +156,74 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                       ),
                     ),
                     SizedBox(
-                      height: size.height * 0.05,
+                      height: size.height * 0.02,
                     ),
-                    SizedBox(
-                      height: size.height * 0.45,
-                      width: size.width * 0.95,
-                      child: Card(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        elevation: 8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: SfDateRangePicker(
-                                minDate:
-                                    DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                                maxDate:
-                                    DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
-                                selectionColor: Colors.deepPurple.shade100,
-                                selectionShape:
-                                    DateRangePickerSelectionShape.circle,
-                                showActionButtons: true,
-                                selectableDayPredicate: (date) {
-                                  return Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .getNotOptedWithReasons
-                                      .keys
-                                      .contains(date.toString());
-                                },
-                                cellBuilder: (BuildContext context,
-                                    DateRangePickerCellDetails details) {
-                                  Color circleColor = Provider.of<AdminEmployeesProvider>(
-                                              context,
-                                              listen: false)
-                                          .getEmpWithID!
-                                          .opted
-                                          .contains(details.date
-                                              .toString()
-                                              .substring(0, 10))
-                                      ? Colors.green.shade200
-                                      : Provider.of<AdminEmployeesProvider>(context, listen: false)
-                                              .getEmpWithID!
-                                              .notOpted
-                                              .keys
-                                              .contains(details.date
-                                                  .toString()
-                                                  .substring(0, 10))
-                                          ? Colors.orange.shade200
-                                          : Provider.of<UserDataProvider>(context,
-                                                      listen: false)
-                                                  .getHolidays
-                                                  .contains(details.date.toString().substring(0, 10))
-                                              ? Colors.red.shade100
-                                              : (details.date.weekday == DateTime.sunday || details.date.weekday == DateTime.saturday)
-                                                  ? Colors.blueGrey.shade200
-                                                  : ((details.date.day == now.day && details.date.month <= now.month && now.hour >= 15 && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.opted.contains(details.date.toString().substring(0, 10)) && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.notOpted.keys.contains(details.date.toString().substring(0, 10))) || ((details.date.day < now.day && details.date.month <= now.month) && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.opted.contains(details.date.toString().substring(0, 10)) && !Provider.of<AdminEmployeesProvider>(context, listen: false).getEmpWithID!.notOpted.keys.contains(details.date.toString().substring(0, 10))))
-                                                      ? Colors.grey.shade300
-                                                      : Colors.white30;
-                                  return Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      child: Container(
-                                        width: details.bounds.width / 2,
-                                        height: details.bounds.width / 2,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: circleColor,
+                    CustomCalendarCard(
+                      forAdmin: false,
+                      selectionMode: DateRangePickerSelectionMode.single,
+                      selectibleDayPredicate: (date) {
+                        return Provider.of<UserDataProvider>(context,
+                                listen: false)
+                            .getNotOptedWithReasons
+                            .keys
+                            .contains(date.toString());
+                      },
+                      onSubmit: (p0) => sendMail(
+                          context,
+                          Provider.of<AdminEmployeesProvider>(context,
+                                  listen: false)
+                              .getEmpWithID!),
+                      onCancel: () {
+                        datesController.selectedDate = null;
+                      },
+                      confirmText: 'Send Mail',
+                      cancelText: 'Clear Selection',
+                      controller: datesController,
+                      onSelectionChanged:
+                          (dateRangePickerSelectionChangedArgs) {
+                        if (Provider.of<AdminEmployeesProvider>(context,
+                                listen: false)
+                            .getEmpWithID!
+                            .notOpted
+                            .keys
+                            .contains(dateRangePickerSelectionChangedArgs.value
+                                .toString())) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: SizedBox(
+                                    width: size.width * 0.6,
+                                    height: size.height * 0.08,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Reason',
+                                          style: TextStyle(fontSize: 18),
                                         ),
-                                        child: Center(
-                                            child: Text(
-                                                details.date.day.toString())),
-                                      ));
-                                },
-                                allowViewNavigation: true,
-                                selectionMode:
-                                    DateRangePickerSelectionMode.single,
-                                showNavigationArrow: true,
-                                // this will not be required when we integrate local api to app
-                                onSelectionChanged:
-                                    (dateRangePickerSelectionChangedArgs) {
-                                  if (Provider.of<AdminEmployeesProvider>(
-                                          context,
-                                          listen: false)
-                                      .getEmpWithID!
-                                      .notOpted
-                                      .keys
-                                      .contains(
-                                          dateRangePickerSelectionChangedArgs
-                                              .value
-                                              .toString())) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          content: SizedBox(
-                                              width: size.width * 0.6,
-                                              height: size.height * 0.08,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Reason',
-                                                    style:
-                                                        TextStyle(fontSize: 18),
-                                                  ),
-                                                  SizedBox(
-                                                    height: size.height * 0.02,
-                                                  ),
-                                                  Text(Provider.of<
-                                                                  AdminEmployeesProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .getEmpWithID!
-                                                          .notOpted[
-                                                      dateRangePickerSelectionChangedArgs
-                                                          .value
-                                                          .toString()]!),
-                                                ],
-                                              )),
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
-                                cancelText: '',
-                                confirmText: 'Send Mail',
-                                onSubmit: (p0) => sendMail(
-                                    context,
-                                    Provider.of<AdminEmployeesProvider>(context,
-                                            listen: false)
-                                        .getEmpWithID!),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                                        SizedBox(
+                                          height: size.height * 0.02,
+                                        ),
+                                        Text(Provider.of<
+                                                        AdminEmployeesProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getEmpWithID!
+                                                .notOpted[
+                                            dateRangePickerSelectionChangedArgs
+                                                .value
+                                                .toString()]!),
+                                      ],
+                                    )),
+                              );
+                            },
+                          );
+                        }
+                      },
                     ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _options(
-                              color: Colors.green.shade200,
-                              text: const Text(
-                                'Opted',
-                                style: TextStyle(fontSize: 10),
-                              )),
-                          _options(
-                              color: Colors.orange.shade200,
-                              text: const Text(
-                                'Not Opted',
-                                style: TextStyle(fontSize: 10),
-                              )),
-                          _options(
-                              color: Colors.red.shade100,
-                              text: const Text(
-                                'Holiday',
-                                style: TextStyle(fontSize: 10),
-                              )),
-                          _options(
-                              color: Colors.grey.shade300,
-                              text: const Text(
-                                'No Status',
-                                style: TextStyle(fontSize: 10),
-                              )),
-                        ],
-                      ),
-                    ),
+                    const CustomLegend(),
                     Image.asset("assets/images/food.png"),
                   ],
                 ),
@@ -332,7 +236,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                     bottom: 0,
                     child: Container(
                       color: Colors.black38,
-                      child: SpinKitCircle(
+                      child: const SpinKitCircle(
                         color: Color.fromARGB(255, 185, 147, 255),
                       ),
                     ),
@@ -340,18 +244,6 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
               ],
             ),
     ));
-  }
-
-  Widget _options({required color, required text}) {
-    return Row(
-      children: [
-        Icon(
-          Icons.circle,
-          color: color,
-        ),
-        text,
-      ],
-    );
   }
 
   Future<void> sendMail(BuildContext context, UserModel thisEmpData) async {
@@ -447,7 +339,6 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
       if (status.isDenied) {
         await Permission.storage.request();
       }
-      
 
       // Permission granted, proceed with sending email
       const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
@@ -460,6 +351,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
+      // ignore: use_build_context_synchronously
       Provider.of<AdminEmployeesProvider>(context, listen: false)
           .isMailLoading = false;
       // Send email

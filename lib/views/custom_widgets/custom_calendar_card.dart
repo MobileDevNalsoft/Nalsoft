@@ -15,15 +15,21 @@ class CustomCalendarCard extends StatelessWidget {
   DateRangePickerSelectionMode selectionMode;
   dynamic Function(Object?)? onSubmit;
   void Function()? onCancel;
+  String confirmText;
+  String cancelText;
+  void Function(DateRangePickerSelectionChangedArgs)? onSelectionChanged;
 
   CustomCalendarCard(
       {super.key,
       required this.forAdmin,
       this.controller,
+      this.onSelectionChanged,
       required this.selectibleDayPredicate,
       required this.selectionMode,
       required this.onSubmit,
-      required this.onCancel});
+      required this.onCancel,
+      required this.confirmText,
+      required this.cancelText});
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +129,8 @@ class CustomCalendarCard extends StatelessWidget {
                   showNavigationArrow: true,
                   onSubmit: onSubmit,
                   onCancel: onCancel,
+                  confirmText: confirmText,
+                  cancelText: cancelText,
                 );
               },
             ),
