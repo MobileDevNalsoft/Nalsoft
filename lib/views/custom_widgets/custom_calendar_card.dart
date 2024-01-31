@@ -31,7 +31,6 @@ class CustomCalendarCard extends StatelessWidget {
 
     return SizedBox(
       width: size.width * 0.95,
-      height: size.height * 0.53,
       child: Card(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),
