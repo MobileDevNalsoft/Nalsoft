@@ -16,11 +16,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.remove();
   await di.init();
 
   await Firebase.initializeApp(
