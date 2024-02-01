@@ -11,14 +11,16 @@ import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/views/screens/splash_screen.dart';
+import 'package:meals_management/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.remove();
   await di.init();
 
   await Firebase.initializeApp(
@@ -54,10 +56,12 @@ void main() async {
           create: (context) => GenerateNotificationProvider()),
     ],
     child: SafeArea(
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: RouteManagement.generateRoute,
-          home: Splashscreen()),
-    ),
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            onGenerateRoute: RouteManagement.generateRoute,
+            home:
+                sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
+                    ? LoginView()
+                    : EmployeeHomeView())),
   ));
 }

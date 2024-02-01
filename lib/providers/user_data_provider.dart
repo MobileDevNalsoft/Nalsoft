@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:meals_management/repositories/user_repo.dart';
@@ -17,18 +18,20 @@ class UserDataProvider extends ChangeNotifier {
 
   // gets
   List<dynamic> get getHolidays => _holidays;
-  // String? get getUsername => _user!.userName;
-  // bool? get getIsAdmin => _user!.isAdmin;
-  // String? get getFloor => _user!.floor;
-  // String? get getEmpID => _user!.employee_id;
+  UserModel get getUserData => _user!;
   List<dynamic> get getOpted => _optedDates;
   Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
 
   // getting user data from firestore collection
   Future<void> getUserinfo(String? username) async {
     String username = "raviteja.singamsetty@nalsoft.net";
-    print(userRepo);
-    userRepo!.getUserinfo(username);
+    ApiResponse apiResponse = await userRepo!.getUserinfo(username);
+
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      _user = UserModel.fromJson(apiResponse.response!.data);
+    }
+    notifyListeners();
   }
 
   Future<bool> pushOptedDate({String? uid}) async {

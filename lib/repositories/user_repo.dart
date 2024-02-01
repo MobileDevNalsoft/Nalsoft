@@ -13,15 +13,19 @@ class UserRepo {
 
   UserRepo({this.dioClient2, this.sharedPreferences});
 
-  Future<void> getUserinfo(String username) async {
+  Future<ApiResponse> getUserinfo(String username) async {
     try {
-      print('inside get user');
+      String basicAuth = 'Basic ' +
+          base64.encode(utf8.encode(
+              '${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
       Response response = await dioClient2!
-          .get('${AppConstants.GETUSERINFO}?UserName=$username');
-      print(response);
+          .get('${AppConstants.GETUSERINFO}?UserName=$username',
+              options: Options(headers: {
+                'Authorization': basicAuth,
+              }));
+      return ApiResponse.withSuccess(response);
     } catch (e) {
-      // return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-      print(e);
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
 }
