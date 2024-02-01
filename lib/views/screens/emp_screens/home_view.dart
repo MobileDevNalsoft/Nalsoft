@@ -6,10 +6,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_it/get_it.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
+import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
-import 'package:meals_management/repositories/firebase_auth_repo.dart';
+import 'package:meals_management/repositories/auth_repo.dart';
+import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/utils/constants.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
@@ -36,11 +39,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   // used to modify QR view
   QRViewController? qrController;
 
-  // used to save some data in local storage in key value pairs
-  SharedPreferences sharedPreferences = GetIt.instance.get<SharedPreferences>();
-
   // to identify QR widgt in widget tree
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  UserRepo userRepo = UserRepo();
+
+  final sharedPreferences = sl.get<SharedPreferences>();
 
   bool _showQR = false;
   bool _hasShownSnackbar = false;
@@ -56,7 +60,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Future<void> initData() async {
     try {
       await Provider.of<UserDataProvider>(context, listen: false)
-          .getUserFromDB();
+          .getUserinfo('');
       // ignore: use_build_context_synchronously
       await Provider.of<HomeStatusProvider>(context, listen: false)
           .setFloorDetails();
@@ -97,16 +101,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    List<Map<String, Map<String, dynamic>>> floorDetails =
-        Provider.of<HomeStatusProvider>(context, listen: false).getFloorDetails;
-    Map<String, dynamic> timings = _isLoading
-        ? {}
-        : floorDetails
-            .map((e) => e[
-                Provider.of<UserDataProvider>(context, listen: false).getFloor])
-            .nonNulls
-            .toList()[0];
-
     return AspectRatio(
       aspectRatio: size.height / size.width,
       child: SafeArea(
@@ -117,8 +111,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                     color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
               )
             : Provider.of<UserDataProvider>(context, listen: false)
-                        .getUsername ==
-                    'vendor'
+                        .getUserData
+                        .data!
+                        .userType ==
+                    'V'
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -138,16 +134,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       value: 'Sign Out',
                                       height: 10,
                                       onTap: () {
-                                        FirebaseAuthRepo()
-                                            .signOutNow()
-                                            .then((value) {
-                                          sharedPreferences.setString(
-                                              'islogged', 'false');
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              RouteManagement.loginPage,
-                                              (route) => false);
-                                        });
+                                        sharedPreferences.setString(
+                                            AppConstants.TOKEN, '');
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            RouteManagement.loginPage,
+                                            (route) => false);
                                       },
                                       child: const Text('Sign Out'))
                                 ];
@@ -338,7 +330,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   padding:
                                       const EdgeInsets.only(left: 25, top: 15),
                                   child: Text(
-                                    'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
+                                    'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
                                     style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold),
@@ -346,8 +338,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 ),
                                 const Expanded(child: SizedBox()),
                                 Provider.of<UserDataProvider>(context,
-                                            listen: false)
-                                        .getIsAdmin!
+                                                listen: false)
+                                            .getUserData
+                                            .data!
+                                            .userType ==
+                                        'A'
                                     ? Switch(
                                         value: false,
                                         onChanged: (value) {
@@ -368,18 +363,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             value: 'Sign Out',
                                             height: 10,
                                             onTap: () {
-                                              FirebaseAuthRepo()
-                                                  .signOutNow()
-                                                  .then((value) {
-                                                sharedPreferences.setString(
-                                                    'islogged', 'false');
-                                                Navigator
-                                                    .pushNamedAndRemoveUntil(
-                                                        context,
-                                                        RouteManagement
-                                                            .loginPage,
-                                                        (route) => false);
-                                              });
+                                              sharedPreferences.setString(
+                                                  AppConstants.TOKEN, '');
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  RouteManagement.loginPage,
+                                                  (route) => false);
                                             },
                                             child: const Text('Sign Out'))
                                       ];
@@ -516,12 +505,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              timings['start_time'],
+                                              '1:00pm',
                                               style:
                                                   const TextStyle(fontSize: 12),
                                             ),
                                             Text(
-                                              timings['end_time'],
+                                              '2:00pm',
                                               style:
                                                   const TextStyle(fontSize: 12),
                                             )

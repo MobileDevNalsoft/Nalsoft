@@ -2,11 +2,14 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:meals_management/APIClient/dio_client2.dart';
 import '../models/user_model.dart';
 
 class UserEventsRepo {
   final _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DioClient2? dioClient2;
+  UserEventsRepo({this.dioClient2});
 
   //creates a new user document in firestore collection
   void createUser(String docID, UserModel userData) {

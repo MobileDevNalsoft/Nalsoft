@@ -79,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
                           const SizedBox(
                             height: 15,
                           ),
-                          Consumer<AuthenticationProvider>(
+                          Consumer<AuthProvider>(
                               builder: (context, provider, _) {
                             return CustomTextFormField(
                               hintText: 'password',
@@ -129,45 +129,40 @@ class _LoginViewState extends State<LoginView> {
                               CustomButton(
                                 onPressed: () async {
                                   if (_emailController.text.isEmpty) {
-                                    CustomSnackBar.showSnackBar(
-                                        context, 'Email cannot be empty', Colors.red);
+                                    CustomSnackBar.showSnackBar(context,
+                                        'Email cannot be empty', Colors.red);
                                   } else if (!_emailController.text
                                       .contains('@nalsoft.net')) {
-                                    CustomSnackBar.showSnackBar(context,
-                                        'Email must contain @nalsoft.net', Colors.red);
-                                  } else if (_passwordController.text.isEmpty) {
                                     CustomSnackBar.showSnackBar(
-                                        context, 'Password cannot be empty', Colors.red);
+                                        context,
+                                        'Email must contain @nalsoft.net',
+                                        Colors.red);
+                                  } else if (_passwordController.text.isEmpty) {
+                                    CustomSnackBar.showSnackBar(context,
+                                        'Password cannot be empty', Colors.red);
                                   } else if (_passwordController.text.length <
                                       10) {
-                                    CustomSnackBar.showSnackBar(context,
-                                        'Password must be atleast 10 characters', Colors.red);
-                                  } else if (!Constants.regex
+                                    CustomSnackBar.showSnackBar(
+                                        context,
+                                        'Password must be atleast 10 characters',
+                                        Colors.red);
+                                  } else if (!AppConstants.regex
                                       .hasMatch(_passwordController.text)) {
-                                    CustomSnackBar.showSnackBar(context,
-                                        'Password must include atleast one special symbol, lowercase and uppercase letter', Colors.red);
+                                    CustomSnackBar.showSnackBar(
+                                        context,
+                                        'Password must include atleast one special symbol, lowercase and uppercase letter',
+                                        Colors.red);
                                   } else {
-                                    var isSuccess = await Provider.of<
-                                                AuthenticationProvider>(context,
+                                    await Provider.of<AuthProvider>(context,
                                             listen: false)
-                                        .userLogin(_emailController.text.trim(),
-                                            _passwordController.text.trim());
-                                    if (isSuccess) {
-                                      sharedPreferences!
-                                          .setString("islogged", "true");
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          RouteManagement.employeeHomePage,
-                                          (route) => false);
-                                      // ignore: use_build_context_synchronously
-                                      CustomSnackBar.showSnackBar(context,
-                                        'Logged in Successfully', Colors.green);
-                                    } else {
-                                      // ignore: use_build_context_synchronously
-                                      CustomSnackBar.showSnackBar(context,
-                                        'Error', Colors.red);
-                                    }
+                                        .getToken()
+                                        .then((value) =>
+                                            Provider.of<AuthProvider>(context,
+                                                    listen: false)
+                                                .authenticateUserName(
+                                                    _emailController.text,
+                                                    _passwordController.text,
+                                                    context));
                                   }
                                 },
                                 color: MaterialStatePropertyAll(

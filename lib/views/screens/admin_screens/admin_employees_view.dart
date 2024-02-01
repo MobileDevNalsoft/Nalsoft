@@ -35,7 +35,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
           .setEmpList();
     } finally {
       setState(() {
-        Constants.empSearchIsLoading = false;
+        AppConstants.empSearchIsLoading = false;
       });
     }
   }
@@ -109,7 +109,8 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
               height: size.height * 0.02,
             ),
             Provider.of<AdminEmployeesProvider>(context, listen: true)
-                            .empList.isNotEmpty &&
+                        .empList
+                        .isNotEmpty &&
                     !Provider.of<AdminEmployeesProvider>(context, listen: true)
                         .isSearching
                 ? const Text(
@@ -119,7 +120,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                 : const Text(''),
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
-                return Constants.empSearchIsLoading
+                return AppConstants.empSearchIsLoading
                     ? const Expanded(
                         child: SizedBox(
                           child: Center(
