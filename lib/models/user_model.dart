@@ -1,41 +1,29 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UserModel {
-  String userName;
-  String email;
-  String employee_id;
-  String department;
-  String floor; //=> will not be used
-  bool isAdmin; //=> data type changes to String
-  List<dynamic> opted;
-  Map<String, dynamic> notOpted; //=> data type changes to List<dynamic>
+  int? responseCode;
+  String? responseMessage;
+  User? data;
 
-  UserModel(this.userName, this.email, this.employee_id, this.department,
-      this.floor, this.isAdmin, this.opted, this.notOpted);
+  UserModel({this.responseCode, this.responseMessage, this.data});
 
-  static UserModel fromSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    return UserModel(
-        snapshot['username'],
-        snapshot['email'],
-        snapshot['employee_id'],
-        snapshot['department'],
-        snapshot['floor'],
-        snapshot['isAdmin'],
-        snapshot['opted'],
-        snapshot['notOpted']);
+  UserModel.fromJson(Map<String, dynamic> json) {
+    responseCode = json['response_code'];
+    responseMessage = json['response_message'];
+    data = json['data'] != null ? new User.fromJson(json['data']) : null;
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'username': userName,
-      'email': email,
-      'employee_id': employee_id,
-      'department': department,
-      'floor': floor,
-      'isAdmin': isAdmin,
-      'opted': opted,
-      'notOpted': notOpted,
-    };
+class User {
+  String? empId;
+  String? empName;
+  String? userName;
+  String? userType;
+
+  User({this.empId, this.empName, this.userName, this.userType});
+
+  User.fromJson(Map<String, dynamic> json) {
+    empId = json['emp_id'];
+    empName = json['emp_name'];
+    userName = json['user_name'];
+    userType = json['user_type'];
   }
 }

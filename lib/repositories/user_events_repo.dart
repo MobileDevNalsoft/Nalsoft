@@ -10,7 +10,7 @@ class UserEventsRepo {
 
   //creates a new user document in firestore collection
   void createUser(String docID, UserModel userData) {
-    _db.collection('employees').doc(docID).set(userData.toJson());
+    // _db.collection('employees').doc(docID).set(userData.toJson());
   }
 
   Future<bool> pushOpted(String? uid) async {
@@ -35,11 +35,11 @@ class UserEventsRepo {
   }
 
   //retrieves the user data from firestore collection
-  Future<UserModel> readData() async {
-    final userCollection =
-        await _db.collection("employees").doc(_auth.currentUser!.uid).get();
-    return UserModel.fromSnapshot(userCollection);
-  }
+  // Future<UserModel> readData() async {
+  //   final userCollection =
+  //       await _db.collection("employees").doc(_auth.currentUser!.uid).get();
+  //   return UserModel.fromSnapshot(userCollection);
+  // }
 
   //retrieves list of departments from firestore doc
   Future<List<dynamic>> readDepartments() async {
@@ -64,22 +64,22 @@ class UserEventsRepo {
     return userCollection.docs.map((e) => e.data()).toList();
   }
 
-  Future<UserModel> readDataWithID({String? empid}) async {
-    final snapshot = await _db.collection('employees').get();
-    Map<String, dynamic> docids = {};
-    snapshot.docs.forEach((doc) {
-      docids[doc.id] = doc.data()['employee_id'];
-    });
-    String? docid;
-    for (var entry in docids.entries) {
-      if (empid == entry.value) {
-        docid = entry.key;
-      }
-    }
+  // Future<UserModel> readDataWithID({String? empid}) async {
+  //   final snapshot = await _db.collection('employees').get();
+  //   Map<String, dynamic> docids = {};
+  //   snapshot.docs.forEach((doc) {
+  //     docids[doc.id] = doc.data()['employee_id'];
+  //   });
+  //   String? docid;
+  //   for (var entry in docids.entries) {
+  //     if (empid == entry.value) {
+  //       docid = entry.key;
+  //     }
+  //   }
 
-    final userCollection = await _db.collection("employees").doc(docid).get();
-    return UserModel.fromSnapshot(userCollection);
-  }
+  //   final userCollection = await _db.collection("employees").doc(docid).get();
+  //   return UserModel.fromSnapshot(userCollection);
+  // }
 
   Future<List<dynamic>> getEmployees({String search = ''}) async {
     QuerySnapshot querySnapshot = await _db
