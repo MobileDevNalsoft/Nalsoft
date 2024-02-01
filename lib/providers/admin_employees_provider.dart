@@ -47,7 +47,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   }
 
   Future<void> setEmpDataWithID({String? empid}) async {
-    _user = await _db.readDataWithID(empid: empid);
+    // _user = await _db.readDataWithID(empid: empid);
     // here we can use API method 1 Get method
     notifyListeners();
   }

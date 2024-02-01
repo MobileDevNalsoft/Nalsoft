@@ -13,16 +13,16 @@ class UserDataProvider extends ChangeNotifier {
 
   // gets
   List<dynamic> get getHolidays => _holidays;
-  String? get getUsername => _user!.userName;
-  bool? get getIsAdmin => _user!.isAdmin;
-  String? get getFloor => _user!.floor;
-  String? get getEmpID => _user!.employee_id;
+  // String? get getUsername => _user!.userName;
+  // bool? get getIsAdmin => _user!.isAdmin;
+  // String? get getFloor => _user!.floor;
+  // String? get getEmpID => _user!.employee_id;
   List<dynamic> get getOpted => _optedDates;
   Map<String, dynamic> get getNotOptedWithReasons => _notOptedDatesWithReasons;
 
   // getting user data from firestore collection
   Future<void> getUserFromDB() async {
-    _user = await _db.readData();
+    // _user = await _db.readData();
     // API method 1 for Get Request
     // when user logs in to app for the first time we will store his mail id in shared preferences then
     // using that mail id(we send that mail id in get method) as a primary key we will fetch data from both company's employees table and events table
@@ -42,7 +42,7 @@ class UserDataProvider extends ChangeNotifier {
 
   void setOptedDates({DateTime? date}) {
     if (date == null) {
-      _optedDates = _user!.opted;
+      // _optedDates = _user!.opted;
       notifyListeners();
       // we will get this from the model after API method 1 is a success
     } else {
@@ -53,7 +53,7 @@ class UserDataProvider extends ChangeNotifier {
 
   void setNotOptedDatesWithReason({List<DateTime>? dates, String? reason}) {
     if (dates == null) {
-      _notOptedDatesWithReasons = _user!.notOpted;
+      // _notOptedDatesWithReasons = _user!.notOpted;
       notifyListeners();
       // we will get this from the model after API method 1 is a success
     } else {

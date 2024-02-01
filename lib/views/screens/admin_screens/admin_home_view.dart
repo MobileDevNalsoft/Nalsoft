@@ -2,6 +2,7 @@ import "dart:io";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:get_it/get_it.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
+import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
@@ -168,110 +169,34 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 ),
                 const Text("Select Date",
                     style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100))),
-                SizedBox(
-                  width: size.width * 0.95,
-                  height: size.height * 0.5,
-                  child: Card(
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    elevation: 8,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: size.height * 0.01,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 18.0, top: 4),
-                          child: Text('Lunch Calendar'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 15.0, left: 18),
-                          child: Text(
-                            '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
-                            style: const TextStyle(fontSize: 30),
-                          ),
-                        ),
-                        const Divider(),
-                        Consumer<HomeStatusProvider>(
-                          builder: (context, provider, child) {
-                            return Expanded(
-                                child: SfDateRangePicker(
-                              controller: datesController,
-                              minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
-                              maxDate:
-                                  DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
-                              selectionColor: Colors.deepPurple.shade100,
-                              selectionShape:
-                                  DateRangePickerSelectionShape.circle,
-                              selectableDayPredicate: (date) {
-                                return date.weekday != DateTime.saturday &&
-                                    date.weekday != DateTime.sunday &&
-                                    date.day <= now.day &&
-                                    date.month <= now.month &&
-                                    !Provider.of<UserDataProvider>(context,
-                                            listen: false)
-                                        .getHolidays
-                                        .contains(
-                                            date.toString().substring(0, 10));
-                              },
-                              cellBuilder: (BuildContext context,
-                                  DateRangePickerCellDetails details) {
-                                Color circleColor =
-                                    Provider.of<UserDataProvider>(context,
-                                                listen: false)
-                                            .getHolidays
-                                            .contains(details.date
-                                                .toString()
-                                                .substring(0, 10))
-                                        ? Colors.red.shade100
-                                        : (details.date.weekday ==
-                                                    DateTime.sunday ||
-                                                details.date.weekday ==
-                                                    DateTime.saturday)
-                                            ? Colors.blueGrey.shade200
-                                            : Colors.white30;
-                                return Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Container(
-                                    width: details.bounds.width / 2,
-                                    height: details.bounds.width / 2,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: circleColor,
-                                    ),
-                                    child: Center(
-                                        child:
-                                            Text(details.date.day.toString())),
-                                  ),
-                                );
-                              },
-                              showActionButtons: true,
-                              allowViewNavigation: true,
-                              selectionMode:
-                                  DateRangePickerSelectionMode.single,
-                              showNavigationArrow: true,
-                              confirmText: 'Send Mail',
-                              cancelText: 'Clear Selection',
-                              onSubmit: (date) {
-                                if (date != null) {
-                                  date = date as DateTime;
-                                  sendMail(date, context);
-                                } else {
-                                  CustomSnackBar.showSnackBar(context,
-                                      'please select a date', Colors.red);
-                                }
-                              },
-                              onCancel: () {
-                                datesController.selectedDate = null;
-                                datesController.selectedDates = null;
-                              },
-                            ));
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                CustomCalendarCard(
+                  forAdmin: true,
+                  controller: datesController,
+                  selectionMode: DateRangePickerSelectionMode.single,
+                  selectibleDayPredicate: (date) {
+                    return date.weekday != DateTime.saturday &&
+                        date.weekday != DateTime.sunday &&
+                        date.day <= now.day &&
+                        date.month <= now.month &&
+                        !Provider.of<UserDataProvider>(context, listen: false)
+                            .getHolidays
+                            .contains(date.toString().substring(0, 10));
+                  },
+                  onSubmit: (date) {
+                    if (date != null) {
+                      date = date as DateTime;
+                      sendMail(date, context);
+                    } else {
+                      CustomSnackBar.showSnackBar(
+                          context, 'please select a date', Colors.red);
+                    }
+                  },
+                  onCancel: () {
+                    datesController.selectedDate = null;
+                    datesController.selectedDates = null;
+                  },
+                  confirmText: 'Send Mail',
+                  cancelText: 'Clear Selection',
                 ),
                 CustomButton(
                     color: MaterialStatePropertyAll(Colors.blue),
@@ -279,8 +204,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       Navigator.pushNamed(
                           context, RouteManagement.generateNotification);
                     },
-                    child:
-                        const Text("Notify", style: TextStyle(color: Colors.white))),
+                    child: const Text("Notify",
+                        style: TextStyle(color: Colors.white))),
                 Image.asset("assets/images/food.png")
               ],
             ),
@@ -305,11 +230,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   Future<void> sendMail(DateTime date, BuildContext context) async {
-    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading = true;
+    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
+        true;
     await Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllEmpData();
     List<Map<String, dynamic>> empData =
-        Provider.of<AdminEmployeesProvider>(context, listen: false).getAllEmpData;
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+            .getAllEmpData;
 
     final dir = await getExternalStorageDirectory();
 
@@ -388,7 +315,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
-      Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading = false;
+      Provider.of<AdminEmployeesProvider>(context, listen: false)
+          .isMailLoading = false;
 
       // Send email
       await FlutterEmailSender.send(email);
