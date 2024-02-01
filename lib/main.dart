@@ -43,10 +43,9 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => di.sl<AuthProvider>()),
+      ChangeNotifierProvider(create: (_) => di.sl<UserDataProvider>()),
       ChangeNotifierProvider<SignatureProvider>(
           create: (context) => SignatureProvider()),
-      ChangeNotifierProvider<UserDataProvider>(
-          create: (context) => UserDataProvider()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
           create: (context) => AdminEmployeesProvider()),
       ChangeNotifierProvider<HomeStatusProvider>(

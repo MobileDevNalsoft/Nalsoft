@@ -53,6 +53,31 @@ class AuthProvider extends ChangeNotifier {
       if (token.isNotEmpty) {
         authRepo!.saveUserToken(token);
         print("token$token");
+        getRequestState();
+        notifyListeners();
+      }
+    }
+  }
+
+  Future getRequestState() async {
+    _isLoading = true;
+    notifyListeners();
+    ApiResponse apiResponse = await authRepo!.getRequestState();
+
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      Map map = apiResponse.response!.data;
+
+      String requestState = '';
+
+      try {
+        requestState = map["requestState"];
+      } catch (e) {}
+
+      if (requestState.isNotEmpty) {
+        authRepo!.saveReqSate(requestState);
+        print("req_state$requestState");
+
         notifyListeners();
       }
     }

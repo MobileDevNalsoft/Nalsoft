@@ -13,14 +13,15 @@ class UserRepo {
 
   UserRepo({this.dioClient2, this.sharedPreferences});
 
-  Future<void> getUser(String username) async {
+  Future<void> getUserinfo(String username) async {
     try {
-      String username = "raviteja.singamsetty@nalsoft.net";
+      print('inside get user');
       Response response = await dioClient2!
           .get('${AppConstants.GETUSERINFO}?UserName=$username');
       print(response);
     } catch (e) {
       // return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+      print(e);
     }
   }
 }

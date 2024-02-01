@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_it/get_it.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
+import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
@@ -23,8 +24,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 
 class EmployeeHomeView extends StatefulWidget {
-  final sharedPreferences;
-  const EmployeeHomeView({super.key, this.sharedPreferences});
+  const EmployeeHomeView({super.key});
 
   @override
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
@@ -44,6 +44,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   UserRepo userRepo = UserRepo();
 
+  final sharedPreferences = sl.get<SharedPreferences>();
+
   bool _showQR = false;
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
@@ -53,13 +55,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   void initState() {
     super.initState();
     initData();
-    userRepo.getUser('');
   }
 
   Future<void> initData() async {
     try {
       await Provider.of<UserDataProvider>(context, listen: false)
-          .getUserFromDB();
+          .getUserinfo('');
       // ignore: use_build_context_synchronously
       await Provider.of<HomeStatusProvider>(context, listen: false)
           .setFloorDetails();
@@ -72,28 +73,23 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           .setNotOptedDatesWithReason();
     } finally {
       setState(() {
-        DateTime lastResetDate =
-            widget.sharedPreferences.containsKey('lastResetDate')
-                ? DateTime.parse(
-                    widget.sharedPreferences.getString('lastResetDate')!)
-                : DateTime.now();
+        DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
+            ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+            : DateTime.now();
 
-        if (!widget.sharedPreferences.containsKey('lastResetDate')) {
-          widget.sharedPreferences.setString('lastResetDate', now.toString());
-          widget.sharedPreferences.setInt('employeeCount', 0);
+        if (!sharedPreferences.containsKey('lastResetDate')) {
+          sharedPreferences.setString('lastResetDate', now.toString());
+          sharedPreferences.setInt('employeeCount', 0);
           Provider.of<HomeStatusProvider>(context, listen: false)
-              .setEmployeeCount(
-                  widget.sharedPreferences.getInt('employeeCount') ?? 0);
+              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else if (now.day != lastResetDate.day) {
-          widget.sharedPreferences.setString('lastResetDate', now.toString());
-          // widget.sharedPreferences.setInt('employeeCount', 0);
-          // Provider.of<HomeStatusProvider>(context, listen: false)
-          //     .setEmployeeCount(
-          //         widget.sharedPreferences.getInt('employeeCount') ?? 0);
+          sharedPreferences.setString('lastResetDate', now.toString());
+          sharedPreferences.setInt('employeeCount', 0);
+          Provider.of<HomeStatusProvider>(context, listen: false)
+              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else {
-          // Provider.of<HomeStatusProvider>(context, listen: false)
-          //     .setEmployeeCount(
-          //         widget.sharedPreferences.getInt('employeeCount') ?? 0);
+          Provider.of<HomeStatusProvider>(context, listen: false)
+              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         }
 
         _isLoading = false;
@@ -147,8 +143,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   value: 'Sign Out',
                                   height: 10,
                                   onTap: () {
-                                    widget.sharedPreferences
-                                        .setString(AppConstants.TOKEN, '');
+                                    sharedPreferences.setString(
+                                        AppConstants.TOKEN, '');
                                     Navigator.pushNamedAndRemoveUntil(
                                         context,
                                         RouteManagement.loginPage,
@@ -177,7 +173,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                     Consumer<HomeStatusProvider>(
                       builder: (context, provider, child) {
                         return Text(
-                            'Employee Count : ${widget.sharedPreferences.getInt('employeeCount')}');
+                            'Employee Count : ${sharedPreferences.getInt('employeeCount')}');
                       },
                     ),
                     SizedBox(
@@ -216,7 +212,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                     Provider.of<HomeStatusProvider>(context,
                                             listen: false)
                                         .incrEmpCount();
-                                    widget.sharedPreferences.setInt(
+                                    sharedPreferences.setInt(
                                         'employeeCount',
                                         // ignore: use_build_context_synchronously
                                         Provider.of<HomeStatusProvider>(context,
@@ -369,7 +365,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         value: 'Sign Out',
                                         height: 10,
                                         onTap: () {
-                                          widget.sharedPreferences.setString(
+                                          sharedPreferences.setString(
                                               AppConstants.TOKEN, '');
                                           Navigator.pushNamedAndRemoveUntil(
                                               context,
