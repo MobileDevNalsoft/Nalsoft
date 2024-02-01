@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
+import 'di_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Initialize().setup();
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
+  await di.init();
   await Firebase.initializeApp(
       options: const FirebaseOptions(
           apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE",
@@ -41,23 +42,21 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<SignatureProvider>(
-          create: (context) => SignatureProvider()),
-      ChangeNotifierProvider<UserDataProvider>(
-          create: (context) => UserDataProvider()),
-      ChangeNotifierProvider<AuthenticationProvider>(
-          create: (context) => AuthenticationProvider()),
+          create: (_) => SignatureProvider()),
+      ChangeNotifierProvider(create: (_) => di.sl<UserDataProvider>()),
+      ChangeNotifierProvider(create: (_) => di.sl<AuthenticationProvider>()),
       ChangeNotifierProvider<AdminEmployeesProvider>(
-          create: (context) => AdminEmployeesProvider()),
+          create: (_) => AdminEmployeesProvider()),
       ChangeNotifierProvider<HomeStatusProvider>(
-          create: (context) => HomeStatusProvider()),
+          create: (_) => HomeStatusProvider()),
       ChangeNotifierProvider<GenerateNotificationProvider>(
-          create: (context) => GenerateNotificationProvider()),
+          create: (_) => GenerateNotificationProvider()),
     ],
     child: SafeArea(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         onGenerateRoute: RouteManagement.generateRoute,
-        home: sharedPreferences.getString("islogged") == "true"
+        home: di.sl.get<SharedPreferences>().getString("islogged") == "true"
             ? const EmployeeHomeView()
             : const LoginView(),
       ),

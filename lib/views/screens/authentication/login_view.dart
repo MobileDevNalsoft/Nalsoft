@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/di_container.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
@@ -29,9 +30,9 @@ class _LoginViewState extends State<LoginView> {
     super.initState();
     initiate();
   }
-
+// 
   initiate() async {
-    sharedPreferences = await SharedPreferences.getInstance();
+    // sharedPreferences = await SharedPreferences.getInstance();
   }
 
   @override
@@ -129,32 +130,39 @@ class _LoginViewState extends State<LoginView> {
                               CustomButton(
                                 onPressed: () async {
                                   if (_emailController.text.isEmpty) {
-                                    CustomSnackBar.showSnackBar(
-                                        context, 'Email cannot be empty', Colors.red);
+                                    CustomSnackBar.showSnackBar(context,
+                                        'Email cannot be empty', Colors.red);
                                   } else if (!_emailController.text
                                       .contains('@nalsoft.net')) {
-                                    CustomSnackBar.showSnackBar(context,
-                                        'Email must contain @nalsoft.net', Colors.red);
-                                  } else if (_passwordController.text.isEmpty) {
                                     CustomSnackBar.showSnackBar(
-                                        context, 'Password cannot be empty', Colors.red);
+                                        context,
+                                        'Email must contain @nalsoft.net',
+                                        Colors.red);
+                                  } else if (_passwordController.text.isEmpty) {
+                                    CustomSnackBar.showSnackBar(context,
+                                        'Password cannot be empty', Colors.red);
                                   } else if (_passwordController.text.length <
                                       10) {
-                                    CustomSnackBar.showSnackBar(context,
-                                        'Password must be atleast 10 characters', Colors.red);
+                                    CustomSnackBar.showSnackBar(
+                                        context,
+                                        'Password must be atleast 10 characters',
+                                        Colors.red);
                                   } else if (!Constants.regex
                                       .hasMatch(_passwordController.text)) {
-                                    CustomSnackBar.showSnackBar(context,
-                                        'Password must include atleast one special symbol, lowercase and uppercase letter', Colors.red);
+                                    CustomSnackBar.showSnackBar(
+                                        context,
+                                        'Password must include atleast one special symbol, lowercase and uppercase letter',
+                                        Colors.red);
                                   } else {
-                                    var isSuccess = await Provider.of<
-                                                AuthenticationProvider>(context,
+                                    print("validations passed");
+                                   bool isSuccess= await Provider.of<AuthenticationProvider>(
+                                            context,
                                             listen: false)
-                                        .userLogin(_emailController.text.trim(),
-                                            _passwordController.text.trim());
+                                        .getToken()
+                                        .then((value) =>
+                                            Provider.of<AuthenticationProvider>(context,listen: false).
+                                            authenticateUserName(_emailController.text,_passwordController.text,context));
                                     if (isSuccess) {
-                                      sharedPreferences!
-                                          .setString("islogged", "true");
                                       // ignore: use_build_context_synchronously
                                       Navigator.pushNamedAndRemoveUntil(
                                           context,

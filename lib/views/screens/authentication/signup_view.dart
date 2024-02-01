@@ -33,24 +33,14 @@ class _SignUpViewState extends State<SignUpView> {
   initState() {
     super.initState();
     initiate();
-    initData();
+   
   }
 
   initiate() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
-  Future<void> initData() async {
-    try {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .setDeptandFloorList();
-    } finally {
-      // Set loading state to false when data fetching is complete
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -280,29 +270,30 @@ class _SignUpViewState extends State<SignUpView> {
                                   null) {
                             CustomSnackBar.showSnackBar(context,
                                 'Please select your department and floor', Colors.black);
-                          } else {
-                            var isSuccess =
-                                await Provider.of<AuthenticationProvider>(
-                                        context,
-                                        listen: false)
-                                    .createUser(
-                                        _usernameController.text,
-                                        _emailController.text.trim(),
-                                        _empIdController.text.trim(),
-                                        _confirmPasswordController.text);
-                            if (isSuccess) {
-                              // ignore: use_build_context_synchronously
-                              CustomSnackBar.showSnackBar(
-                                context, 'You have Registered Successfully', Colors.green);
-                              // ignore: use_build_context_synchronously
-                              sharedPreferences.setString('islogged', 'true');
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushNamed(
-                                  context, RouteManagement.employeeHomePage);
-                            } else {
-                              print('some error occurred');
-                            }
-                          }
+                          } 
+                          // else {
+                          //   var isSuccess =
+                          //       await Provider.of<AuthenticationProvider>(
+                          //               context,
+                          //               listen: false)
+                          //           .createUser(
+                          //               _usernameController.text,
+                          //               _emailController.text.trim(),
+                          //               _empIdController.text.trim(),
+                          //               _confirmPasswordController.text);
+                          //   if (isSuccess) {
+                          //     // ignore: use_build_context_synchronously
+                          //     CustomSnackBar.showSnackBar(
+                          //       context, 'You have Registered Successfully', Colors.green);
+                          //     // ignore: use_build_context_synchronously
+                          //     sharedPreferences.setString('islogged', 'true');
+                          //     // ignore: use_build_context_synchronously
+                          //     Navigator.pushNamed(
+                          //         context, RouteManagement.employeeHomePage);
+                          //   } else {
+                          //     print('some error occurred');
+                          //   }
+                          // }
                         },
                         color: MaterialStatePropertyAll(Colors.grey.shade300),
                         child: const Text(

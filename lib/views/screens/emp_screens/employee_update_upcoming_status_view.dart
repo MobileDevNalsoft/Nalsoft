@@ -262,13 +262,14 @@ class UpdateLunchStatus extends StatelessWidget {
                                     context,
                                     'remove weekoffs from selection',
                                     Colors.red);
-                              } else {
-                                Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .setNotOptedDatesWithReason(
-                                        dates: [dates!],
-                                        reason: notOptController.text);
-                              }
+                              } 
+                              // else {
+                              //   Provider.of<UserDataProvider>(context,
+                              //           listen: false)
+                              //       .setNotOptedDatesWithReason(
+                              //           dates: [dates!],
+                              //           reason: notOptController.text);
+                              // }
                             } else {
                               List<DateTime> datesList =
                                   dates as List<DateTime>;
@@ -284,13 +285,14 @@ class UpdateLunchStatus extends StatelessWidget {
                                     context,
                                     'remove weekoffs from selection',
                                     Colors.red);
-                              } else {
-                                Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .setNotOptedDatesWithReason(
-                                        dates: dates,
-                                        reason: notOptController.text);
                               }
+                              //  else {
+                              //   Provider.of<UserDataProvider>(context,
+                              //           listen: false)
+                              //       .setNotOptedDatesWithReason(
+                              //           dates: dates,
+                              //           reason: notOptController.text);
+                              // }
                             }
                           }
                           Navigator.pop(context);
@@ -338,8 +340,8 @@ class UpdateLunchStatus extends StatelessWidget {
                     children: [
                       CustomButton(
                         onPressed: () {
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .removeNotOptedDate(dates);
+                          // Provider.of<UserDataProvider>(context, listen: false)
+                          //     .removeNotOptedDate(dates);
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;

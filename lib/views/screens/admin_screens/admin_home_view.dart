@@ -18,7 +18,7 @@ import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import '../../../providers/home_status_provider.dart';
-import '../../../repositories/firebase_auth_repo.dart';
+import '../../../repositories/auth_repo.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -84,7 +84,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         builder: (context, provider, child) {
                           return Provider.of<UserDataProvider>(context,
                                       listen: false)
-                                  .getIsAdmin!
+                                  .getIsAdmin=="A"
                               ? Switch(
                                   value: true,
                                   onChanged: (value) {
@@ -97,30 +97,31 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               : const SizedBox();
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: PopupMenuButton(
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              PopupMenuItem(
-                                  value: 'Sign Out',
-                                  height: 10,
-                                  onTap: () => FirebaseAuthRepo()
-                                          .signOutNow()
-                                          .then((value) {
-                                        sharedPreferences.setString(
-                                            "islogged", 'false');
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            RouteManagement.loginPage,
-                                            (route) => false);
-                                      }),
-                                  child: const Text('Sign Out'))
-                            ];
-                          },
-                          child: const Icon(Icons.power_settings_new_sharp),
-                        ),
-                      )
+                      // Padding(
+                      //   padding: const EdgeInsets.all(10.0),
+                      //   child: PopupMenuButton(
+                      //     itemBuilder: (BuildContext context) {
+                      //       return [
+                      //         PopupMenuItem(
+                      //             value: 'Sign Out',
+                      //             height: 10,
+                      //             onTap: () => AthRepo()
+                      //                     .signOutNow()
+                      //                     .then((value) {
+                      //                   sharedPreferences.setString(
+                      //                       "islogged", 'false');
+                      //                   Navigator.pushNamedAndRemoveUntil(
+                      //                       context,
+                      //                       RouteManagement.loginPage,
+                      //                       (route) => false);
+                      //                 }),
+                      //             child: const Text('Sign Out'))
+                      //       ];
+                      //     },
+                      //     child: const Icon(Icons.power_settings_new_sharp),
+                      //   ),
+                      // )
+                    
                     ],
                   ),
                 ),

@@ -60,7 +60,9 @@ class CustomCalendarCard extends StatelessWidget {
             ),
             const Divider(),
             Consumer<UserDataProvider>(
+
               builder: (context, provider, child) {
+                print(DateTime.now());
                 return SfDateRangePicker(
                   controller: controller,
                   minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),

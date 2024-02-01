@@ -14,8 +14,11 @@ class AdminEmployeesProvider extends ChangeNotifier {
   List<Map<String, dynamic>> get getAllEmpData => _empData;
   List<dynamic> get getEmpList => empList;
   get isSearching => _isSearching;
-  get isMailLoading => _isMailLoading;
-  UserModel? get getEmpWithID => _user;
+  get isMailLoading => _isMailLoading;  
+  String? get username => _user!.data!.empName;
+  String? get userType => _user!.data!.userType;
+  String? get empID => _user!.data!.empId;
+
 
   set isSearching(value) {
     _isSearching = value;
@@ -28,17 +31,17 @@ class AdminEmployeesProvider extends ChangeNotifier {
   }
 
   Future<void> setEmpList({String search = ''}) async {
-    var allEmpinfoList = await _db.getEmployees(search: search);
+    // var allEmpinfoList = await _db.getEmployees(search: search);
     // API method 6 for Get Request
     // here we fetch the entire column of names from company's empoyees table
     // then for each change in search text field we trigger that get method
-    empList = allEmpinfoList;
+    // empList = allEmpinfoList;
     isSearching = false;
     notifyListeners();
   }
 
   Future<void> setAllEmpData() async {
-    _empData = await _db.readUsers();
+    // _empData = await _db.readUsers();
     // API method 7 for Get Request
     // we send the date to db using that date we filter rows in events table then we join that events table with
     // company's employees table using employee id in response we get a list of map(for each user with column names as keys and each row data
@@ -53,7 +56,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   }
 
   Future<void> setEmpData() async {
-    _empData = await _db.readUsers();
+    // _empData = await _db.readUsers();
     notifyListeners();
   }
 }
