@@ -49,28 +49,6 @@ class AuthenticationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // creating user document in firestore collection
-  Future<bool> createUser(String userName, String email, String employee_id,
-      String password) async {
-    User? user = await _auth.signUpwithEmailandPassword(email, password);
-    if (user != null) {
-      final userData = UserModel(
-          userName, email, employee_id, _dept!, _floor!, false, [], {});
-      _db.createUser(user.uid, userData);
-      return true;
-    }
-    return false;
-  }
-
-  // validating user login details
-  Future<bool> userLogin(String email, String password) async {
-    User? user = await _auth.signInwithEmailandPassword(email, password);
-    if (user != null) {
-      return true;
-    }
-    return false;
-  }
-
   String? get getDept => _dept;
   String? get getFloor => _floor;
   bool get obscurePassword => _obscurePassword;

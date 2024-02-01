@@ -11,19 +11,13 @@ class DioClient1 {
   final SharedPreferences? sharedPreferences;
 
   Dio dio = Dio();
- 
-  
 
-    DioClient1(
+  DioClient1(
     this.baseUrl,
     Dio? dioC, {
     this.loggingInterceptor,
     this.sharedPreferences,
   }) {
-    // token = sharedPreferences.getString(AppConstants.TOKEN);
-    // countryCode = sharedPreferences.getString(AppConstants.COUNTRY_CODE) ??
-    //     AppConstants.languages[0].countryCode;
-    // print("NNNN $token");
     dio = dioC ?? Dio();
     dio
       ..options.baseUrl = baseUrl
@@ -32,31 +26,9 @@ class DioClient1 {
       ..httpClientAdapter
       ..options.headers = {
         'Content-Type': 'application/json; charset=UTF-8',
-        
-        
       };
     dio.interceptors.add(loggingInterceptor!);
   }
-
-  // void updateHeader(String token, String countryCode) {
-  //   token = token == null ? this.token : token;
-  //   countryCode = countryCode == null
-  //       ? this.countryCode == 'US'
-  //           ? 'en'
-  //           : this.countryCode.toLowerCase()
-  //       : countryCode == 'US'
-  //           ? 'en'
-  //           : countryCode.toLowerCase();
-  //   this.token = token;
-  //   this.countryCode = countryCode;
-  //   print('===Country code====>$countryCode');
-  //   dio.options.headers = {
-  //     'Content-Type': 'application/json; charset=UTF-8',
-  //     'Authorization': 'Bearer $token',
-  //     AppConstants.LANG_KEY:
-  //         countryCode == 'US' ? 'en' : countryCode.toLowerCase(),
-  //   };
-  // }
 
   Future<Response> get(
     String uri, {
