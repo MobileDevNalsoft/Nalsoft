@@ -124,28 +124,31 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  Provider.of<AdminEmployeesProvider>(context,
-                                          listen: false)
-                                      .getEmpWithID!
-                                      .userName,
+                                  // Provider.of<AdminEmployeesProvider>(context,
+                                  //         listen: false)
+                                  //     .getEmpWithID!
+                                  //     .userName,
+                                  'user',
                                   style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
                               Text(
-                                  Provider.of<AdminEmployeesProvider>(context,
-                                          listen: false)
-                                      .getEmpWithID!
-                                      .department,
+                                  // Provider.of<AdminEmployeesProvider>(context,
+                                  //         listen: false)
+                                  //     .getEmpWithID!
+                                  //     .department,
+                                  'dev mob',
                                   style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
                               Text(
-                                  Provider.of<AdminEmployeesProvider>(context,
-                                          listen: false)
-                                      .getEmpWithID!
-                                      .floor,
+                                  // Provider.of<AdminEmployeesProvider>(context,
+                                  //         listen: false)
+                                  //     .getEmpWithID!
+                                  //     .floor,
+                                  '8',
                                   style: const TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16,
@@ -181,13 +184,15 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                       controller: datesController,
                       onSelectionChanged:
                           (dateRangePickerSelectionChangedArgs) {
-                        if (Provider.of<AdminEmployeesProvider>(context,
-                                listen: false)
-                            .getEmpWithID!
-                            .notOpted
-                            .keys
-                            .contains(dateRangePickerSelectionChangedArgs.value
-                                .toString())) {
+                        if (
+                            // Provider.of<AdminEmployeesProvider>(context,
+                            //       listen: false)
+                            //   .getEmpWithID!
+                            //   .notOpted
+                            //   .keys
+                            //   .contains(dateRangePickerSelectionChangedArgs.value
+                            //       .toString())
+                            true) {
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -206,15 +211,17 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                                         SizedBox(
                                           height: size.height * 0.02,
                                         ),
-                                        Text(Provider.of<
-                                                        AdminEmployeesProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getEmpWithID!
-                                                .notOpted[
-                                            dateRangePickerSelectionChangedArgs
-                                                .value
-                                                .toString()]!),
+                                        Text(
+                                            // Provider.of<
+                                            //               AdminEmployeesProvider>(
+                                            //           context,
+                                            //           listen: false)
+                                            //       .getEmpWithID!
+                                            //       .notOpted[
+                                            //   dateRangePickerSelectionChangedArgs
+                                            //       .value
+                                            //       .toString()]!
+                                            'emp'),
                                       ],
                                     )),
                               );
@@ -247,118 +254,118 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
   }
 
   Future<void> sendMail(BuildContext context, UserModel thisEmpData) async {
-    Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
-        true;
+    //   Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
+    //       true;
 
-    final dir = await getExternalStorageDirectory();
+    //   final dir = await getExternalStorageDirectory();
 
-    DateTime now = DateTime.now();
+    //   DateTime now = DateTime.now();
 
-    // Create a new Excel workbook
-    final excel.Workbook workbook = excel.Workbook();
+    //   // Create a new Excel workbook
+    //   final excel.Workbook workbook = excel.Workbook();
 
-    // Add a worksheet to the workbook
-    final excel.Worksheet sheet = workbook.worksheets[0];
+    //   // Add a worksheet to the workbook
+    //   final excel.Worksheet sheet = workbook.worksheets[0];
 
-    excel.Style style = workbook.styles.add('style');
+    //   excel.Style style = workbook.styles.add('style');
 
-    style.wrapText = true;
+    //   style.wrapText = true;
 
-    // Set the worksheet name
-    sheet.name = '${thisEmpData.userName}' 's Meals data';
+    //   // Set the worksheet name
+    //   sheet.name = '${thisEmpData.userName}' 's Meals data';
 
-    // Append headers
-    sheet
-        .getRangeByIndex(1, 1)
-        .setText('${thisEmpData.userName}(${thisEmpData.employee_id})');
+    //   // Append headers
+    //   sheet
+    //       .getRangeByIndex(1, 1)
+    //       .setText('${thisEmpData.userName}(${thisEmpData.employee_id})');
 
-    sheet.getRangeByIndex(3, 1).setText('Date');
-    sheet.getRangeByIndex(3, 2).setText('Status');
-    sheet.getRangeByIndex(3, 3).setText('Reason');
+    //   sheet.getRangeByIndex(3, 1).setText('Date');
+    //   sheet.getRangeByIndex(3, 2).setText('Status');
+    //   sheet.getRangeByIndex(3, 3).setText('Reason');
 
-    List<DateTime> rangeDates = List.generate(
-        now.difference(DateTime(now.year, now.month, 1)).inDays + 1,
-        (index) => DateTime(now.year, now.month, 1).add(Duration(days: index)));
+    //   List<DateTime> rangeDates = List.generate(
+    //       now.difference(DateTime(now.year, now.month, 1)).inDays + 1,
+    //       (index) => DateTime(now.year, now.month, 1).add(Duration(days: index)));
 
-    int rowIndex = 4;
+    //   int rowIndex = 4;
 
-    for (var date in rangeDates) {
-      if (thisEmpData.opted.contains(date.toString().substring(0, 10))) {
-        sheet
-            .getRangeByIndex(rowIndex, 1)
-            .setText(date.toString().substring(0, 10));
-        sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
-        rowIndex++;
-      } else if (thisEmpData.notOpted.keys
-          .contains(date.toString().substring(0, 10))) {
-        sheet
-            .getRangeByIndex(rowIndex, 1)
-            .setText(date.toString().substring(0, 10));
-        sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
-        sheet
-            .getRangeByIndex(rowIndex, 3)
-            .setText(thisEmpData.notOpted[date.toString().substring(0, 10)]);
-        rowIndex++;
-      } else if (date.day < now.day && date.month <= now.month) {
-        sheet
-            .getRangeByIndex(rowIndex, 1)
-            .setText(date.toString().substring(0, 10));
-        sheet.getRangeByIndex(rowIndex, 2).setText('No Status');
-        rowIndex++;
-      }
-    }
+    //   for (var date in rangeDates) {
+    //     if (thisEmpData.opted.contains(date.toString().substring(0, 10))) {
+    //       sheet
+    //           .getRangeByIndex(rowIndex, 1)
+    //           .setText(date.toString().substring(0, 10));
+    //       sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
+    //       rowIndex++;
+    //     } else if (thisEmpData.notOpted.keys
+    //         .contains(date.toString().substring(0, 10))) {
+    //       sheet
+    //           .getRangeByIndex(rowIndex, 1)
+    //           .setText(date.toString().substring(0, 10));
+    //       sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
+    //       sheet
+    //           .getRangeByIndex(rowIndex, 3)
+    //           .setText(thisEmpData.notOpted[date.toString().substring(0, 10)]);
+    //       rowIndex++;
+    //     } else if (date.day < now.day && date.month <= now.month) {
+    //       sheet
+    //           .getRangeByIndex(rowIndex, 1)
+    //           .setText(date.toString().substring(0, 10));
+    //       sheet.getRangeByIndex(rowIndex, 2).setText('No Status');
+    //       rowIndex++;
+    //     }
+    //   }
 
-    for (var entry in thisEmpData.notOpted.entries) {
-      if ((DateTime.parse(entry.key).day > now.day &&
-              DateTime.parse(entry.key).month == now.month) ||
-          DateTime.parse(entry.key).month > now.month) {
-        sheet.getRangeByIndex(rowIndex, 1).setText(entry.key);
-        sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
-        sheet
-            .getRangeByIndex(rowIndex, 3)
-            .setText(thisEmpData.notOpted[entry.key]);
-        rowIndex++;
-      }
-    }
+    //   for (var entry in thisEmpData.notOpted.entries) {
+    //     if ((DateTime.parse(entry.key).day > now.day &&
+    //             DateTime.parse(entry.key).month == now.month) ||
+    //         DateTime.parse(entry.key).month > now.month) {
+    //       sheet.getRangeByIndex(rowIndex, 1).setText(entry.key);
+    //       sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
+    //       sheet
+    //           .getRangeByIndex(rowIndex, 3)
+    //           .setText(thisEmpData.notOpted[entry.key]);
+    //       rowIndex++;
+    //     }
+    //   }
 
-    sheet.autoFitColumn(1);
-    sheet.autoFitColumn(2);
-    sheet.autoFitColumn(3);
+    //   sheet.autoFitColumn(1);
+    //   sheet.autoFitColumn(2);
+    //   sheet.autoFitColumn(3);
 
-    try {
-      // Save the workbook to external storage
-      final List<int> bytes = workbook.saveAsStream();
+    //   try {
+    //     // Save the workbook to external storage
+    //     final List<int> bytes = workbook.saveAsStream();
 
-      final path =
-          '${dir!.path}/${thisEmpData.userName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
-      final File file = File(path);
-      await file.writeAsBytes(bytes);
+    //     final path =
+    //         '${dir!.path}/${thisEmpData.userName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
+    //     final File file = File(path);
+    //     await file.writeAsBytes(bytes);
 
-      // Check email permissions
-      var status = await Permission.storage.status;
-      if (status.isDenied) {
-        await Permission.storage.request();
-      }
+    //     // Check email permissions
+    //     var status = await Permission.storage.status;
+    //     if (status.isDenied) {
+    //       await Permission.storage.request();
+    //     }
 
-      // Permission granted, proceed with sending email
-      const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
-      const subject = 'Excel Data';
-      const body = 'Please find the attached Excel file with the data.';
+    //     // Permission granted, proceed with sending email
+    //     const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
+    //     const subject = 'Excel Data';
+    //     const body = 'Please find the attached Excel file with the data.';
 
-      final email = Email(
-        body: body,
-        subject: subject,
-        recipients: [recipientEmail],
-        attachmentPaths: [path],
-      );
-      // ignore: use_build_context_synchronously
-      Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .isMailLoading = false;
-      // Send email
-      await FlutterEmailSender.send(email);
-    } catch (error) {
-      // Handle the error
-      print('Error sending email: $error');
-    }
+    //     final email = Email(
+    //       body: body,
+    //       subject: subject,
+    //       recipients: [recipientEmail],
+    //       attachmentPaths: [path],
+    //     );
+    //     // ignore: use_build_context_synchronously
+    //     Provider.of<AdminEmployeesProvider>(context, listen: false)
+    //         .isMailLoading = false;
+    //     // Send email
+    //     await FlutterEmailSender.send(email);
+    //   } catch (error) {
+    //     // Handle the error
+    //     print('Error sending email: $error');
+    //   }
   }
 }

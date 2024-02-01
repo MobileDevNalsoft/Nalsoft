@@ -16,6 +16,7 @@ class User {
   String? empId;
   String? empName;
   String? userName;
+  String? department;
   String? userType;
 
   User({this.empId, this.empName, this.userName, this.userType});
@@ -25,5 +26,6 @@ class User {
     empName = json['emp_name'];
     userName = json['user_name'];
     userType = json['user_type'];
+    department = json['Department'];
   }
 }

@@ -1,6 +1,7 @@
 import "dart:io";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:get_it/get_it.dart";
+import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
@@ -18,7 +19,7 @@ import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import '../../../providers/home_status_provider.dart';
-import '../../../repositories/firebase_auth_repo.dart';
+import '../../../repositories/auth_repo.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -72,7 +73,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                           return Padding(
                             padding: const EdgeInsets.only(left: 25, top: 15),
                             child: Text(
-                              'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
+                              // 'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUsername}',
+                              'hi',
                               style: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold),
                             ),
@@ -82,19 +84,21 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       const Expanded(child: SizedBox()),
                       Consumer<HomeStatusProvider>(
                         builder: (context, provider, child) {
-                          return Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .getIsAdmin!
-                              ? Switch(
-                                  value: true,
-                                  onChanged: (value) {
-                                    Navigator.pushReplacementNamed(context,
-                                        RouteManagement.employeeHomePage);
-                                  },
-                                  activeColor:
-                                      const Color.fromARGB(255, 181, 129, 248),
-                                )
-                              : const SizedBox();
+                          return
+                              // Provider.of<UserDataProvider>(context,
+                              //             listen: false)
+                              //         .getIsAdmin!
+                              true
+                                  ? Switch(
+                                      value: true,
+                                      onChanged: (value) {
+                                        Navigator.pushReplacementNamed(context,
+                                            RouteManagement.employeeHomePage);
+                                      },
+                                      activeColor: const Color.fromARGB(
+                                          255, 181, 129, 248),
+                                    )
+                                  : const SizedBox();
                         },
                       ),
                       Padding(
@@ -105,16 +109,14 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               PopupMenuItem(
                                   value: 'Sign Out',
                                   height: 10,
-                                  onTap: () => FirebaseAuthRepo()
-                                          .signOutNow()
-                                          .then((value) {
-                                        sharedPreferences.setString(
-                                            "islogged", 'false');
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            RouteManagement.loginPage,
-                                            (route) => false);
-                                      }),
+                                  onTap: () {
+                                    sharedPreferences.setString(
+                                        AppConstants.TOKEN, '');
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        RouteManagement.loginPage,
+                                        (route) => false);
+                                  },
                                   child: const Text('Sign Out'))
                             ];
                           },
