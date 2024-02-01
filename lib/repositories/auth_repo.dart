@@ -1,17 +1,19 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meals_management/APIClient/dio_client1.dart';
 import 'package:meals_management/APIClient/exceptions/api_error_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
+import 'package:meals_management/models/user_model.dart';
+
 import 'package:meals_management/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthRepo {
+class AuthenticationRepo {
   final DioClient1? dioClient1;
   final SharedPreferences? sharedPreferences;
-  AuthRepo({this.dioClient1, this.sharedPreferences});
+  AuthenticationRepo({this.dioClient1, this.sharedPreferences});
 
   Future<ApiResponse> authenticateUser(String username, String password) async {
     try {
@@ -38,20 +40,7 @@ class AuthRepo {
     }
   }
 
-  Future<ApiResponse> getRequestState() async {
-    try {
-      Response response =
-          await dioClient1!.get(AppConstants.AUTHENCTICATE_USER_NAME,
-              options: Options(headers: {
-                'Authorization':
-                    'Bearer ${sharedPreferences!.getString(AppConstants.TOKEN) ?? ""}',
-                'Content-Type': 'application/x-www-form-urlencoded'
-              }));
-      return ApiResponse.withSuccess(response);
-    } catch (e) {
-      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-    }
-  }
+ 
 
   Future<ApiResponse> gettoken() async {
     try {
@@ -75,6 +64,23 @@ class AuthRepo {
     }
   }
 
+Future<ApiResponse> getRequestState() async{
+try {
+      Response response = await dioClient1!.get(
+        AppConstants.AUTHENCTICATE_USER_NAME,
+       options: Options(
+        headers: {
+          'Authorization': 'Bearer ${sharedPreferences!.getString(AppConstants.TOKEN) ?? ""}',
+      'Content-Type':'application/x-www-form-urlencoded' 
+        }
+       )
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+}
+
   Future<void> saveUserToken(String token) async {
     try {
       await sharedPreferences!.setString(AppConstants.TOKEN, token);
@@ -91,7 +97,17 @@ class AuthRepo {
     }
   }
 
-  Future<void> saveReqSate(String req_state) async {
+  
+ Future<void> saveUserNameandPassword(String username,String password) async {
+   try {
+      await sharedPreferences!.setString(AppConstants.USERNAME, username);
+      await sharedPreferences!.setString(AppConstants.PASSWORD, password);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+    Future<void> saveReqSate(String req_state) async {
     try {
       await sharedPreferences!.setString(AppConstants.REQ_STATE, req_state);
     } catch (e) {
@@ -99,14 +115,7 @@ class AuthRepo {
     }
   }
 
-  Future<void> saveUserNameandPassword(String username, String password) async {
-    try {
-      await sharedPreferences!.setString(AppConstants.USERNAME, username);
-      await sharedPreferences!.setString(AppConstants.PASSWORD, password);
-    } catch (e) {
-      throw e;
-    }
-  }
+
 
   String getUserToken() {
     return sharedPreferences!.getString(AppConstants.TOKEN) ?? "";

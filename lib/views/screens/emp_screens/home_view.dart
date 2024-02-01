@@ -59,18 +59,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   Future<void> initData() async {
     try {
+     
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserinfo('');
-      // ignore: use_build_context_synchronously
-      await Provider.of<HomeStatusProvider>(context, listen: false)
-          .setFloorDetails();
-      // ignore: use_build_context_synchronously
-      await Provider.of<UserDataProvider>(context, listen: false).setHolidays();
-      // ignore: use_build_context_synchronously
-      Provider.of<UserDataProvider>(context, listen: false).setOptedDates();
-      // ignore: use_build_context_synchronously
-      Provider.of<UserDataProvider>(context, listen: false)
-          .setNotOptedDatesWithReason();
+ 
+      await Provider.of<UserDataProvider>(context, listen: false)
+          .getUserEventsData();
+ 
+     
     } finally {
       setState(() {
         DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
@@ -100,6 +96,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
+    // List<Map<String, Map<String, dynamic>>> floorDetails =
+        // Provider.of<HomeStatusProvider>(context, listen: false).getFloorDetails;
+    Map<String, dynamic> timings = _isLoading
+        ? {}
+        : {"start_time":"12:30 pm","end_time":"2:30 pm"};
 
     return AspectRatio(
       aspectRatio: size.height / size.width,
@@ -142,6 +144,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             (route) => false);
                                       },
                                       child: const Text('Sign Out'))
+                               
                                 ];
                               },
                               child: const Icon(Icons.power_settings_new_sharp),
@@ -181,57 +184,57 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 controller.scannedDataStream
                                     .listen((data) async {
                                   var qrData = jsonDecode(data.code!);
-                                  if (qrData['date'] ==
-                                      now.toString().substring(0, 10)) {
-                                    bool isAlreadyScanned =
-                                        await Provider.of<UserDataProvider>(
-                                                context,
-                                                listen: false)
-                                            .pushOptedDate(uid: qrData['uid']);
-                                    if (isAlreadyScanned) {
-                                      if (!_hasShownSnackbar) {
-                                        setState(() {
-                                          _showQR = false;
-                                          _hasShownSnackbar = true;
-                                          CustomSnackBar.showSnackBar(context,
-                                              'QR already scanned', Colors.red);
-                                        });
-                                        controller.pauseCamera();
-                                      }
-                                    } else {
-                                      FlutterBeep.beep();
-                                      if (!_isIncremented) {
-                                        // ignore: use_build_context_synchronously
-                                        Provider.of<HomeStatusProvider>(context,
-                                                listen: false)
-                                            .incrEmpCount();
-                                        sharedPreferences.setInt(
-                                            'employeeCount',
-                                            // ignore: use_build_context_synchronously
-                                            Provider.of<HomeStatusProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getEmployeeCount!);
-                                        _isIncremented = true;
-                                      }
-                                      controller.pauseCamera();
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        controller.resumeCamera();
-                                        _isIncremented = false;
-                                      });
-                                    }
-                                  } else {
-                                    if (!_hasShownSnackbar) {
-                                      setState(() {
-                                        _showQR = false;
-                                        _hasShownSnackbar = true;
-                                        CustomSnackBar.showSnackBar(
-                                            context, 'Invalid QR', Colors.red);
-                                      });
-                                      controller.pauseCamera();
-                                    }
-                                  }
+                                  // if (qrData['date'] ==
+                                  //     now.toString().substring(0, 10)) {
+                                  //   bool isAlreadyScanned =
+                                  //       await Provider.of<UserDataProvider>(
+                                  //               context,
+                                  //               listen: false)
+                                  //           .pushOptedDate(uid: qrData['uid']);
+                                  //   if (isAlreadyScanned) {
+                                  //     if (!_hasShownSnackbar) {
+                                  //       setState(() {
+                                  //         _showQR = false;
+                                  //         _hasShownSnackbar = true;
+                                  //         CustomSnackBar.showSnackBar(context,
+                                  //             'QR already scanned', Colors.red);
+                                  //       });
+                                  //       controller.pauseCamera();
+                                  //     }
+                                  //   } else {
+                                  //     FlutterBeep.beep();
+                                  //     if (!_isIncremented) {
+                                  //       // ignore: use_build_context_synchronously
+                                  //       Provider.of<HomeStatusProvider>(context,
+                                  //               listen: false)
+                                  //           .incrEmpCount();
+                                  //       sharedPreferences.setInt(
+                                  //           'employeeCount',
+                                  //           // ignore: use_build_context_synchronously
+                                  //           Provider.of<HomeStatusProvider>(
+                                  //                   context,
+                                  //                   listen: false)
+                                  //               .getEmployeeCount!);
+                                  //       _isIncremented = true;
+                                  //     }
+                                  //     controller.pauseCamera();
+                                  //     Future.delayed(const Duration(seconds: 2),
+                                  //         () {
+                                  //       controller.resumeCamera();
+                                  //       _isIncremented = false;
+                                  //     });
+                                  //   }
+                                  // } else {
+                                  //   if (!_hasShownSnackbar) {
+                                  //     setState(() {
+                                  //       _showQR = false;
+                                  //       _hasShownSnackbar = true;
+                                  //       CustomSnackBar.showSnackBar(
+                                  //           context, 'Invalid QR', Colors.red);
+                                  //     });
+                                  //     controller.pauseCamera();
+                                  //   }
+                                  // }
                                 });
                               },
                               overlay: QrScannerOverlayShape(
@@ -308,6 +311,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                       ],
                     ),
                   )
+              
                 : Stack(
                     children: [
                       Column(
@@ -377,6 +381,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         Icons.power_settings_new_sharp),
                                   ),
                                 )
+                            
                               ],
                             ),
                           ),
@@ -440,6 +445,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             confirmText: 'Ok',
                             cancelText: 'Cancel',
                           ),
+                     
                           const CustomLegend(),
                           Image.asset('assets/images/food.png'),
                         ],

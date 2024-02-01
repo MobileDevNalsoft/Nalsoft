@@ -171,11 +171,15 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                             .keys
                             .contains(date.toString());
                       },
-                      onSubmit: (p0) => sendMail(
-                          context,
-                          Provider.of<AdminEmployeesProvider>(context,
-                                  listen: false)
-                              .getEmpWithID!),
+
+                      //TODO
+                      onSubmit: (p0) => {},
+                      // sendMail(
+                      //     context,
+                      //     Provider.of<AdminEmployeesProvider>(context,
+                      //             listen: false)
+                      //         .getEmpWithID!
+                      //         ),
                       onCancel: () {
                         datesController.selectedDate = null;
                       },

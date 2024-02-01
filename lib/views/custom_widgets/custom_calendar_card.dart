@@ -37,7 +37,6 @@ class CustomCalendarCard extends StatelessWidget {
 
     return SizedBox(
       width: size.width * 0.95,
-      height: size.height * 0.53,
       child: Card(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -61,7 +60,9 @@ class CustomCalendarCard extends StatelessWidget {
             ),
             const Divider(),
             Consumer<UserDataProvider>(
+
               builder: (context, provider, child) {
+                print(DateTime.now());
                 return SfDateRangePicker(
                   controller: controller,
                   minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),

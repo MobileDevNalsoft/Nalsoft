@@ -18,4 +18,5 @@ class AppConstants {
   static const String REQ_STATE = 'requestState';
   static const String APIUSERNAME = 'IntegrationDeveloper';
   static const String APIPASSWORD = 'Nalsoft@123456';
+  static const String GETUSEREVENTSDATA = "/GETUSEREVENTSDATA/1.0/GetUserEventData";
 }

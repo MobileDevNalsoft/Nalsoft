@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 class ApiErrorHandler {
   static dynamic getMessage(error) {
     dynamic errorDescription = "";
@@ -27,9 +26,9 @@ class ApiErrorHandler {
               errorDescription = "Send timeout with server";
               break;
             case DioExceptionType.badCertificate:
-            // TODO: Handle this case.
+              // TODO: Handle this case.
             case DioExceptionType.connectionError:
-            // TODO: Handle this case.
+              // TODO: Handle this case.
           }
         } else {
           errorDescription = "Unexpected error occured";
@@ -39,5 +38,4 @@ class ApiErrorHandler {
       }
     }
     return errorDescription;
-  }
-}
+  }}

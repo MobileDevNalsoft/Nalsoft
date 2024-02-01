@@ -29,12 +29,7 @@ class HomeStatusProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // aquires details of floor from db
-  Future<void> setFloorDetails() async {
-    _floorDetails = await _db.readFloors();
-    // => not required further
-    notifyListeners();
-  }
+
 
   bool get getReasonStatusEmpty => _reasonStatusEmpty;
   String get getReason => _selectedReason;

@@ -1,15 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 
-class AuthProvider extends ChangeNotifier {
-  final AuthRepo? authRepo;
+class AuthenticationProvider extends ChangeNotifier {
+  final UserEventsRepo _db = UserEventsRepo();
+  final AuthenticationRepo? authenticationRepo ;
+  AuthenticationProvider({this.authenticationRepo});
 
-  AuthProvider({this.authRepo});
 
   bool _obscurePassword = true;
   int _errTxt = 0;
@@ -34,7 +36,7 @@ class AuthProvider extends ChangeNotifier {
   Future getToken() async {
     _isLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await authRepo!.gettoken();
+    ApiResponse apiResponse = await authenticationRepo!.gettoken();
 
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
@@ -51,7 +53,7 @@ class AuthProvider extends ChangeNotifier {
       } catch (e) {}
 
       if (token.isNotEmpty) {
-        authRepo!.saveUserToken(token);
+        authenticationRepo!.saveUserToken(token);
         print("token$token");
         getRequestState();
         notifyListeners();
@@ -62,7 +64,7 @@ class AuthProvider extends ChangeNotifier {
   Future getRequestState() async {
     _isLoading = true;
     notifyListeners();
-    ApiResponse apiResponse = await authRepo!.getRequestState();
+    ApiResponse apiResponse = await authenticationRepo!.getRequestState();
 
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
@@ -75,7 +77,7 @@ class AuthProvider extends ChangeNotifier {
       } catch (e) {}
 
       if (requestState.isNotEmpty) {
-        authRepo!.saveReqSate(requestState);
+        authenticationRepo!.saveReqSate(requestState);
         print("req_state$requestState");
 
         notifyListeners();
@@ -89,7 +91,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     print('before auth');
     ApiResponse apiResponse =
-        await authRepo!.authenticateUser(username, password);
+        await authenticationRepo!.authenticateUser(username, password);
     print('after auth');
 
     if (apiResponse.response != null &&
@@ -106,8 +108,8 @@ class AuthProvider extends ChangeNotifier {
       } catch (e) {}
 
       if (authToken.isNotEmpty && status == "success") {
-        authRepo!.saveAuthToken(authToken);
-        authRepo!.saveUserNameandPassword(username, password);
+        authenticationRepo!.saveAuthToken(authToken);
+        authenticationRepo!.saveUserNameandPassword(username, password);
         print("token $authToken");
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => EmployeeHomeView()));
@@ -148,10 +150,10 @@ class AuthProvider extends ChangeNotifier {
   int get getPassErrTxt => _passErrTxt;
   bool get getIsLoading => _isLoading;
   String getUserToken() {
-    return authRepo!.getUserToken();
+    return authenticationRepo!.getUserToken();
   }
 
   String getAuthToken() {
-    return authRepo!.getAuthToken();
+    return authenticationRepo!.getAuthToken();
   }
 }
