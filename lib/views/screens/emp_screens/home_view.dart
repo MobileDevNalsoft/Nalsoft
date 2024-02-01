@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get_it/get_it.dart';
 // ignore: depend_on_referenced_packages
-import 'package:intl/intl.dart';
 import 'package:meals_management/inits/di_container.dart';
+import 'package:meals_management/models/user_events_model.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
-import 'package:meals_management/repositories/auth_repo.dart';
 import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
@@ -21,7 +19,6 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:flutter_beep/flutter_beep.dart';
 
 class EmployeeHomeView extends StatefulWidget {
   const EmployeeHomeView({super.key});
@@ -59,35 +56,38 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   Future<void> initData() async {
     try {
-     
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserinfo('');
- 
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserEventsData();
- 
-     
+      await Provider.of<UserDataProvider>(context,listen: false)
+                                      .updateUserEvents([Dates(date: '2024-01-23', info: now.millisecondsSinceEpoch.toString()).toJson()]);
     } finally {
       setState(() {
-        DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
+        if(Provider.of<UserDataProvider>(context, listen: false)
+                        .getUserData
+                        .data!
+                        .userType ==
+                    'V'){
+          DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
             ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
             : DateTime.now();
 
-        if (!sharedPreferences.containsKey('lastResetDate')) {
-          sharedPreferences.setString('lastResetDate', now.toString());
-          sharedPreferences.setInt('employeeCount', 0);
-          Provider.of<HomeStatusProvider>(context, listen: false)
-              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-        } else if (now.day != lastResetDate.day) {
-          sharedPreferences.setString('lastResetDate', now.toString());
-          sharedPreferences.setInt('employeeCount', 0);
-          Provider.of<HomeStatusProvider>(context, listen: false)
-              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-        } else {
-          Provider.of<HomeStatusProvider>(context, listen: false)
-              .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+          if (!sharedPreferences.containsKey('lastResetDate')) {
+            sharedPreferences.setString('lastResetDate', now.toString());
+            sharedPreferences.setInt('employeeCount', 0);
+            Provider.of<HomeStatusProvider>(context, listen: false)
+                .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+          } else if (now.day != lastResetDate.day) {
+            sharedPreferences.setString('lastResetDate', now.toString());
+            sharedPreferences.setInt('employeeCount', 0);
+            Provider.of<HomeStatusProvider>(context, listen: false)
+                .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+          } else {
+            Provider.of<HomeStatusProvider>(context, listen: false)
+                .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+          }
         }
-
         _isLoading = false;
       });
     }
@@ -97,8 +97,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // List<Map<String, Map<String, dynamic>>> floorDetails =
-        // Provider.of<HomeStatusProvider>(context, listen: false).getFloorDetails;
     Map<String, dynamic> timings = _isLoading
         ? {}
         : {"start_time":"12:30 pm","end_time":"2:30 pm"};
@@ -184,13 +182,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 controller.scannedDataStream
                                     .listen((data) async {
                                   var qrData = jsonDecode(data.code!);
-                                  // if (qrData['date'] ==
-                                  //     now.toString().substring(0, 10)) {
-                                  //   bool isAlreadyScanned =
-                                  //       await Provider.of<UserDataProvider>(
-                                  //               context,
-                                  //               listen: false)
-                                  //           .pushOptedDate(uid: qrData['uid']);
+                                  if (qrData['date'] !=
+                                      now.toString().substring(0, 10)) {
+                                    Provider.of<UserDataProvider>(
+                                                context,
+                                                listen: false)
+                                            .updateUserEvents([Dates(date: qrData['date']!, info: now.millisecondsSinceEpoch.toString()).toJson()]);
                                   //   if (isAlreadyScanned) {
                                   //     if (!_hasShownSnackbar) {
                                   //       setState(() {
@@ -234,7 +231,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   //     });
                                   //     controller.pauseCamera();
                                   //   }
-                                  // }
+                                  }
                                 });
                               },
                               overlay: QrScannerOverlayShape(

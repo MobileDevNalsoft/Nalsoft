@@ -1,6 +1,9 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:meals_management/models/user_events_model.dart";
 import 'package:meals_management/providers/home_status_provider.dart';
 import "package:meals_management/providers/user_data_provider.dart";
+import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
@@ -205,6 +208,10 @@ class UpdateLunchStatus extends StatelessWidget {
                   TextFormField(
                     focusNode: _focusNode,
                     controller: notOptController,
+                    keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[^\d]')), // Allows any character except digits
+                    ],
                     decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         hintText: 'reason for not opting...',
@@ -263,13 +270,12 @@ class UpdateLunchStatus extends StatelessWidget {
                                     'remove weekoffs from selection',
                                     Colors.red);
                               } 
-                              // else {
-                              //   Provider.of<UserDataProvider>(context,
-                              //           listen: false)
-                              //       .setNotOptedDatesWithReason(
-                              //           dates: [dates!],
-                              //           reason: notOptController.text);
-                              // }
+                              else {
+                                Provider.of<UserDataProvider>(
+                                                context,
+                                                listen: false)
+                                            .updateUserEvents([Dates(date: dates.toString().substring(0,10), info: notOptController.text).toJson()]);
+                              }
                             } else {
                               List<DateTime> datesList =
                                   dates as List<DateTime>;
@@ -286,13 +292,12 @@ class UpdateLunchStatus extends StatelessWidget {
                                     'remove weekoffs from selection',
                                     Colors.red);
                               }
-                              //  else {
-                              //   Provider.of<UserDataProvider>(context,
-                              //           listen: false)
-                              //       .setNotOptedDatesWithReason(
-                              //           dates: dates,
-                              //           reason: notOptController.text);
-                              // }
+                               else {
+                                Provider.of<UserDataProvider>(
+                                                context,
+                                                listen: false)
+                                            .updateUserEvents(dates.map((date) => Dates(date: date.toString().substring(0,10), info: notOptController.text).toJson()).toList());
+                              }
                             }
                           }
                           Navigator.pop(context);

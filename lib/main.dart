@@ -1,19 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:meals_management/inits/di_container.dart' as di;
-
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/admin_generate_notification_provider.dart';
 import 'package:meals_management/providers/auth_provider.dart';
-import 'package:meals_management/providers/digital_signature_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';

@@ -38,15 +38,11 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<bool> pushOptedDate({String? uid}) async {
-  //   bool isAlreadyScanned = await userEventsRepo!.pushOpted(uid);
-  //   // API method 5 for Post Request
-  //   // we send the mail id and check if this date present in the table with status as 1(i.e opted)
-  //   // we Get a boolean value in return. meanwhile we insert that row into table
-  //   return isAlreadyScanned;
-  //   // discuss about strean => ui updations when data changes in events table in database
-  //   // can we create seperate table for each user with their mail id as table name
-  // }
+  Future<void> updateUserEvents(List<Map<String, dynamic>> dates) async {
+    ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(_user!.data!.empId!, dates!);
+    print(apiResponse);
+    notifyListeners();
+  }
 
   void setOptedDates({DateTime? date}) {
     if (date == null) {
@@ -95,7 +91,7 @@ class UserDataProvider extends ChangeNotifier {
   Future<void> getUserEventsData()async {
     print("before response");
 
-    ApiResponse apiResponse = await userEventsRepo!.getUserEventsData(00032);
+    ApiResponse apiResponse = await userEventsRepo!.getUserEventsData(_user!.data!.empId!);
     print("after response");
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {

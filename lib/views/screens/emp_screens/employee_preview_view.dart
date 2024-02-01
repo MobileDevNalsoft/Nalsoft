@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
@@ -17,7 +15,6 @@ class Preview extends StatefulWidget {
 }
 
 class _PreviewState extends State<Preview> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -87,7 +84,7 @@ class _PreviewState extends State<Preview> {
                       ),
                       QrImageView(
                         data:
-                            '{"uid":"${_auth.currentUser!.uid}","date":"${DateTime.now().toString().substring(0, 10)}"}',
+                            '{"uid":"${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empId}","date":"2024-01-19"}',//${DateTime.now().toString().substring(0, 10)}
                         size: 200,
                       ),
                       SizedBox(
