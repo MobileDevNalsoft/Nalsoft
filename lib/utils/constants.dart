@@ -22,4 +22,5 @@ class AppConstants {
   static const String UPDATEUSEREVENTS = "/UPDATEUSEREVENTS/1.0/UpdateUserEventData";
   static const String DELETEUSEREVENTS = "/DELETEUSEREVENTS/1.0/DeleteUserEvnts";
   static const String GETHOLIDAYS = "/GETHOLIDAYS/1.0/GetHolidays";
+  static const String GETALLUSERSDATA = "/GETALLUSERDATA/1.0/GetAllUsers";
 }

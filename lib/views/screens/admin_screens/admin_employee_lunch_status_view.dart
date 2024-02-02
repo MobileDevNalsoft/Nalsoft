@@ -15,9 +15,7 @@ import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
 
 // ignore: must_be_immutable
 class EmployeeLunchStatus extends StatefulWidget {
-  String? empid;
-  EmployeeLunchStatus({super.key, this.empid});
-
+  EmployeeLunchStatus({super.key});
   @override
   State<EmployeeLunchStatus> createState() => _EmployeeLunchStatusState();
 }
@@ -31,20 +29,9 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
   @override
   void initState() {
     super.initState();
-    initData();
   }
 
-  Future<void> initData() async {
-    try {
-      String empid = widget.empid!;
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpDataWithID(empid: empid);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {

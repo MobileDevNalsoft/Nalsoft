@@ -17,6 +17,7 @@ class UserDataProvider extends ChangeNotifier {
   List<Dates> _notOptedDates = [];
   List<dynamic> _holidays = [];
   UserEventsModel? _userEventsModel;
+  bool _isAlreadyScanned = false;
 
 
   // getters
@@ -25,6 +26,7 @@ class UserDataProvider extends ChangeNotifier {
   UserModel get getUserData => _user!;
   List<dynamic> get getOpted => _optedDates;
   List<Dates> get getNotOpted => _notOptedDates;
+  bool get getIsAlreadyScanned => _isAlreadyScanned;
 
   // getting user data from firestore collection
   Future<void> getUserinfo(String? username) async {
@@ -45,7 +47,22 @@ class UserDataProvider extends ChangeNotifier {
     print(dates.toString());
 
     ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(_user!.data!.empId!, dates,isOpted);
-    print(apiResponse);
+    if(apiResponse.response!= null && apiResponse.response!.statusCode == 200){
+
+       
+
+ print(apiResponse);
+    notifyListeners();
+    }else{
+     _isAlreadyScanned = true;
+      notifyListeners();
+    }
+   
+  }
+
+  void setScanned(bool isscanned){
+
+    _isAlreadyScanned = isscanned;
     notifyListeners();
   }
 

@@ -34,10 +34,9 @@ class RouteManagement {
       case '/employees':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/employeeLunchStatus':
-        return MaterialPageRoute(builder: (_) {
-          final args = settings.arguments as Map<String, dynamic>;
-          final empid = args['empid'];
-          return EmployeeLunchStatus(empid: empid);
+        return MaterialPageRoute(builder: (_) { 
+          
+          return EmployeeLunchStatus();
         });
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) => UpdateLunchStatus());

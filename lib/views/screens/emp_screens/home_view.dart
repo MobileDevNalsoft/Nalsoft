@@ -69,7 +69,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                 .getUserData
                 .data!
                 .userType ==
-            'E') {
+            'V') {
           DateTime lastResetDate = sharedPreferences
                   .containsKey('lastResetDate')
               ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
@@ -106,7 +106,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
         _isLoading ? {} : {"start_time": "12:30 pm", "end_time": "2:30 pm"};
 
     return AspectRatio(
-      aspectRatio: size.height / size.width,
+      aspectRatio: size.height/size.width,
       child: SafeArea(
           child: Scaffold(
         body: _isLoading
@@ -118,7 +118,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                         .getUserData
                         .data!
                         .userType ==
-                    'E'
+                    'V'
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -198,50 +198,57 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                               info: now.millisecondsSinceEpoch
                                                   .toString())
                                           .toJson()
-                                    ], true);
-                                    //   if (isAlreadyScanned) {
-                                    //     if (!_hasShownSnackbar) {
-                                    //       setState(() {
-                                    //         _showQR = false;
-                                    //         _hasShownSnackbar = true;
-                                    //         CustomSnackBar.showSnackBar(context,
-                                    //             'QR already scanned', Colors.red);
-                                    //       });
-                                    //       controller.pauseCamera();
-                                    //     }
-                                    //   } else {
-                                    //     FlutterBeep.beep();
-                                    //     if (!_isIncremented) {
-                                    //       // ignore: use_build_context_synchronously
-                                    //       Provider.of<HomeStatusProvider>(context,
-                                    //               listen: false)
-                                    //           .incrEmpCount();
-                                    //       sharedPreferences.setInt(
-                                    //           'employeeCount',
-                                    //           // ignore: use_build_context_synchronously
-                                    //           Provider.of<HomeStatusProvider>(
-                                    //                   context,
-                                    //                   listen: false)
-                                    //               .getEmployeeCount!);
-                                    //       _isIncremented = true;
-                                    //     }
-                                    //     controller.pauseCamera();
-                                    //     Future.delayed(const Duration(seconds: 2),
-                                    //         () {
-                                    //       controller.resumeCamera();
-                                    //       _isIncremented = false;
-                                    //     });
-                                    //   }
-                                    // } else {
-                                    //   if (!_hasShownSnackbar) {
-                                    //     setState(() {
-                                    //       _showQR = false;
-                                    //       _hasShownSnackbar = true;
-                                    //       CustomSnackBar.showSnackBar(
-                                    //           context, 'Invalid QR', Colors.red);
-                                    //     });
-                                    //     controller.pauseCamera();
-                                    //   }
+                                    ], true).then((value) {
+                                         if (Provider.of<UserDataProvider>(context,
+                                            listen: false).getIsAlreadyScanned) {
+                                        if (!_hasShownSnackbar) {
+                                          setState(() {
+                                            _showQR = false;
+                                            _hasShownSnackbar = true;
+                                            CustomSnackBar.showSnackBar(context,
+                                                'QR already scanned', Colors.red);
+                                          });
+
+                                         Provider.of<UserDataProvider>(context,
+                                            listen: false) .setScanned(false);
+                                          controller.pauseCamera();
+                                        }
+                                      } else {
+                                        FlutterBeep.beep();
+                                        if (!_isIncremented) {
+
+                                          // ignore: use_build_context_synchronously
+                                          Provider.of<HomeStatusProvider>(context,
+                                                  listen: false)
+                                              .incrEmpCount();
+                                          sharedPreferences.setInt(
+                                              'employeeCount',
+                                              // ignore: use_build_context_synchronously
+                                              Provider.of<HomeStatusProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .getEmployeeCount!);
+                                          _isIncremented = true;
+                                        }
+                                        controller.pauseCamera();
+                                        Future.delayed(const Duration(seconds: 2),
+                                            () {
+                                          controller.resumeCamera();
+                                          _isIncremented = false;
+                                        });
+                                      }
+                                    });
+                                     
+                                    } else {
+                                      if (!_hasShownSnackbar) {
+                                        setState(() {
+                                          _showQR = false;
+                                          _hasShownSnackbar = true;
+                                          CustomSnackBar.showSnackBar(
+                                              context, 'Invalid QR', Colors.red);
+                                        });
+                                        controller.pauseCamera();
+                                      }
                                   }
                                 });
                               },
@@ -333,61 +340,68 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   bottomLeft: Radius.circular(50),
                                   bottomRight: Radius.circular(50),
                                 )),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                            child: Column(
                               children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 25, top: 15),
-                                  child: Text(
-                                    'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
-                                    style: const TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const Expanded(child: SizedBox()),
-                                Provider.of<UserDataProvider>(context,
-                                                listen: false)
-                                            .getUserData
-                                            .data!
-                                            .userType ==
-                                        'A'
-                                    ? Switch(
-                                        value: false,
-                                        onChanged: (value) {
-                                          Navigator.pushReplacementNamed(
-                                              context,
-                                              RouteManagement.adminHomePage);
-                                        },
-                                        activeColor: const Color.fromARGB(
-                                            255, 181, 129, 248),
-                                      )
-                                    : const SizedBox(),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: PopupMenuButton(
-                                    itemBuilder: (BuildContext context) {
-                                      return [
-                                        PopupMenuItem(
-                                            value: 'Sign Out',
-                                            height: 10,
-                                            onTap: () {
-                                              sharedPreferences.setString(
-                                                  AppConstants.TOKEN, '');
-                                              Navigator.pushNamedAndRemoveUntil(
+                                SizedBox(height: size.height*0.015,),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(width: size.width*0.05,),
+                                    SizedBox(
+                                      height: size.height*0.1,
+                                      width: size.width*0.6,
+                                      child: Text(
+                                        'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
+                                        style:  TextStyle(
+                                            fontSize: size.width*0.057 ,
+                                            fontWeight: FontWeight.bold,
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
+                                    ),
+                                    const Expanded(child: SizedBox()),
+                                    Provider.of<UserDataProvider>(context,
+                                                    listen: false)
+                                                .getUserData
+                                                .data!
+                                                .userType ==
+                                            'E'
+                                        ? Switch(
+                                            value: false,
+                                            onChanged: (value) {
+                                              Navigator.pushReplacementNamed(
                                                   context,
-                                                  RouteManagement.loginPage,
-                                                  (route) => false);
+                                                  RouteManagement.adminHomePage);
                                             },
-                                            child: const Text('Sign Out'))
-                                      ];
-                                    },
-                                    child: const Icon(
-                                        Icons.power_settings_new_sharp),
-                                  ),
-                                )
+                                            activeColor: const Color.fromARGB(
+                                                255, 181, 129, 248),
+                                          )
+                                        : const SizedBox(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right:10.0, top: 10, left: 10),
+                                      child: PopupMenuButton(
+                                        itemBuilder: (BuildContext context) {
+                                          return [
+                                            PopupMenuItem(
+                                                value: 'Sign Out',
+                                                height: 10,
+                                                onTap: () {
+                                                  sharedPreferences.setString(
+                                                      AppConstants.TOKEN, '');
+                                                  Navigator.pushNamedAndRemoveUntil(
+                                                      context,
+                                                      RouteManagement.loginPage,
+                                                      (route) => false);
+                                                },
+                                                child: const Text('Sign Out'))
+                                          ];
+                                        },
+                                        child: const Icon(
+                                            Icons.power_settings_new_sharp),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
                           ),

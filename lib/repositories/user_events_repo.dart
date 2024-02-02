@@ -112,6 +112,10 @@ Future<ApiResponse> getHolidays() async{
       print(e);
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
+
+
 }
+
+
 
 }

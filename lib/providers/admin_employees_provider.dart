@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/Repositories/user_repo.dart';
+import 'package:meals_management/inits/di_container.dart';
+import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
-  final UserEventsRepo _db = UserEventsRepo();
 
+   final UserRepo userRepo = UserRepo(dioClient2: sl());
   List<Map<String, dynamic>> _empData = [];
   List<dynamic> empList = [];
   bool _isSearching = false;
-  UserModel? _user;
+  UserModel? _user = UserModel();
   bool _isMailLoading = false;
+
+
 
   List<Map<String, dynamic>> get getAllEmpData => _empData;
   List<dynamic> get getEmpList => empList;
   get isSearching => _isSearching;
-  get isMailLoading => _isMailLoading;  
+  get isMailLoading => _isMailLoading; 
+  List<dynamic>?  _alluserList = [];
   String? get username => _user!.data!.empName;
   String? get userType => _user!.data!.userType;
   String? get empID => _user!.data!.empId;
+  List<dynamic>? get getAllUserList => _alluserList;
 
 
   set isSearching(value) {
@@ -40,13 +47,17 @@ class AdminEmployeesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setAllEmpData() async {
-    // _empData = await _db.readUsers();
-    // API method 7 for Get Request
-    // we send the date to db using that date we filter rows in events table then we join that events table with
-    // company's employees table using employee id in response we get a list of map(for each user with column names as keys and each row data
-    // as values)  using this in the app we inject data into excel sheet accordingly.
-    notifyListeners();
+  Future<void> getAllUsers(String date) async {
+  ApiResponse apiResponse = await  userRepo.getAllUserData(date);   
+   if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+        _alluserList = apiResponse.response!.data['data'].map((userdata) => Data.fromJson(userdata)).toList();
+
+         
+     
+       
+        }
+    
   }
 
   Future<void> setEmpDataWithID({String? empid}) async {
