@@ -47,6 +47,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
   bool _isLoading = true;
+  
 
   @override
   void initState() {
@@ -68,7 +69,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                 .getUserData
                 .data!
                 .userType ==
-            'V') {
+            'E') {
           DateTime lastResetDate = sharedPreferences
                   .containsKey('lastResetDate')
               ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
@@ -117,7 +118,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                         .getUserData
                         .data!
                         .userType ==
-                    'V'
+                    'E'
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -183,8 +184,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                 qrController = controller;
                                 controller.scannedDataStream
                                     .listen((data) async {
+
+
                                   var qrData = jsonDecode(data.code!);
-                                  if (qrData['date'] !=
+                                  print(" Qr Data scanned${qrData.toString()}");
+                                  if (qrData['date'] ==
                                       now.toString().substring(0, 10)) {
                                     Provider.of<UserDataProvider>(context,
                                             listen: false)

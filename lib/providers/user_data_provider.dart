@@ -39,7 +39,11 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> updateUserEvents(List<Map<String, dynamic>> dates, bool isOpted) async {
-    isOpted?_optedDates.add(dates.map((e) => e.keys).toList()):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
+
+    isOpted?_optedDates.add(dates.first['date']):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
+    print("Dates");
+    print(dates.toString());
+
     ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(_user!.data!.empId!, dates,isOpted);
     print(apiResponse);
     notifyListeners();
