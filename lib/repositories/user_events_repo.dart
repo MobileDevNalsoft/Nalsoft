@@ -39,25 +39,18 @@ class UserEventsRepo {
     }
   }
 
-  Future<ApiResponse> updateUserEvents(String empid, List<Map<String, dynamic>> dates) async {
-    var data;
-    try{
-      var num = int.parse(dates.first['info']);
-      data = {
+  Future<ApiResponse> updateUserEvents(String empid, List<Map<String, dynamic>> dates,bool isOpted) async {
+    var data=isOpted?{
             "data": {
                 "opted_dates": dates,
                 "not_opted": []
             }
-        };
-    } catch(e){
-      data = {
+        }:{
             "data": {
                 "opted_dates": [],
                 "not_opted": dates
             }
         };
-    }
-    
     try {
        String basicAuth =
       'Basic ' + base64.encode(utf8.encode('${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
@@ -76,4 +69,49 @@ class UserEventsRepo {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+Future<ApiResponse> deleteUserEvents(String empid,List dates) async{
+
+
+ try {
+       String basicAuth =
+      'Basic ' + base64.encode(utf8.encode('${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
+      Response response = await dioClient2!.post(
+        '${AppConstants.DELETEUSEREVENTS}?EmpID=$empid',
+        data: {
+    "dates": dates
+},
+        options: Options(
+          headers: {
+            'Authorization': basicAuth,      
+          }
+       )
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print(e);
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+}
+
+
+Future<ApiResponse> getHolidays() async{
+ try {
+       String basicAuth =
+      'Basic ' + base64.encode(utf8.encode('${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
+      Response response = await dioClient2!.get(
+        AppConstants.GETHOLIDAYS,
+        options: Options(
+          headers: {
+            'Authorization': basicAuth,      
+          }
+       )
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print(e);
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+}
+
 }

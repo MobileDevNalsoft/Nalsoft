@@ -167,8 +167,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
                       selectibleDayPredicate: (date) {
                         return Provider.of<UserDataProvider>(context,
                                 listen: false)
-                            .getNotOptedWithReasons
-                            .keys
+                            .getNotOpted.map((e) => e.date).toList()
                             .contains(date.toString());
                       },
 

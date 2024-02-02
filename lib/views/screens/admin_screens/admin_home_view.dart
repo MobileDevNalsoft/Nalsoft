@@ -182,7 +182,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         date.day <= now.day &&
                         date.month <= now.month &&
                         !Provider.of<UserDataProvider>(context, listen: false)
-                            .getHolidays
+                            .holidays
                             .contains(date.toString().substring(0, 10));
                   },
                   onSubmit: (date) {

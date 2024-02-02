@@ -62,7 +62,6 @@ class CustomCalendarCard extends StatelessWidget {
             Consumer<UserDataProvider>(
 
               builder: (context, provider, child) {
-                print(DateTime.now());
                 return SfDateRangePicker(
                   controller: controller,
                   minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
@@ -77,10 +76,10 @@ class CustomCalendarCard extends StatelessWidget {
                       circleColor = provider.getOpted.contains(
                               details.date.toString().substring(0, 10))
                           ? Colors.green.shade200
-                          : provider.getNotOptedWithReasons.keys.contains(
+                          : provider.getNotOpted.map((e) => e.date).toList().contains(
                                   details.date.toString().substring(0, 10))
                               ? Colors.orange.shade200
-                              : provider.getHolidays.contains(
+                              : provider.holidays.contains(
                                       details.date.toString().substring(0, 10))
                                   ? Colors.red.shade100
                                   : (details.date.weekday == DateTime.sunday ||
@@ -96,14 +95,13 @@ class CustomCalendarCard extends StatelessWidget {
                                                           .toString()
                                                           .substring(0, 10)) &&
                                                   !provider
-                                                      .getNotOptedWithReasons
-                                                      .keys
+                                                      .getNotOpted.map((e) => e.date).toList()
                                                       .contains(details.date.toString().substring(0, 10))) ||
-                                              ((details.date.day < now.day && details.date.month <= now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOptedWithReasons.keys.contains(details.date.toString().substring(0, 10))))
+                                              ((details.date.day < now.day && details.date.month <= now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOpted.map((e) => e.date).toList().contains(details.date.toString().substring(0, 10))))
                                           ? Colors.grey.shade300
                                           : Colors.white30;
                     } else {
-                      circleColor = provider.getHolidays.contains(
+                      circleColor = provider.holidays.contains(
                               details.date.toString().substring(0, 10))
                           ? Colors.red.shade100
                           : (details.date.weekday == DateTime.sunday ||

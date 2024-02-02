@@ -114,7 +114,7 @@ class UpdateLunchStatus extends StatelessWidget {
                             (date.year == now.year &&
                                 date.month > now.month)) &&
                         !Provider.of<UserDataProvider>(context, listen: false)
-                            .getHolidays
+                            .holidays
                             .contains(date.toString().substring(0, 10)) &&
                         ((date.day > now.day + 1 && date.month == now.month) ||
                             (date.month > now.month) ||
@@ -137,8 +137,7 @@ class UpdateLunchStatus extends StatelessWidget {
                         } else {
                           if (Provider.of<UserDataProvider>(context,
                                   listen: false)
-                              .getNotOptedWithReasons
-                              .keys
+                              .getNotOpted.map((e) => e.date).toList()
                               .contains(dates.toString().substring(0, 10))) {
                             removeDialog(context, size, [dates as DateTime]);
                           } else {
@@ -159,8 +158,7 @@ class UpdateLunchStatus extends StatelessWidget {
                       List<DateTime> datesList = dates as List<DateTime>;
                       if (datesList.any((element) =>
                           Provider.of<UserDataProvider>(context, listen: false)
-                              .getNotOptedWithReasons
-                              .keys
+                              .getNotOpted.map((e) => e.date).toList()
                               .contains(element.toString().substring(0, 10)))) {
                         removeDialog(context, size, dates);
                       } else {
@@ -274,7 +272,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                 Provider.of<UserDataProvider>(
                                                 context,
                                                 listen: false)
-                                            .updateUserEvents([Dates(date: dates.toString().substring(0,10), info: notOptController.text).toJson()]);
+                                            .updateUserEvents([Dates(date: dates.toString().substring(0,10), info: notOptController.text).toJson()],false);
                               }
                             } else {
                               List<DateTime> datesList =
@@ -296,7 +294,7 @@ class UpdateLunchStatus extends StatelessWidget {
                                 Provider.of<UserDataProvider>(
                                                 context,
                                                 listen: false)
-                                            .updateUserEvents(dates.map((date) => Dates(date: date.toString().substring(0,10), info: notOptController.text).toJson()).toList());
+                                            .updateUserEvents(dates.map((date) => Dates(date: date.toString().substring(0,10), info: notOptController.text).toJson()).toList(),false);
                               }
                             }
                           }
@@ -345,8 +343,9 @@ class UpdateLunchStatus extends StatelessWidget {
                     children: [
                       CustomButton(
                         onPressed: () {
-                          // Provider.of<UserDataProvider>(context, listen: false)
-                          //     .removeNotOptedDate(dates);
+                          print(dates);
+                          Provider.of<UserDataProvider>(context, listen: false).
+                              deleteUserEvents(dates.map((e) => {"date":e.toString().substring(0,10)}).toList());
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;

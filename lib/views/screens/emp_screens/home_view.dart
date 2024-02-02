@@ -60,32 +60,36 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
           .getUserinfo('');
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserEventsData();
-      await Provider.of<UserDataProvider>(context,listen: false)
-                                      .updateUserEvents([Dates(date: '2024-01-23', info: now.millisecondsSinceEpoch.toString()).toJson()]);
+      await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
+      
     } finally {
       setState(() {
-        if(Provider.of<UserDataProvider>(context, listen: false)
-                        .getUserData
-                        .data!
-                        .userType ==
-                    'V'){
-          DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
-            ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
-            : DateTime.now();
+        if (Provider.of<UserDataProvider>(context, listen: false)
+                .getUserData
+                .data!
+                .userType ==
+            'V') {
+          DateTime lastResetDate = sharedPreferences
+                  .containsKey('lastResetDate')
+              ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+              : DateTime.now();
 
           if (!sharedPreferences.containsKey('lastResetDate')) {
             sharedPreferences.setString('lastResetDate', now.toString());
             sharedPreferences.setInt('employeeCount', 0);
             Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+                .setEmployeeCount(
+                    sharedPreferences.getInt('employeeCount') ?? 0);
           } else if (now.day != lastResetDate.day) {
             sharedPreferences.setString('lastResetDate', now.toString());
             sharedPreferences.setInt('employeeCount', 0);
             Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+                .setEmployeeCount(
+                    sharedPreferences.getInt('employeeCount') ?? 0);
           } else {
             Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+                .setEmployeeCount(
+                    sharedPreferences.getInt('employeeCount') ?? 0);
           }
         }
         _isLoading = false;
@@ -97,9 +101,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    Map<String, dynamic> timings = _isLoading
-        ? {}
-        : {"start_time":"12:30 pm","end_time":"2:30 pm"};
+    Map<String, dynamic> timings =
+        _isLoading ? {} : {"start_time": "12:30 pm", "end_time": "2:30 pm"};
 
     return AspectRatio(
       aspectRatio: size.height / size.width,
@@ -142,7 +145,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                             (route) => false);
                                       },
                                       child: const Text('Sign Out'))
-                               
                                 ];
                               },
                               child: const Icon(Icons.power_settings_new_sharp),
@@ -184,53 +186,58 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                   var qrData = jsonDecode(data.code!);
                                   if (qrData['date'] !=
                                       now.toString().substring(0, 10)) {
-                                    Provider.of<UserDataProvider>(
-                                                context,
-                                                listen: false)
-                                            .updateUserEvents([Dates(date: qrData['date']!, info: now.millisecondsSinceEpoch.toString()).toJson()]);
-                                  //   if (isAlreadyScanned) {
-                                  //     if (!_hasShownSnackbar) {
-                                  //       setState(() {
-                                  //         _showQR = false;
-                                  //         _hasShownSnackbar = true;
-                                  //         CustomSnackBar.showSnackBar(context,
-                                  //             'QR already scanned', Colors.red);
-                                  //       });
-                                  //       controller.pauseCamera();
-                                  //     }
-                                  //   } else {
-                                  //     FlutterBeep.beep();
-                                  //     if (!_isIncremented) {
-                                  //       // ignore: use_build_context_synchronously
-                                  //       Provider.of<HomeStatusProvider>(context,
-                                  //               listen: false)
-                                  //           .incrEmpCount();
-                                  //       sharedPreferences.setInt(
-                                  //           'employeeCount',
-                                  //           // ignore: use_build_context_synchronously
-                                  //           Provider.of<HomeStatusProvider>(
-                                  //                   context,
-                                  //                   listen: false)
-                                  //               .getEmployeeCount!);
-                                  //       _isIncremented = true;
-                                  //     }
-                                  //     controller.pauseCamera();
-                                  //     Future.delayed(const Duration(seconds: 2),
-                                  //         () {
-                                  //       controller.resumeCamera();
-                                  //       _isIncremented = false;
-                                  //     });
-                                  //   }
-                                  // } else {
-                                  //   if (!_hasShownSnackbar) {
-                                  //     setState(() {
-                                  //       _showQR = false;
-                                  //       _hasShownSnackbar = true;
-                                  //       CustomSnackBar.showSnackBar(
-                                  //           context, 'Invalid QR', Colors.red);
-                                  //     });
-                                  //     controller.pauseCamera();
-                                  //   }
+                                    Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .updateUserEvents([
+                                      Dates(
+                                              date: qrData['date']!,
+                                              info: now.millisecondsSinceEpoch
+                                                  .toString())
+                                          .toJson()
+                                    ], true);
+                                    //   if (isAlreadyScanned) {
+                                    //     if (!_hasShownSnackbar) {
+                                    //       setState(() {
+                                    //         _showQR = false;
+                                    //         _hasShownSnackbar = true;
+                                    //         CustomSnackBar.showSnackBar(context,
+                                    //             'QR already scanned', Colors.red);
+                                    //       });
+                                    //       controller.pauseCamera();
+                                    //     }
+                                    //   } else {
+                                    //     FlutterBeep.beep();
+                                    //     if (!_isIncremented) {
+                                    //       // ignore: use_build_context_synchronously
+                                    //       Provider.of<HomeStatusProvider>(context,
+                                    //               listen: false)
+                                    //           .incrEmpCount();
+                                    //       sharedPreferences.setInt(
+                                    //           'employeeCount',
+                                    //           // ignore: use_build_context_synchronously
+                                    //           Provider.of<HomeStatusProvider>(
+                                    //                   context,
+                                    //                   listen: false)
+                                    //               .getEmployeeCount!);
+                                    //       _isIncremented = true;
+                                    //     }
+                                    //     controller.pauseCamera();
+                                    //     Future.delayed(const Duration(seconds: 2),
+                                    //         () {
+                                    //       controller.resumeCamera();
+                                    //       _isIncremented = false;
+                                    //     });
+                                    //   }
+                                    // } else {
+                                    //   if (!_hasShownSnackbar) {
+                                    //     setState(() {
+                                    //       _showQR = false;
+                                    //       _hasShownSnackbar = true;
+                                    //       CustomSnackBar.showSnackBar(
+                                    //           context, 'Invalid QR', Colors.red);
+                                    //     });
+                                    //     controller.pauseCamera();
+                                    //   }
                                   }
                                 });
                               },
@@ -308,7 +315,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                       ],
                     ),
                   )
-              
                 : Stack(
                     children: [
                       Column(
@@ -378,7 +384,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                         Icons.power_settings_new_sharp),
                                   ),
                                 )
-                            
                               ],
                             ),
                           ),
@@ -396,13 +401,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                                       .contains(date.weekday) &&
                                   !Provider.of<UserDataProvider>(context,
                                           listen: false)
-                                      .getHolidays
+                                      .holidays
                                       .contains(
                                           date.toString().substring(0, 10)) &&
                                   !Provider.of<UserDataProvider>(context,
                                           listen: false)
-                                      .getNotOptedWithReasons
-                                      .keys
+                                      .getNotOpted
+                                      .map((e) => e.date)
+                                      .toList()
                                       .contains(
                                           date.toString().substring(0, 10)) &&
                                   !Provider.of<UserDataProvider>(context,
@@ -442,7 +448,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                             confirmText: 'Ok',
                             cancelText: 'Cancel',
                           ),
-                     
                           const CustomLegend(),
                           Image.asset('assets/images/food.png'),
                         ],
