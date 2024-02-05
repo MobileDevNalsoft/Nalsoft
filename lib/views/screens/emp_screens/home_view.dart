@@ -5,6 +5,7 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
+import 'package:meals_management/mixin/network_handler.dart';
 import 'package:meals_management/models/user_events_model.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -27,7 +28,7 @@ class EmployeeHomeView extends StatefulWidget {
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
 }
 
-class _EmployeeHomeViewState extends State<EmployeeHomeView> {
+class _EmployeeHomeViewState extends State<EmployeeHomeView> with ConnectivityMixin{
   DateTime now = DateTime.now();
 
   // used to work with the selected dates in SfDateRangePicker
@@ -98,6 +99,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    showConnectivitySnackBar(context);
     final size = MediaQuery.of(context).size;
 
     Map<String, dynamic> timings =

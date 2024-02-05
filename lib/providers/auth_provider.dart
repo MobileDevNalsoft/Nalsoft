@@ -1,22 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
-import 'package:meals_management/repositories/user_events_repo.dart';
-import 'package:meals_management/models/user_model.dart';
-import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
-  final UserEventsRepo _db = UserEventsRepo();
   final AuthenticationRepo? authenticationRepo ;
   AuthenticationProvider({this.authenticationRepo});
-
 
   bool _obscurePassword = true;
   int _errTxt = 0;
   int _passErrTxt = 0;
-  bool _isLoading = false;
 
   void obscureToggle() {
     _obscurePassword = !_obscurePassword;
@@ -34,7 +27,6 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future getToken() async {
-    _isLoading = true;
     notifyListeners();
     ApiResponse apiResponse = await authenticationRepo!.gettoken();
 
@@ -43,11 +35,7 @@ class AuthenticationProvider extends ChangeNotifier {
       Map map = apiResponse.response!.data;
 
       String token = '';
-      String token_type = '';
 
-      try {
-        token_type = map["token_type"];
-      } catch (e) {}
       try {
         token = map["access_token"];
       } catch (e) {}
@@ -62,8 +50,6 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future getRequestState() async {
-    _isLoading = true;
-    notifyListeners();
     ApiResponse apiResponse = await authenticationRepo!.getRequestState();
 
     if (apiResponse.response != null &&
@@ -79,7 +65,6 @@ class AuthenticationProvider extends ChangeNotifier {
       if (requestState.isNotEmpty) {
         authenticationRepo!.saveReqSate(requestState);
         print("req_state$requestState");
-
         notifyListeners();
       }
     }
@@ -87,12 +72,8 @@ class AuthenticationProvider extends ChangeNotifier {
 
   Future authenticateUserName(
       String username, String password, BuildContext context) async {
-    _isLoading = true;
-    notifyListeners();
-    print('before auth');
     ApiResponse apiResponse =
         await authenticationRepo!.authenticateUser(username, password);
-    print('after auth');
 
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
@@ -119,7 +100,6 @@ class AuthenticationProvider extends ChangeNotifier {
             backgroundColor: Colors.green,
           ),
         );
-
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -148,12 +128,6 @@ class AuthenticationProvider extends ChangeNotifier {
   bool get obscurePassword => _obscurePassword;
   int get getErrTxt => _errTxt;
   int get getPassErrTxt => _passErrTxt;
-  bool get getIsLoading => _isLoading;
-  String getUserToken() {
-    return authenticationRepo!.getUserToken();
-  }
-
-  String getAuthToken() {
-    return authenticationRepo!.getAuthToken();
-  }
+  String get getUserToken => authenticationRepo!.getUserToken();
+  String get getAuthToken => authenticationRepo!.getAuthToken();
 }
