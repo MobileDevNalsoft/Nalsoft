@@ -73,8 +73,7 @@ class CustomCalendarCard extends StatelessWidget {
                     Color circleColor;
 
                     if (!forAdmin) {
-                      circleColor = provider.getOpted.contains(
-                              details.date.toString().substring(0, 10))
+                      circleColor = provider.getOpted.any((element) => element.date==details.date.toString().substring(0, 10))
                           ? Colors.green.shade200
                           : provider.getNotOpted.map((e) => e.date).toList().contains(
                                   details.date.toString().substring(0, 10))

@@ -10,9 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepo {
   final DioClient2? dioClient2;
-  final SharedPreferences? sharedPreferences;
 
-  UserRepo({this.dioClient2, this.sharedPreferences});
+  UserRepo({this.dioClient2});
 
   Future<ApiResponse> getUserinfo(String username) async {
     try {
@@ -29,4 +28,44 @@ class UserRepo {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+  Future<ApiResponse> getAllUserData(String date) async{
+ try {
+       String basicAuth =
+      'Basic ' + base64.encode(utf8.encode('${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
+      Response response = await dioClient2!.get(
+        "${AppConstants.GETALLUSERSDATA}?Date=$date",
+        options: Options(
+          headers: {
+            'Authorization': basicAuth,      
+          }
+       )
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print(e);
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+}
+
+ Future<ApiResponse> getSearchData(String searchText) async{
+ try {
+       String basicAuth =
+      'Basic ' + base64.encode(utf8.encode('${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
+      Response response = await dioClient2!.get(
+        "${AppConstants.SEARCH_DETAILS_API}?UserName=$searchText",
+        options: Options(
+          headers: {
+            'Authorization': basicAuth,      
+          }
+       )
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print(e);
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+
+
+}
 }

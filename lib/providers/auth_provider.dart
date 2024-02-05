@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
@@ -128,6 +129,12 @@ class AuthenticationProvider extends ChangeNotifier {
   bool get obscurePassword => _obscurePassword;
   int get getErrTxt => _errTxt;
   int get getPassErrTxt => _passErrTxt;
-  String get getUserToken => authenticationRepo!.getUserToken();
-  String get getAuthToken => authenticationRepo!.getAuthToken();
+  bool get getIsLoading => _isLoading;
+  String getUserToken() {
+    return authenticationRepo!.getUserToken();
+  }
+
+  String getAuthToken() {
+    return authenticationRepo!.getAuthToken();
+  }
 }

@@ -25,6 +25,7 @@ class _PreviewState extends State<Preview> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 247, 242, 250),
         appBar: AppBar(
@@ -84,7 +85,7 @@ class _PreviewState extends State<Preview> {
                       ),
                       QrImageView(
                         data:
-                            '{"uid":"${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empId}","date":"2024-01-19"}',//${DateTime.now().toString().substring(0, 10)}
+                            '{"uid":"${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empId}","date":"${DateTime.now().toString().substring(0, 10)}"}',//${DateTime.now().toString().substring(0, 10)}
                         size: 200,
                       ),
                       SizedBox(

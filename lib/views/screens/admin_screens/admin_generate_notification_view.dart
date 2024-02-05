@@ -6,9 +6,16 @@ import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 
-class GenerateNotification extends StatelessWidget {
+class GenerateNotification extends StatefulWidget {
+  @override
+  State<GenerateNotification> createState() => _GenerateNotificationState();
+}
+
+class _GenerateNotificationState extends State<GenerateNotification> {
   TextEditingController titleController = TextEditingController();
+
   TextEditingController descriptionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

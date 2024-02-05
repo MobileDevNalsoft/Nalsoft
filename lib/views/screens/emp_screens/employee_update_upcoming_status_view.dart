@@ -8,13 +8,19 @@ import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
+
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
 // ignore: must_be_immutable
-class UpdateLunchStatus extends StatelessWidget {
+class UpdateLunchStatus extends StatefulWidget {
   UpdateLunchStatus({super.key});
 
+  @override
+  State<UpdateLunchStatus> createState() => _UpdateLunchStatusState();
+}
+
+class _UpdateLunchStatusState extends State<UpdateLunchStatus> {
   // used to work with the selected dates in SfDateRangePicker
   DateRangePickerController datesController = DateRangePickerController();
 
@@ -25,6 +31,7 @@ class UpdateLunchStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     var size = MediaQuery.of(context).size;
 
     var now = DateTime.now();

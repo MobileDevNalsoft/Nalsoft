@@ -5,7 +5,9 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
+import 'package:meals_management/mixin/network_handler.dart';
 import 'package:meals_management/models/user_events_model.dart';
+import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
@@ -19,15 +21,16 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
-class EmployeeHomeView extends StatefulWidget {
+class EmployeeHomeView extends StatefulWidget  {
   const EmployeeHomeView({super.key});
 
   @override
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
 }
 
-class _EmployeeHomeViewState extends State<EmployeeHomeView>{
+class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityMixin{
   DateTime now = DateTime.now();
 
   // used to work with the selected dates in SfDateRangePicker
@@ -35,6 +38,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
 
   // used to modify QR view
   QRViewController? qrController;
+
+  late StreamSubscription subscription;
 
   // to identify QR widgt in widget tree
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -47,6 +52,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
   bool _isLoading = true;
+  
 
   @override
   void initState() {
@@ -55,6 +61,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
   }
 
   Future<void> initData() async {
+    print("did init");
     try {
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserinfo('');
@@ -95,16 +102,31 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
       });
     }
   }
+@override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
+    if(isConnected()){
+      print("did changes connected");
+      initData();
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {
+    if(!isConnected()){
+      Navigator.pushNamed(context, '/network_error');
+    }
     final size = MediaQuery.of(context).size;
-
+    
+   
     Map<String, dynamic> timings =
         _isLoading ? {} : {"start_time": "12:30 pm", "end_time": "2:30 pm"};
 
     return AspectRatio(
-      aspectRatio: size.height / size.width,
+      aspectRatio: size.height/size.width,
       child: SafeArea(
           child: Scaffold(
         body: _isLoading
@@ -182,8 +204,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
                                 qrController = controller;
                                 controller.scannedDataStream
                                     .listen((data) async {
+
+
                                   var qrData = jsonDecode(data.code!);
-                                  if (qrData['date'] !=
+                                  print(" Qr Data scanned${qrData.toString()}");
+                                  if (qrData['date'] ==
                                       now.toString().substring(0, 10)) {
                                     Provider.of<UserDataProvider>(context,
                                             listen: false)
@@ -193,50 +218,57 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
                                               info: now.millisecondsSinceEpoch
                                                   .toString())
                                           .toJson()
-                                    ], true);
-                                    //   if (isAlreadyScanned) {
-                                    //     if (!_hasShownSnackbar) {
-                                    //       setState(() {
-                                    //         _showQR = false;
-                                    //         _hasShownSnackbar = true;
-                                    //         CustomSnackBar.showSnackBar(context,
-                                    //             'QR already scanned', Colors.red);
-                                    //       });
-                                    //       controller.pauseCamera();
-                                    //     }
-                                    //   } else {
-                                    //     FlutterBeep.beep();
-                                    //     if (!_isIncremented) {
-                                    //       // ignore: use_build_context_synchronously
-                                    //       Provider.of<HomeStatusProvider>(context,
-                                    //               listen: false)
-                                    //           .incrEmpCount();
-                                    //       sharedPreferences.setInt(
-                                    //           'employeeCount',
-                                    //           // ignore: use_build_context_synchronously
-                                    //           Provider.of<HomeStatusProvider>(
-                                    //                   context,
-                                    //                   listen: false)
-                                    //               .getEmployeeCount!);
-                                    //       _isIncremented = true;
-                                    //     }
-                                    //     controller.pauseCamera();
-                                    //     Future.delayed(const Duration(seconds: 2),
-                                    //         () {
-                                    //       controller.resumeCamera();
-                                    //       _isIncremented = false;
-                                    //     });
-                                    //   }
-                                    // } else {
-                                    //   if (!_hasShownSnackbar) {
-                                    //     setState(() {
-                                    //       _showQR = false;
-                                    //       _hasShownSnackbar = true;
-                                    //       CustomSnackBar.showSnackBar(
-                                    //           context, 'Invalid QR', Colors.red);
-                                    //     });
-                                    //     controller.pauseCamera();
-                                    //   }
+                                    ], true).then((value) {
+                                         if (Provider.of<UserDataProvider>(context,
+                                            listen: false).getIsAlreadyScanned) {
+                                        if (!_hasShownSnackbar) {
+                                          setState(() {
+                                            _showQR = false;
+                                            _hasShownSnackbar = true;
+                                            CustomSnackBar.showSnackBar(context,
+                                                'QR already scanned', Colors.red);
+                                          });
+
+                                         Provider.of<UserDataProvider>(context,
+                                            listen: false) .setScanned(false);
+                                          controller.pauseCamera();
+                                        }
+                                      } else {
+                                        FlutterBeep.beep();
+                                        if (!_isIncremented) {
+
+                                          // ignore: use_build_context_synchronously
+                                          Provider.of<HomeStatusProvider>(context,
+                                                  listen: false)
+                                              .incrEmpCount();
+                                          sharedPreferences.setInt(
+                                              'employeeCount',
+                                              // ignore: use_build_context_synchronously
+                                              Provider.of<HomeStatusProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .getEmployeeCount!);
+                                          _isIncremented = true;
+                                        }
+                                        controller.pauseCamera();
+                                        Future.delayed(const Duration(seconds: 2),
+                                            () {
+                                          controller.resumeCamera();
+                                          _isIncremented = false;
+                                        });
+                                      }
+                                    });
+                                     
+                                    } else {
+                                      if (!_hasShownSnackbar) {
+                                        setState(() {
+                                          _showQR = false;
+                                          _hasShownSnackbar = true;
+                                          CustomSnackBar.showSnackBar(
+                                              context, 'Invalid QR', Colors.red);
+                                        });
+                                        controller.pauseCamera();
+                                      }
                                   }
                                 });
                               },
@@ -328,61 +360,68 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
                                   bottomLeft: Radius.circular(50),
                                   bottomRight: Radius.circular(50),
                                 )),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                            child: Column(
                               children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 25, top: 15),
-                                  child: Text(
-                                    'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
-                                    style: const TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const Expanded(child: SizedBox()),
-                                Provider.of<UserDataProvider>(context,
-                                                listen: false)
-                                            .getUserData
-                                            .data!
-                                            .userType ==
-                                        'A'
-                                    ? Switch(
-                                        value: false,
-                                        onChanged: (value) {
-                                          Navigator.pushReplacementNamed(
-                                              context,
-                                              RouteManagement.adminHomePage);
-                                        },
-                                        activeColor: const Color.fromARGB(
-                                            255, 181, 129, 248),
-                                      )
-                                    : const SizedBox(),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: PopupMenuButton(
-                                    itemBuilder: (BuildContext context) {
-                                      return [
-                                        PopupMenuItem(
-                                            value: 'Sign Out',
-                                            height: 10,
-                                            onTap: () {
-                                              sharedPreferences.setString(
-                                                  AppConstants.TOKEN, '');
-                                              Navigator.pushNamedAndRemoveUntil(
+                                SizedBox(height: size.height*0.015,),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(width: size.width*0.05,),
+                                    SizedBox(
+                                      height: size.height*0.1,
+                                      width: size.width*0.6,
+                                      child: Text(
+                                        'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
+                                        style:  TextStyle(
+                                            fontSize: size.width*0.057 ,
+                                            fontWeight: FontWeight.bold,
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
+                                    ),
+                                    const Expanded(child: SizedBox()),
+                                    Provider.of<UserDataProvider>(context,
+                                                    listen: false)
+                                                .getUserData
+                                                .data!
+                                                .userType ==
+                                            'E'
+                                        ? Switch(
+                                            value: false,
+                                            onChanged: (value) {
+                                              Navigator.pushReplacementNamed(
                                                   context,
-                                                  RouteManagement.loginPage,
-                                                  (route) => false);
+                                                  RouteManagement.adminHomePage);
                                             },
-                                            child: const Text('Sign Out'))
-                                      ];
-                                    },
-                                    child: const Icon(
-                                        Icons.power_settings_new_sharp),
-                                  ),
-                                )
+                                            activeColor: const Color.fromARGB(
+                                                255, 181, 129, 248),
+                                          )
+                                        : const SizedBox(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right:10.0, top: 10, left: 10),
+                                      child: PopupMenuButton(
+                                        itemBuilder: (BuildContext context) {
+                                          return [
+                                            PopupMenuItem(
+                                                value: 'Sign Out',
+                                                height: 10,
+                                                onTap: () {
+                                                  sharedPreferences.setString(
+                                                      AppConstants.TOKEN, '');
+                                                  Navigator.pushNamedAndRemoveUntil(
+                                                      context,
+                                                      RouteManagement.loginPage,
+                                                      (route) => false);
+                                                },
+                                                child: const Text('Sign Out'))
+                                          ];
+                                        },
+                                        child: const Icon(
+                                            Icons.power_settings_new_sharp),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -551,6 +590,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>{
                           ],
                         ),
                       ),
+                      if(!isConnected())
+                        SizedBox(
+                          height: size.height*0.1,
+                          child: Container(
+                            color: Colors.red,
+                          ),
+                        )
+                      
                     ],
                   ),
       )),
