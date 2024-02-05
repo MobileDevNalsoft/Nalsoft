@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/mixin/network_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_events_model.dart';
 import 'package:meals_management/models/user_model.dart';
@@ -13,23 +14,31 @@ class UserDataProvider extends ChangeNotifier {
 
   // for UI updations related to user data
   UserModel? _user;
-  List<dynamic> _optedDates = [];
+  List<Dates> _optedDates = [];
   List<Dates> _notOptedDates = [];
   List<dynamic> _holidays = [];
   UserEventsModel? _userEventsModel;
   bool _isAlreadyScanned = false;
-
+  List<UserModel> _alluserSearchList=[];
+  bool _isSearching = false;
 
   // getters
   List<dynamic> get holidays => _holidays;
-
+  bool get isSearching => _isSearching;
   UserModel get getUserData => _user!;
-  List<dynamic> get getOpted => _optedDates;
+  List<Dates> get getOpted => _optedDates;
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;
 
+
+    set isSearching(value) {
+    _isSearching = value;
+    notifyListeners();
+  }
+
   // getting user data from firestore collection
   Future<void> getUserinfo(String? username) async {
+
     String username = "raviteja.singamsetty@nalsoft.net";
     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
 
@@ -72,7 +81,7 @@ class UserDataProvider extends ChangeNotifier {
       notifyListeners();
       // we will get this from the model after API method 1 is a success
     } else {
-      _optedDates.add(date.toString().substring(0, 10));
+      _optedDates.add(Dates.fromJson({"date":date.toString().substring(0, 10),"info":"1234567890"}));
       notifyListeners();
     }
   }
@@ -90,14 +99,19 @@ class UserDataProvider extends ChangeNotifier {
         }
   }
 
-Future<void> getUserEventsData() async {
-    ApiResponse apiResponse =
-        await userEventsRepo!.getUserEventsData(_user!.data!.empId!);
+Future<void> getUserEventsData({String? empID}) async {
+ApiResponse apiResponse;
+if (empID==null)
+   {  apiResponse =
+        await userEventsRepo!.getUserEventsData(_user!.data!.empId!);}
+else{ apiResponse =
+        await userEventsRepo!.getUserEventsData(empID!);}
 
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       _userEventsModel = UserEventsModel.fromJson(apiResponse.response!.data);
-      _optedDates =_userEventsModel!.data!.optedDates!.map((date) => date.date).toList();
+      _optedDates =_userEventsModel!.data!.optedDates!;
+
       _notOptedDates = _userEventsModel!.data!.notOpted!;
       print(_optedDates);
       print(_userEventsModel!.data!.notOpted!);
@@ -120,7 +134,8 @@ Future<void> deleteUserEvents(List dates) async {
       notifyListeners();
     }
     }
-  }
 
 
 
+
+}

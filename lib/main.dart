@@ -13,10 +13,13 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
+import 'package:upgrader/upgrader.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Upgrader.clearSavedSettings(); 
 
   await di.init();
 
@@ -56,7 +59,7 @@ void main() async {
             onGenerateRoute: RouteManagement.generateRoute,
             home:
                 di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
-                    ? LoginView()
-                    : EmployeeHomeView())),
+                    ? UpgradeAlert(child: LoginView())
+                    : UpgradeAlert(child: EmployeeHomeView()))),
   ));
 }

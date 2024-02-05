@@ -7,6 +7,7 @@ import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
+import 'package:meals_management/views/screens/network_error.dart';
 
 class RouteManagement {
   RouteManagement._();
@@ -21,6 +22,7 @@ class RouteManagement {
   static const String employeeSearch = '/employeeSearch';
   static const String digitalSignature = '/sign';
   static const String generateNotification = '/generateNotification';
+  static const String network_error = '/network_error';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/login_page':
@@ -34,9 +36,11 @@ class RouteManagement {
       case '/employees':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/employeeLunchStatus':
-        return MaterialPageRoute(builder: (_) { 
-          
-          return EmployeeLunchStatus();
+        return MaterialPageRoute(builder : (_) { 
+            final args = settings.arguments as Map<String, dynamic>;
+          final empid = args['empid'];
+         final username = args['username'];
+          return EmployeeLunchStatus(userName:username,empID: empid,);
         });
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) => UpdateLunchStatus());
@@ -44,6 +48,8 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/generateNotification':
         return MaterialPageRoute(builder: (_) => GenerateNotification());
+      case '/network_error':
+        return MaterialPageRoute(builder: (_) => NetworkError());
       default:
         return null;
     }

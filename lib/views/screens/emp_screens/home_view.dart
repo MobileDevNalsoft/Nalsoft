@@ -5,7 +5,9 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
+import 'package:meals_management/mixin/network_handler.dart';
 import 'package:meals_management/models/user_events_model.dart';
+import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
@@ -19,15 +21,16 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
-class EmployeeHomeView extends StatefulWidget {
+class EmployeeHomeView extends StatefulWidget  {
   const EmployeeHomeView({super.key});
 
   @override
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
 }
 
-class _EmployeeHomeViewState extends State<EmployeeHomeView> {
+class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityMixin{
   DateTime now = DateTime.now();
 
   // used to work with the selected dates in SfDateRangePicker
@@ -35,6 +38,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
 
   // used to modify QR view
   QRViewController? qrController;
+
+  late StreamSubscription subscription;
 
   // to identify QR widgt in widget tree
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -56,6 +61,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
   }
 
   Future<void> initData() async {
+    print("did init");
     try {
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserinfo('');
@@ -96,11 +102,26 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
       });
     }
   }
+@override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
+    if(isConnected()){
+      print("did changes connected");
+      initData();
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {
+    if(!isConnected()){
+      Navigator.pushNamed(context, '/network_error');
+    }
     final size = MediaQuery.of(context).size;
-
+    
+   
     Map<String, dynamic> timings =
         _isLoading ? {} : {"start_time": "12:30 pm", "end_time": "2:30 pm"};
 
@@ -569,6 +590,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
                           ],
                         ),
                       ),
+                      if(!isConnected())
+                        SizedBox(
+                          height: size.height*0.1,
+                          child: Container(
+                            color: Colors.red,
+                          ),
+                        )
+                      
                     ],
                   ),
       )),

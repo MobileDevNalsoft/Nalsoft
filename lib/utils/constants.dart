@@ -2,7 +2,7 @@ class AppConstants {
   static final regex = RegExp(
       r'(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{":;\' '?/<>,.])');
   static final empIDRegex = RegExp(r'^\d+$');
-  static bool empSearchIsLoading = true;
+  // static bool empSearchIsLoading = true;
   static bool admHomeIsLoading = true;
   static const String BASE_URL1 =
       "https://idcs-7a99f7e141c2455daf8e203757d28727.identity.oraclecloud.com/";
@@ -23,4 +23,6 @@ class AppConstants {
   static const String DELETEUSEREVENTS = "/DELETEUSEREVENTS/1.0/DeleteUserEvnts";
   static const String GETHOLIDAYS = "/GETHOLIDAYS/1.0/GetHolidays";
   static const String GETALLUSERSDATA = "/GETALLUSERDATA/1.0/GetAllUsers";
+
+  static const String SEARCH_DETAILS_API = "/SEARCH_DETAILS_API/1.0/GetUserInfo";
 }

@@ -6,6 +6,7 @@ import "package:meals_management/models/user_model.dart";
 import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
+
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
@@ -30,7 +31,7 @@ const AdminHomePage({super.key});
   State<AdminHomePage> createState() => _AdminHomePageState();
 }
 
-class _AdminHomePageState extends State<AdminHomePage> {
+class _AdminHomePageState extends State<AdminHomePage>  {
   DateTime now = DateTime.now();
 
   late SharedPreferences sharedPreferences;
@@ -45,6 +46,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     var size = MediaQuery.of(context).size;
     DateRangePickerController datesController = DateRangePickerController();
 
@@ -251,7 +253,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
         
     
 
-    final dir = await getExternalStorageDirectory();
+    final dir = await getTemporaryDirectory();
 
     // Create a new Excel workbook
     final excel.Workbook workbook = excel.Workbook();

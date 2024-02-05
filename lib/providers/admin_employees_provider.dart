@@ -9,7 +9,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
 
    final UserRepo userRepo = UserRepo(dioClient2: sl());
   List<Map<String, dynamic>> _empData = [];
-  List<dynamic> empList = [];
+  List<dynamic> _alluserSearchList = [];
   bool _isSearching = false;
   UserModel? _user = UserModel();
   bool _isMailLoading = false;
@@ -17,9 +17,9 @@ class AdminEmployeesProvider extends ChangeNotifier {
 
 
   List<Map<String, dynamic>> get getAllEmpData => _empData;
-  List<dynamic> get getEmpList => empList;
-  get isSearching => _isSearching;
-  get isMailLoading => _isMailLoading; 
+  List<dynamic> get alluserSearchList => _alluserSearchList;
+  bool get isSearching => _isSearching;
+  bool get isMailLoading => _isMailLoading; 
   List<dynamic>?  _alluserList = [];
   String? get username => _user!.data!.empName;
   String? get userType => _user!.data!.userType;
@@ -37,15 +37,15 @@ class AdminEmployeesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setEmpList({String search = ''}) async {
-    // var allEmpinfoList = await _db.getEmployees(search: search);
-    // API method 6 for Get Request
-    // here we fetch the entire column of names from company's empoyees table
-    // then for each change in search text field we trigger that get method
-    // empList = allEmpinfoList;
-    isSearching = false;
-    notifyListeners();
-  }
+  // Future<void> setEmpList({String search = ''}) async {
+  //   // var allEmpinfoList = await _db.getEmployees(search: search);
+  //   // API method 6 for Get Request
+  //   // here we fetch the entire column of names from company's empoyees table
+  //   // then for each change in search text field we trigger that get method
+  //   // empList = allEmpinfoList;
+  //   isSearching = false;
+  //   notifyListeners();
+  // }
 
   Future<void> getAllUsers(String date) async {
   ApiResponse apiResponse = await  userRepo.getAllUserData(date);   
@@ -53,12 +53,24 @@ class AdminEmployeesProvider extends ChangeNotifier {
         apiResponse.response!.statusCode == 200) {
         _alluserList = apiResponse.response!.data['data'].map((userdata) => Data.fromJson(userdata)).toList();
 
-         
-     
-       
-        }
-    
+        }  
   }
+
+     Future<void> getSearchData(String searchText) async{
+      _isSearching=true;
+      notifyListeners();
+      ApiResponse apiResponse =
+        await userRepo!.getSearchData(searchText);
+      if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+        _alluserSearchList = apiResponse.response!.data['data'].map((userdata) => Data.fromJson(userdata)).toList(); 
+        print(_alluserSearchList);
+        _isSearching= false;
+        notifyListeners();   
+
+   } 
+  }
+
 
   Future<void> setEmpDataWithID({String? empid}) async {
     // _user = await _db.readDataWithID(empid: empid);
@@ -70,4 +82,6 @@ class AdminEmployeesProvider extends ChangeNotifier {
     // _empData = await _db.readUsers();
     notifyListeners();
   }
+
+
 }

@@ -46,6 +46,25 @@ class UserRepo {
       print(e);
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
+}
+
+ Future<ApiResponse> getSearchData(String searchText) async{
+ try {
+       String basicAuth =
+      'Basic ' + base64.encode(utf8.encode('${AppConstants.APIUSERNAME}:${AppConstants.APIPASSWORD}'));
+      Response response = await dioClient2!.get(
+        "${AppConstants.SEARCH_DETAILS_API}?UserName=$searchText",
+        options: Options(
+          headers: {
+            'Authorization': basicAuth,      
+          }
+       )
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print(e);
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
 
 
 }

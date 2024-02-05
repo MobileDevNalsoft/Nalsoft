@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
@@ -156,4 +159,21 @@ class AuthenticationProvider extends ChangeNotifier {
   String getAuthToken() {
     return authenticationRepo!.getAuthToken();
   }
+
+  Future<bool> checkConnectivity() async {
+
+  final Connectivity _connectivity = Connectivity();
+   try {
+      var result = await _connectivity.checkConnectivity();
+      
+      return result!=ConnectivityResult.none;
+    }
+    catch(e){
+      print(e);
+      return false;
+    }
+
+  }
+
+
 }

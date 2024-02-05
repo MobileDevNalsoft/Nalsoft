@@ -25,6 +25,7 @@ class _PreviewState extends State<Preview> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 247, 242, 250),
         appBar: AppBar(

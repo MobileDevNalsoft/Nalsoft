@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
+import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
 
@@ -27,18 +29,6 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
         FocusScope.of(context).requestFocus(_focusNode);
       },
     );
-    initData();
-  }
-
-  Future<void> initData() async {
-    try {
-      await Provider.of<AdminEmployeesProvider>(context, listen: false)
-          .setEmpList();
-    } finally {
-      setState(() {
-        AppConstants.empSearchIsLoading = false;
-      });
-    }
   }
 
   @override
@@ -49,6 +39,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
 
   @override
   Widget build(BuildContext context) {
+    
     var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
@@ -78,12 +69,13 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                         focusNode: _focusNode,
                         controller: employeeSearchController,
                         onChanged: (searchText) {
+                          if(searchText.length>3){
                           Provider.of<AdminEmployeesProvider>(context,
                                   listen: false)
-                              .isSearching = true;
-                          Provider.of<AdminEmployeesProvider>(context,
-                                  listen: false)
-                              .setEmpList(search: searchText);
+                              .getSearchData(searchText).then((value) =>  print( "search list ${(Provider.of<AdminEmployeesProvider>(context,
+                                  listen: false).alluserSearchList[0] as Data).empName}"));
+                             
+                              }
                         },
                         decoration: const InputDecoration(
                             border: InputBorder.none,
@@ -110,7 +102,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
               height: size.height * 0.02,
             ),
             Provider.of<AdminEmployeesProvider>(context, listen: true)
-                        .empList
+                        .alluserSearchList
                         .isNotEmpty &&
                     !Provider.of<AdminEmployeesProvider>(context, listen: true)
                         .isSearching
@@ -121,17 +113,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                 : const Text(''),
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
-                return AppConstants.empSearchIsLoading
-                    ? const Expanded(
-                        child: SizedBox(
-                          child: Center(
-                            child: SpinKitCircle(
-                                color: Color.fromARGB(255, 179, 157, 219),
-                                size: 50.0),
-                          ),
-                        ),
-                      )
-                    : provider.empList.isEmpty &&
+                return provider.alluserSearchList.isEmpty &&
                             employeeSearchController.text != ''
                         ? const Expanded(child: Text("No employee found"))
                         : provider.isSearching
@@ -143,7 +125,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                             : Expanded(
                                 child: Scrollbar(
                                   child: ListView(
-                                    children: provider.empList
+                                    children: provider.alluserSearchList
                                         .map((item) => Container(
                                               margin: const EdgeInsets.only(
                                                   left: 10.0,
@@ -159,7 +141,8 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                                                         RouteManagement
                                                             .employeeLunchStatus,
                                                         arguments: {
-                                                          'empid': item[1]
+                                                          'username': (item as Data).userName.toString(),
+                                                          'empid':(item as Data).empId.toString()
                                                         });
                                                   },
                                                   style: TextButton.styleFrom(
@@ -167,11 +150,11 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
                                                           Alignment.centerLeft),
                                                   child: Row(
                                                     children: [
-                                                      Text(item[0]),
+                                                      Text((item as Data).empName.toString()),
                                                       Expanded(
                                                           child: SizedBox()),
                                                       Text(
-                                                        item[1],
+                                                        (item as Data).empId.toString()
                                                       ),
                                                     ],
                                                   ),
