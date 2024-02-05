@@ -61,7 +61,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView> {
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserEventsData();
       await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
-      
     } finally {
       setState(() {
         if (Provider.of<UserDataProvider>(context, listen: false)

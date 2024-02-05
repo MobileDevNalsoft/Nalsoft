@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/providers/auth_provider.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 class LoginView extends StatefulWidget {
@@ -20,20 +18,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final GlobalKey _formKey = GlobalKey<FormState>();
 
-  SharedPreferences? sharedPreferences;
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    initiate();
-  }
-// 
-  initiate() async {
-    // sharedPreferences = await SharedPreferences.getInstance();
-  }
 
   @override
   Widget build(BuildContext context) {
