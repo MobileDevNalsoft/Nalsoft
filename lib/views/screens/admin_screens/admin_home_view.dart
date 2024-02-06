@@ -2,6 +2,7 @@ import "dart:io";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:get_it/get_it.dart";
 import "package:meals_management/models/user_model.dart";
+import "package:meals_management/network_handler_mixin/network_handler.dart";
 
 import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
@@ -31,7 +32,7 @@ const AdminHomePage({super.key});
   State<AdminHomePage> createState() => _AdminHomePageState();
 }
 
-class _AdminHomePageState extends State<AdminHomePage>  {
+class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin  {
   DateTime now = DateTime.now();
 
   late SharedPreferences sharedPreferences;
@@ -143,6 +144,12 @@ class _AdminHomePageState extends State<AdminHomePage>  {
                       ),
                       child: InkWell(
                         onTap: () {
+                          Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .setConnected(isConnected());
+if (Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .getConnected)
                           Navigator.push(
                             context,
                             PageRouteBuilder(
@@ -158,6 +165,10 @@ class _AdminHomePageState extends State<AdminHomePage>  {
                               },
                             ),
                           );
+                       else{
+                           CustomSnackBar.showSnackBar(
+                                      context, "No internet", Colors.red);
+                       }
                         },
                         child: Row(
                           children: [

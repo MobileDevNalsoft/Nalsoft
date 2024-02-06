@@ -62,7 +62,7 @@ class _GenerateNotificationState extends State<GenerateNotification> {
                 )),
           ),
           SizedBox(
-            width: size.width * 0.34,
+            width: size.width * 0.35,
             child:
                 Provider.of<GenerateNotificationProvider>(context, listen: true)
                         .isLoading

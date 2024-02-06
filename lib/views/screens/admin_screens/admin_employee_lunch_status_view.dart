@@ -2,11 +2,14 @@ import "dart:io";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
+import "package:intl/intl.dart";
 import "package:meals_management/models/user_model.dart";
+import "package:meals_management/network_handler_mixin/network_handler.dart";
 import "package:meals_management/providers/admin_employees_provider.dart";
 import "package:meals_management/providers/user_data_provider.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
+import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
@@ -26,7 +29,7 @@ class EmployeeLunchStatus extends StatefulWidget {
   State<EmployeeLunchStatus> createState() => _EmployeeLunchStatusState();
 }
 
-class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
+class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> with ConnectivityMixin{
   // used to work with the selected dates in SfDateRangePicker
   DateRangePickerController datesController = DateRangePickerController();
 
@@ -42,11 +45,16 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> {
 
 Future<void> intiData() async{
   print(_isLoading);
-  Provider.of<UserDataProvider>(context,listen: false).getUserinfo(widget.userName);
-  Provider.of<UserDataProvider>(context,listen: false).getUserEventsData(empID:widget.empID);
+ try{
+  await  Provider.of<UserDataProvider>(context,listen: false).getUserinfo(widget.userName);
+  await Provider.of<UserDataProvider>(context,listen: false).getUserEventsData(empID:widget.empID);
+ }
+ finally{
 setState(() {
   _isLoading=false;
 });
+
+ }
 }
   
 
@@ -156,7 +164,51 @@ setState(() {
                     SizedBox(
                       height: size.height * 0.02,
                     ),
-                    CustomCalendarCard(
+                     Consumer<UserDataProvider>(
+                        builder: (context, provider, child) {
+                          if (provider.isLoading) {
+                            return SizedBox(
+                              width: size.width * 0.95,
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                elevation: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 18.0, top: 4),
+                                      child: Text('Lunch Calendar'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 15.0, left: 18),
+                                      child: Text(
+                                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                        style: const TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    SizedBox(
+                                      height: size.height * 0.37,
+                                      child: Center(
+                                        child: SpinKitCircle(
+                                            color: Color.fromARGB(
+                                                255, 179, 157, 219),
+                                            size: 50.0),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else if (!provider.isLoading) {
+                            return CustomCalendarCard(
                       forAdmin: false,
                       selectionMode: DateRangePickerSelectionMode.single,
                       selectibleDayPredicate: (date) {
@@ -172,7 +224,78 @@ setState(() {
                       confirmText: 'Send Mail',
                       cancelText: 'Clear Selection',
                       
-                    ),
+                    );} else {
+                            return SizedBox(
+                              width: size.width * 0.95,
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                elevation: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 18.0, top: 4),
+                                      child: Text('Lunch Calendar'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 15.0, left: 18),
+                                      child: Text(
+                                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                        style: const TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    SizedBox(
+                                      height: size.height * 0.37,
+                                      child: Center(
+                                        child: IconButton(
+                                          icon: Icon(Icons.refresh),
+                                          onPressed: () {
+                                            Provider.of<UserDataProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .setConnected(isConnected());
+                                            if (!Provider.of<UserDataProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getConnected) {
+                                              CustomSnackBar.showSnackBar(
+                                                  context,
+                                                  'No Internet Connection',
+                                                  Colors.red);
+                                            } else {
+                                              setState(() {
+                                                Provider.of<UserDataProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .setConnected(
+                                                        isConnected());
+                                               intiData();
+                                                Provider.of<UserDataProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .isLoading = true;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      
                     const CustomLegend(),
                     Image.asset("assets/images/food.png"),
                   ],

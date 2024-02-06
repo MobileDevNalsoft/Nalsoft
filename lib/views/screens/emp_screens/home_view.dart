@@ -24,14 +24,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-class EmployeeHomeView extends StatefulWidget  {
+class EmployeeHomeView extends StatefulWidget {
   const EmployeeHomeView({super.key});
 
   @override
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
 }
 
-class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityMixin{
+class _EmployeeHomeViewState extends State<EmployeeHomeView>
+    with ConnectivityMixin {
   DateTime now = DateTime.now();
 
   // used to work with the selected dates in SfDateRangePicker
@@ -52,8 +53,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
   bool _showQR = false;
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
-  bool _isLoading = true;
-  
+  // bool _isLoading = true;
+  static int cnt = 0;
 
   @override
   void initState() {
@@ -62,10 +63,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
   }
 
   Future<void> initData() async {
-    print("did init");
-    _isLoading = true;
+    print("did init${cnt++}");
+
+    Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
     try {
-      if(!sharedPreferences.containsKey('employee_name')){
+      if (!sharedPreferences.containsKey('employee_name')) {
         await Provider.of<UserDataProvider>(context, listen: false)
             .getUserinfo('');
         print('user data got');
@@ -73,11 +75,12 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserEventsData();
       await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
-      Provider.of<UserDataProvider>(context, listen: false).setConnected(isConnected());
+
+      Provider.of<UserDataProvider>(context, listen: false)
+          .setConnected(isConnected());
     } finally {
       setState(() {
-        if (sharedPreferences.getString('user_type') == 
-            'V') {
+        if (sharedPreferences.getString('user_type') == 'V') {
           DateTime lastResetDate = sharedPreferences
                   .containsKey('lastResetDate')
               ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
@@ -101,318 +104,320 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                     sharedPreferences.getInt('employeeCount') ?? 0);
           }
         }
-        _isLoading = false;
+        Provider.of<UserDataProvider>(context, listen: false).isLoading = false;
       });
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
-    
-   
-    Map<String, dynamic> timings =
-        _isLoading ? {} : {"start_time": "12:30 pm", "end_time": "2:30 pm"};
+
+    Map<String, dynamic> timings = {
+      "start_time": "12:30 pm",
+      "end_time": "2:30 pm"
+    };
 
     return AspectRatio(
-      aspectRatio: size.height/size.width,
+      aspectRatio: size.height / size.width,
       child: SafeArea(
           child: Scaffold(
-        body: sharedPreferences.getString('user_type') ==
-                    'V'
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+        body: sharedPreferences.getString('user_type') == 'V'
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
+                    Row(
                       children: [
-                        SizedBox(
-                          height: size.height * 0.01,
+                        const Expanded(
+                          child: SizedBox(),
                         ),
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: SizedBox(),
-                            ),
-                            PopupMenuButton(
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  PopupMenuItem(
-                                      value: 'Sign Out',
-                                      height: 10,
-                                      onTap: () {
-                                        sharedPreferences.setString(
-                                            AppConstants.TOKEN, '');
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            RouteManagement.loginPage,
-                                            (route) => false);
-                                      },
-                                      child: const Text('Sign Out'))
-                                ];
-                              },
-                              child: const Icon(Icons.power_settings_new_sharp),
-                            ),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: size.height * 0.08,
-                        ),
-                        const Text(
-                          'Scan QR Code',
-                          style: TextStyle(fontSize: 25),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.02,
-                        ),
-                        Consumer<HomeStatusProvider>(
-                          builder: (context, provider, child) {
-                            return Text(
-                                'Employee Count : ${sharedPreferences.getInt('employeeCount')}');
+                        PopupMenuButton(
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              PopupMenuItem(
+                                  value: 'Sign Out',
+                                  height: 10,
+                                  onTap: () {
+                                    sharedPreferences.setString(
+                                        AppConstants.TOKEN, '');
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        RouteManagement.loginPage,
+                                        (route) => false);
+                                  },
+                                  child: const Text('Sign Out'))
+                            ];
                           },
+                          child: const Icon(Icons.power_settings_new_sharp),
                         ),
                         SizedBox(
-                          height: size.height * 0.05,
-                        ),
-                        if (_showQR)
-                          SizedBox(
-                            height: size.height * 0.40,
-                            width: size.width * 0.9,
-                            child: QRView(
-                              key: qrKey,
-                              onQRViewCreated: (controller) {
-                                qrController = controller;
-                                controller.scannedDataStream
-                                    .listen((data) async {
-
-
-                                  var qrData = jsonDecode(data.code!);
-                                  print(" Qr Data scanned${qrData.toString()}");
-                                  if (qrData['date'] ==
-                                      now.toString().substring(0, 10)) {
-                                    Provider.of<UserDataProvider>(context,
-                                            listen: false)
-                                        .updateUserEvents([
-                                      Dates(
-                                              date: qrData['date']!,
-                                              info: now.millisecondsSinceEpoch
-                                                  .toString())
-                                          .toJson()
-                                    ], true).then((value) {
-                                         if (Provider.of<UserDataProvider>(context,
-                                            listen: false).getIsAlreadyScanned) {
-                                        if (!_hasShownSnackbar) {
-                                          setState(() {
-                                            _showQR = false;
-                                            _hasShownSnackbar = true;
-                                            CustomSnackBar.showSnackBar(context,
-                                                'QR already scanned', Colors.red);
-                                          });
-
-                                         Provider.of<UserDataProvider>(context,
-                                            listen: false) .setScanned(false);
-                                          controller.pauseCamera();
-                                        }
-                                      } else {
-                                        FlutterBeep.beep();
-                                        if (!_isIncremented) {
-
-                                          // ignore: use_build_context_synchronously
-                                          Provider.of<HomeStatusProvider>(context,
-                                                  listen: false)
-                                              .incrEmpCount();
-                                          sharedPreferences.setInt(
-                                              'employeeCount',
-                                              // ignore: use_build_context_synchronously
-                                              Provider.of<HomeStatusProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .getEmployeeCount!);
-                                          _isIncremented = true;
-                                        }
-                                        controller.pauseCamera();
-                                        Future.delayed(const Duration(seconds: 2),
-                                            () {
-                                          controller.resumeCamera();
-                                          _isIncremented = false;
-                                        });
-                                      }
-                                    });
-                                     
-                                    } else {
-                                      if (!_hasShownSnackbar) {
-                                        setState(() {
-                                          _showQR = false;
-                                          _hasShownSnackbar = true;
-                                          CustomSnackBar.showSnackBar(
-                                              context, 'Invalid QR', Colors.red);
-                                        });
-                                        controller.pauseCamera();
-                                      }
-                                  }
-                                });
-                              },
-                              overlay: QrScannerOverlayShape(
-                                  borderColor: Colors.red,
-                                  borderRadius: 10,
-                                  borderLength: 30,
-                                  borderWidth: 10,
-                                  cutOutSize: 300),
-                            ),
-                          ),
-                        if (_showQR)
-                          SizedBox(
-                            height: size.height * 0.03,
-                          ),
-                        if (!_showQR)
-                          const Icon(
-                            Icons.qr_code_scanner_rounded,
-                            size: 340,
-                          ),
-                        SizedBox(
-                          height: size.height * 0.04,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (!_showQR)
-                              CustomButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _showQR = true;
-                                    _hasShownSnackbar = false;
-                                  });
-                                },
-                                color: MaterialStatePropertyAll(
-                                    Colors.grey.shade300),
-                                child: const Text(
-                                  'Scan',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            if (_showQR)
-                              CustomButton(
-                                onPressed: () {
-                                  setState(() {
-                                    qrController!.flipCamera();
-                                  });
-                                },
-                                color: MaterialStatePropertyAll(
-                                    Colors.grey.shade300),
-                                child: const Icon(Icons.flip_camera_android,
-                                    color: Colors.black),
-                              ),
-                            if (_showQR)
-                              SizedBox(
-                                width: size.width * 0.1,
-                              ),
-                            if (_showQR)
-                              CustomButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _showQR = false;
-                                    qrController!.pauseCamera();
-                                  });
-                                },
-                                color: MaterialStatePropertyAll(
-                                    Colors.grey.shade300),
-                                child: const Text(
-                                  'Stop',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              )
-                          ],
-                        ),
+                          width: size.width * 0.02,
+                        )
                       ],
                     ),
-                  )
-                : Stack(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: size.height * 0.20,
-                            decoration: const BoxDecoration(
-                                color: Color.fromARGB(100, 179, 110, 234),
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(50),
-                                  bottomRight: Radius.circular(50),
-                                )),
-                            child: Column(
-                              children: [
-                                SizedBox(height: size.height*0.015,),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(width: size.width*0.05,),
-                                    SizedBox(
-                                      height: size.height*0.1,
-                                      width: size.width*0.6,
-                                      child: Text(
-                                        'Hi,\n${sharedPreferences.getString('employee_name') ?? ' '}',
-                                        style:  TextStyle(
-                                            fontSize: size.width*0.057 ,
-                                            fontWeight: FontWeight.bold,
-                                            overflow: TextOverflow.ellipsis),
-                                      ),
-                                    ),
-                                    const Expanded(child: SizedBox()),
-                                    sharedPreferences.getString('user_type') ==
-                                            'E'
-                                        ? Switch(
-                                            value: false,
-                                            onChanged: (value) {
-                                              Navigator.pushReplacementNamed(
+                    SizedBox(
+                      height: size.height * 0.08,
+                    ),
+                    const Text(
+                      'Scan QR Code',
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                    Consumer<HomeStatusProvider>(
+                      builder: (context, provider, child) {
+                        return Text(
+                            'Employee Count : ${sharedPreferences.getInt('employeeCount')}');
+                      },
+                    ),
+                    SizedBox(
+                      height: size.height * 0.05,
+                    ),
+                    if (_showQR)
+                      SizedBox(
+                        height: size.height * 0.40,
+                        width: size.width * 0.9,
+                        child: QRView(
+                          key: qrKey,
+                          onQRViewCreated: (controller) {
+                            qrController = controller;
+                            controller.scannedDataStream.listen((data) async {
+                              var qrData = jsonDecode(data.code!);
+                              print(" Qr Data scanned${qrData.toString()}");
+                              if (qrData['date'] ==
+                                  now.toString().substring(0, 10)) {
+                                Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .updateUserEvents([
+                                  Dates(
+                                          date: qrData['date']!,
+                                          info: now.millisecondsSinceEpoch
+                                              .toString())
+                                      .toJson()
+                                ], true).then((value) {
+                                  if (Provider.of<UserDataProvider>(context,
+                                          listen: false)
+                                      .getIsAlreadyScanned) {
+                                    if (!_hasShownSnackbar) {
+                                      setState(() {
+                                        _showQR = false;
+                                        _hasShownSnackbar = true;
+                                        CustomSnackBar.showSnackBar(context,
+                                            'QR already scanned', Colors.red);
+                                      });
+
+                                      Provider.of<UserDataProvider>(context,
+                                              listen: false)
+                                          .setScanned(false);
+                                      controller.pauseCamera();
+                                    }
+                                  } else {
+                                    FlutterBeep.beep();
+                                    if (!_isIncremented) {
+                                      // ignore: use_build_context_synchronously
+                                      Provider.of<HomeStatusProvider>(context,
+                                              listen: false)
+                                          .incrEmpCount();
+                                      sharedPreferences.setInt(
+                                          'employeeCount',
+                                          // ignore: use_build_context_synchronously
+                                          Provider.of<HomeStatusProvider>(
                                                   context,
-                                                  RouteManagement.adminHomePage);
-                                            },
-                                            activeColor: const Color.fromARGB(
-                                                255, 181, 129, 248),
-                                          )
-                                        : const SizedBox(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right:10.0, top: 10, left: 10),
-                                      child: PopupMenuButton(
-                                        itemBuilder: (BuildContext context) {
-                                          return [
-                                            PopupMenuItem(
-                                                value: 'Sign Out',
-                                                height: 10,
-                                                onTap: () {
-                                                  sharedPreferences.setString(
-                                                      AppConstants.TOKEN, '');
-                                                  Navigator.pushNamedAndRemoveUntil(
-                                                      context,
-                                                      RouteManagement.loginPage,
-                                                      (route) => false);
-                                                },
-                                                child: const Text('Sign Out'))
-                                          ];
-                                        },
-                                        child: const Icon(
-                                            Icons.power_settings_new_sharp),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
+                                                  listen: false)
+                                              .getEmployeeCount!);
+                                      _isIncremented = true;
+                                    }
+                                    controller.pauseCamera();
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      controller.resumeCamera();
+                                      _isIncremented = false;
+                                    });
+                                  }
+                                });
+                              } else {
+                                if (!_hasShownSnackbar) {
+                                  setState(() {
+                                    _showQR = false;
+                                    _hasShownSnackbar = true;
+                                    CustomSnackBar.showSnackBar(
+                                        context, 'Invalid QR', Colors.red);
+                                  });
+                                  controller.pauseCamera();
+                                }
+                              }
+                            });
+                          },
+                          overlay: QrScannerOverlayShape(
+                              borderColor: Colors.red,
+                              borderRadius: 10,
+                              borderLength: 30,
+                              borderWidth: 10,
+                              cutOutSize: 300),
+                        ),
+                      ),
+                    if (_showQR)
+                      SizedBox(
+                        height: size.height * 0.03,
+                      ),
+                    if (!_showQR)
+                      const Icon(
+                        Icons.qr_code_scanner_rounded,
+                        size: 340,
+                      ),
+                    SizedBox(
+                      height: size.height * 0.04,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (!_showQR)
+                          CustomButton(
+                            onPressed: () {
+                              setState(() {
+                                _showQR = true;
+                                _hasShownSnackbar = false;
+                              });
+                            },
+                            color:
+                                MaterialStatePropertyAll(Colors.grey.shade300),
+                            child: const Text(
+                              'Scan',
+                              style: TextStyle(color: Colors.black),
                             ),
                           ),
-                          SizedBox(
-                            height: size.height * 0.05,
+                        if (_showQR)
+                          CustomButton(
+                            onPressed: () {
+                              setState(() {
+                                qrController!.flipCamera();
+                              });
+                            },
+                            color:
+                                MaterialStatePropertyAll(Colors.grey.shade300),
+                            child: const Icon(Icons.flip_camera_android,
+                                color: Colors.black),
                           ),
-                          if(_isLoading)
+                        if (_showQR)
+                          SizedBox(
+                            width: size.width * 0.1,
+                          ),
+                        if (_showQR)
+                          CustomButton(
+                            onPressed: () {
+                              setState(() {
+                                _showQR = false;
+                                qrController!.pauseCamera();
+                              });
+                            },
+                            color:
+                                MaterialStatePropertyAll(Colors.grey.shade300),
+                            child: const Text(
+                              'Stop',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            : Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: size.height * 0.20,
+                        decoration: const BoxDecoration(
+                            color: Color.fromARGB(100, 179, 110, 234),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(50),
+                              bottomRight: Radius.circular(50),
+                            )),
+                        child: Column(
+                          children: [
                             SizedBox(
+                              height: size.height * 0.015,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.05,
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.1,
+                                  width: size.width * 0.6,
+                                  child: Text(
+                                    'Hi,\n${sharedPreferences.getString('employee_name') ?? ' '}',
+                                    style: TextStyle(
+                                        fontSize: size.width * 0.057,
+                                        fontWeight: FontWeight.bold,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ),
+                                const Expanded(child: SizedBox()),
+                                sharedPreferences.getString('user_type') == 'E'
+                                    ? Switch(
+                                        value: false,
+                                        onChanged: (value) {
+                                          Navigator.pushReplacementNamed(
+                                              context,
+                                              RouteManagement.adminHomePage);
+                                        },
+                                        activeColor: const Color.fromARGB(
+                                            255, 181, 129, 248),
+                                      )
+                                    : const SizedBox(),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 10.0, top: 10, left: 10),
+                                  child: PopupMenuButton(
+                                    itemBuilder: (BuildContext context) {
+                                      return [
+                                        PopupMenuItem(
+                                            value: 'Sign Out',
+                                            height: 10,
+                                            onTap: () {
+                                              sharedPreferences.setString(
+                                                  AppConstants.TOKEN, '');
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  RouteManagement.loginPage,
+                                                  (route) => false);
+                                            },
+                                            child: const Text('Sign Out'))
+                                      ];
+                                    },
+                                    child: const Icon(
+                                        Icons.power_settings_new_sharp),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+                      Consumer<UserDataProvider>(
+                        builder: (context, provider, child) {
+                          if (provider.isLoading) {
+                            return SizedBox(
                               width: size.width * 0.95,
                               child: Card(
                                 shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
                                 elevation: 8,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,11 +426,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                       height: 10,
                                     ),
                                     const Padding(
-                                      padding: EdgeInsets.only(left: 18.0, top: 4),
+                                      padding:
+                                          EdgeInsets.only(left: 18.0, top: 4),
                                       child: Text('Lunch Calendar'),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 15.0, left: 18),
+                                      padding: const EdgeInsets.only(
+                                          top: 15.0, left: 18),
                                       child: Text(
                                         '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
                                         style: const TextStyle(fontSize: 30),
@@ -433,40 +440,43 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                     ),
                                     const Divider(),
                                     SizedBox(
-                                      height: size.height*0.37,
-                                      child: Center( child: SpinKitCircle(
-                                          color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
-
+                                      height: size.height * 0.37,
+                                      child: Center(
+                                        child: SpinKitCircle(
+                                            color: Color.fromARGB(
+                                                255, 179, 157, 219),
+                                            size: 50.0),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          if(!_isLoading && Provider.of<UserDataProvider>(context, listen: false).getConnected)
-                            CustomCalendarCard(
+                            );
+                          } else if (provider.eventsPresent) {
+                            return CustomCalendarCard(
                               controller: datesController,
                               forAdmin: false,
-                              selectionMode: DateRangePickerSelectionMode.single,
+                              selectionMode:
+                                  DateRangePickerSelectionMode.single,
                               selectibleDayPredicate: (date) {
                                 return date.toString().substring(0, 10) ==
-                                    now.toString().substring(0, 10) &&
+                                        now.toString().substring(0, 10) &&
                                     ![DateTime.saturday, DateTime.sunday]
                                         .contains(date.weekday) &&
                                     !Provider.of<UserDataProvider>(context,
-                                        listen: false)
+                                            listen: false)
                                         .holidays
                                         .contains(
-                                        date.toString().substring(0, 10)) &&
+                                            date.toString().substring(0, 10)) &&
                                     !Provider.of<UserDataProvider>(context,
-                                        listen: false)
+                                            listen: false)
                                         .getNotOpted
                                         .map((e) => e.date)
                                         .toList()
                                         .contains(
-                                        date.toString().substring(0, 10)) &&
+                                            date.toString().substring(0, 10)) &&
                                     !Provider.of<UserDataProvider>(context,
-                                        listen: false)
+                                            listen: false)
                                         .getOpted
                                         .contains(date.toString().substring(0, 10));
                               },
@@ -475,22 +485,26 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                   CustomSnackBar.showSnackBar(
                                       context,
                                       'Please select today'
-                                          's date',
+                                      's date',
                                       Colors.red);
                                 } else if (
-                                // (now.hour > 14 ||
-                                //   (now.hour == 14 &&
-                                //       now.minute > 30))
-                                false) {
-                                  CustomSnackBar.showSnackBar(context,
-                                      "QR is disabled after 2.30pm", Colors.red);
+                                    // (now.hour > 14 ||
+                                    //   (now.hour == 14 &&
+                                    //       now.minute > 30))
+                                    false) {
+                                  CustomSnackBar.showSnackBar(
+                                      context,
+                                      "QR is disabled after 2.30pm",
+                                      Colors.red);
                                 } else if (
-                                // (now.hour < 12 ||
-                                //   (now.hour == 12 &&
-                                //       now.minute < 30))
-                                false) {
-                                  CustomSnackBar.showSnackBar(context,
-                                      "Wait till 12.30pm to get QR", Colors.red);
+                                    // (now.hour < 12 ||
+                                    //   (now.hour == 12 &&
+                                    //       now.minute < 30))
+                                    false) {
+                                  CustomSnackBar.showSnackBar(
+                                      context,
+                                      "Wait till 12.30pm to get QR",
+                                      Colors.red);
                                 } else {
                                   Navigator.pushNamed(
                                       context, RouteManagement.previewPage);
@@ -501,13 +515,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                               },
                               confirmText: 'Ok',
                               cancelText: 'Cancel',
-                            ),
-                          if(!_isLoading && !Provider.of<UserDataProvider>(context, listen: false).getConnected)
-                            SizedBox(
+                            );
+                          } else {
+                            return SizedBox(
                               width: size.width * 0.95,
                               child: Card(
                                 shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
                                 elevation: 8,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,11 +531,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                       height: 10,
                                     ),
                                     const Padding(
-                                      padding: EdgeInsets.only(left: 18.0, top: 4),
+                                      padding:
+                                          EdgeInsets.only(left: 18.0, top: 4),
                                       child: Text('Lunch Calendar'),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 15.0, left: 18),
+                                      padding: const EdgeInsets.only(
+                                          top: 15.0, left: 18),
                                       child: Text(
                                         '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
                                         style: const TextStyle(fontSize: 30),
@@ -528,133 +545,151 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                     ),
                                     const Divider(),
                                     SizedBox(
-                                      height: size.height*0.37,
-                                      child: Center( child: IconButton(
-                                        icon: Icon(Icons.refresh),
-                                        onPressed: () {
-                                          Provider.of<UserDataProvider>(context, listen: false).setConnected(isConnected());
-                                          if(!Provider.of<UserDataProvider>(context, listen: false).getConnected){
-                                            CustomSnackBar.showSnackBar(context, 'No Internet Connection', Colors.red);
-                                          }else{
-                                            setState(() {
-                                              initData();
-                                            });
-                                          }
-                                        },
-                                      ),
+                                      height: size.height * 0.37,
+                                      child: Center(
+                                        child: IconButton(
+                                          icon: Icon(Icons.refresh),
+                                          onPressed: () {
+                                            Provider.of<UserDataProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .setConnected(isConnected());
+                                            if (!Provider.of<UserDataProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getConnected) {
+                                              CustomSnackBar.showSnackBar(
+                                                  context,
+                                                  'No Internet Connection',
+                                                  Colors.red);
+                                            } else {
+                                              setState(() {
+                                                Provider.of<UserDataProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .setConnected(
+                                                        isConnected());
+                                                initData();
+                                                Provider.of<UserDataProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .isLoading = true;
+                                              });
+                                            }
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          const CustomLegend(),
-                          Image.asset('assets/images/food.png'),
-                        ],
+                            );
+                          }
+                        },
                       ),
-                      Positioned(
-                        top: (size.height * 0.12),
-                        // bottom: ,
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: size.width * 0.07,
-                            ),
-                            _overlayCard(
-                                child: Column(
-                                  children: [
-                                    const SizedBox(height: 10),
-                                    const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.access_time_sharp),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          'Lunch Timings',
-                                          style: TextStyle(fontSize: 12),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Start time',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            Text(
-                                              'End time',
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 5),
-                                        const Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(':'),
-                                            Text(':'),
-                                          ],
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '1:00pm',
-                                              style:
-                                                  const TextStyle(fontSize: 12),
-                                            ),
-                                            Text(
-                                              '2:00pm',
-                                              style:
-                                                  const TextStyle(fontSize: 12),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                size: size),
-                            SizedBox(
-                              width: size.width * 0.01,
-                            ),
-                            _overlayCard(
-                                child: TextButton(
-                                  child: const Text(
-                                    'Update upcoming\nlunch status',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pushNamed(context,
-                                        RouteManagement.updateUpcomingStatus);
-                                  },
-                                ),
-                                size: size),
-                            SizedBox(
-                              width: size.width * 0.07,
-                            ),
-                          ],
-                        ),
-                      ),
-
+                      const CustomLegend(),
+                      Image.asset('assets/images/food.png'),
                     ],
                   ),
+                  Positioned(
+                    top: (size.height * 0.12),
+                    // bottom: ,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: size.width * 0.07,
+                        ),
+                        _overlayCard(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.access_time_sharp),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'Lunch Timings',
+                                      style: TextStyle(fontSize: 12),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Start time',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        Text(
+                                          'End time',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 5),
+                                    const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(':'),
+                                        Text(':'),
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '1:00pm',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        Text(
+                                          '2:00pm',
+                                          style: const TextStyle(fontSize: 12),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            size: size),
+                        SizedBox(
+                          width: size.width * 0.01,
+                        ),
+                        _overlayCard(
+                            child: TextButton(
+                              child: const Text(
+                                'Update upcoming\nlunch status',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              onPressed: () {
+                                Navigator.pushNamed(context,
+                                    RouteManagement.updateUpcomingStatus,
+                                    arguments: {'initData': initData});
+                              },
+                            ),
+                            size: size),
+                        SizedBox(
+                          width: size.width * 0.07,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
       )),
     );
   }
@@ -674,7 +709,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
       ),
     );
   }
-
 }
 
 /*

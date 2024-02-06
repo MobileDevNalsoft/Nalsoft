@@ -1,6 +1,9 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:flutter_spinkit/flutter_spinkit.dart";
+import "package:intl/intl.dart";
 import "package:meals_management/models/user_events_model.dart";
+import "package:meals_management/network_handler_mixin/network_handler.dart";
 import 'package:meals_management/providers/home_status_provider.dart';
 import "package:meals_management/providers/user_data_provider.dart";
 import "package:meals_management/utils/constants.dart";
@@ -8,30 +11,36 @@ import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
+import "package:meals_management/views/screens/emp_screens/home_view.dart";
 
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
 // ignore: must_be_immutable
 class UpdateLunchStatus extends StatefulWidget {
-  UpdateLunchStatus({super.key});
+  Function? initData;
+  UpdateLunchStatus({this.initData, super.key});
 
   @override
   State<UpdateLunchStatus> createState() => _UpdateLunchStatusState();
 }
 
-class _UpdateLunchStatusState extends State<UpdateLunchStatus> {
+class _UpdateLunchStatusState extends State<UpdateLunchStatus>
+    with ConnectivityMixin {
   // used to work with the selected dates in SfDateRangePicker
   DateRangePickerController datesController = DateRangePickerController();
 
   // used to work with the content entered in TextField by user
   TextEditingController notOptController = TextEditingController();
-
+  bool _isLoading = false;
   final FocusNode _focusNode = FocusNode();
+  @override
+  initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
 
     var now = DateTime.now();
@@ -103,83 +112,204 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus> {
                 SizedBox(
                   height: size.height * 0.05,
                 ),
-                CustomCalendarCard(
-                  forAdmin: false,
-                  controller: datesController,
-                  selectionMode:
-                      Provider.of<HomeStatusProvider>(context, listen: true)
+                Consumer<UserDataProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.isLoading) {
+                      return SizedBox(
+                        width: size.width * 0.95,
+                        child: Card(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          elevation: 8,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 18.0, top: 4),
+                                child: Text('Lunch Calendar'),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 15.0, left: 18),
+                                child: Text(
+                                  '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                              ),
+                              const Divider(),
+                              SizedBox(
+                                height: size.height * 0.37,
+                                child: Center(
+                                  child: SpinKitCircle(
+                                      color: Color.fromARGB(255, 179, 157, 219),
+                                      size: 50.0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else if (provider.eventsPresent) {
+                      return CustomCalendarCard(
+                        forAdmin: false,
+                        controller: datesController,
+                        selectionMode: Provider.of<HomeStatusProvider>(context,
+                                        listen: true)
+                                    .getReason ==
+                                'Multiple days'
+                            ? DateRangePickerSelectionMode.multiple
+                            : DateRangePickerSelectionMode.single,
+                        selectibleDayPredicate: (date) {
+                          return date.weekday != DateTime.saturday &&
+                              date.weekday != DateTime.sunday &&
+                              ((date.year == now.year &&
+                                      date.month == now.month &&
+                                      date.day > now.day) ||
+                                  (date.year == now.year &&
+                                      date.month > now.month)) &&
+                              !Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .holidays
+                                  .contains(date.toString().substring(0, 10)) &&
+                              ((date.day > now.day + 1 &&
+                                      date.month == now.month) ||
+                                  (date.month > now.month) ||
+                                  (date.day == now.day + 1 &&
+                                      date.month == now.month &&
+                                      now.hour < 18));
+                        },
+                        onSubmit: (dates) {
+                          if (Provider.of<HomeStatusProvider>(context,
+                                      listen: false)
                                   .getReason ==
-                              'Multiple days'
-                          ? DateRangePickerSelectionMode.multiple
-                          : DateRangePickerSelectionMode.single,
-                  selectibleDayPredicate: (date) {
-                    return date.weekday != DateTime.saturday &&
-                        date.weekday != DateTime.sunday &&
-                        ((date.year == now.year &&
-                                date.month == now.month &&
-                                date.day > now.day) ||
-                            (date.year == now.year &&
-                                date.month > now.month)) &&
-                        !Provider.of<UserDataProvider>(context, listen: false)
-                            .holidays
-                            .contains(date.toString().substring(0, 10)) &&
-                        ((date.day > now.day + 1 && date.month == now.month) ||
-                            (date.month > now.month) ||
-                            (date.day == now.day + 1 &&
-                                date.month == now.month &&
-                                now.hour < 18));
-                  },
-                  onSubmit: (dates) {
-                    if (Provider.of<HomeStatusProvider>(context, listen: false)
-                            .getReason ==
-                        'Single day') {
-                      if (dates.toString().substring(0, 10) !=
-                          now.toString().substring(0, 10)) {
-                        if (DateTime.parse(dates.toString()).weekday ==
-                                DateTime.saturday ||
-                            DateTime.parse(dates.toString()).weekday ==
-                                DateTime.sunday) {
-                          CustomSnackBar.showSnackBar(context,
-                              'remove weekoffs from selection', Colors.red);
-                        } else {
-                          if (Provider.of<UserDataProvider>(context,
-                                  listen: false)
-                              .getNotOpted.map((e) => e.date).toList()
-                              .contains(dates.toString().substring(0, 10))) {
-                            removeDialog(context, size, [dates as DateTime]);
-                          } else {
-                            dialog(context, size, dates);
+                              'Single day') {
+                            if (dates.toString().substring(0, 10) !=
+                                now.toString().substring(0, 10)) {
+                              if (DateTime.parse(dates.toString()).weekday ==
+                                      DateTime.saturday ||
+                                  DateTime.parse(dates.toString()).weekday ==
+                                      DateTime.sunday) {
+                                CustomSnackBar.showSnackBar(
+                                    context,
+                                    'remove weekoffs from selection',
+                                    Colors.red);
+                              } else {
+                                if (Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getNotOpted
+                                    .map((e) => e.date)
+                                    .toList()
+                                    .contains(
+                                        dates.toString().substring(0, 10))) {
+                                  removeDialog(
+                                      context, size, [dates as DateTime]);
+                                } else {
+                                  dialog(context, size, dates);
+                                }
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                      content: Text(
+                                'You can only update upcoming status',
+                              )));
+                            }
+                          } else if (Provider.of<HomeStatusProvider>(context,
+                                      listen: false)
+                                  .getReason ==
+                              'Multiple days') {
+                            List<DateTime> datesList = dates as List<DateTime>;
+                            if (datesList.any((element) =>
+                                Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getNotOpted
+                                    .map((e) => e.date)
+                                    .toList()
+                                    .contains(
+                                        element.toString().substring(0, 10)))) {
+                              removeDialog(context, size, dates);
+                            } else {
+                              dialog(context, size, dates);
+                            }
                           }
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                                content: Text(
-                          'You can only update upcoming status',
-                        )));
-                      }
-                    } else if (Provider.of<HomeStatusProvider>(context,
-                                listen: false)
-                            .getReason ==
-                        'Multiple days') {
-                      List<DateTime> datesList = dates as List<DateTime>;
-                      if (datesList.any((element) =>
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .getNotOpted.map((e) => e.date).toList()
-                              .contains(element.toString().substring(0, 10)))) {
-                        removeDialog(context, size, dates);
-                      } else {
-                        dialog(context, size, dates);
-                      }
+                        },
+                        onCancel: () {
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                        },
+                        confirmText: 'Ok',
+                        cancelText: 'Cancel',
+                      );
+                    } else {
+                      return SizedBox(
+                        width: size.width * 0.95,
+                        child: Card(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          elevation: 8,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 18.0, top: 4),
+                                child: Text('Lunch Calendar'),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 15.0, left: 18),
+                                child: Text(
+                                  '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                              ),
+                              const Divider(),
+                              SizedBox(
+                                height: size.height * 0.37,
+                                child: Center(
+                                  child: IconButton(
+                                    icon: Icon(Icons.refresh),
+                                    onPressed: () {
+                                      Provider.of<UserDataProvider>(context,
+                                              listen: false)
+                                          .setConnected(isConnected());
+                                      if (!Provider.of<UserDataProvider>(
+                                              context,
+                                              listen: false)
+                                          .getConnected) {
+                                        CustomSnackBar.showSnackBar(
+                                            context,
+                                            'No Internet Connection',
+                                            Colors.red);
+                                      } else {
+                                        setState(() {
+                                          Provider.of<UserDataProvider>(context,
+                                                  listen: false)
+                                              .setConnected(isConnected());
+                                          widget.initData!();
+                                          Provider.of<UserDataProvider>(context,
+                                                  listen: false)
+                                              .isLoading = true;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     }
                   },
-                  onCancel: () {
-                    datesController.selectedDate = null;
-                    datesController.selectedDates = null;
-                    datesController.selectedRange = null;
-                  },
-                  confirmText: 'Ok',
-                  cancelText: 'Cancel',
                 ),
                 const CustomLegend(),
                 Image.asset("assets/images/food.png"),
@@ -215,7 +345,8 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus> {
                     controller: notOptController,
                     keyboardType: TextInputType.text,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[^\d]')), // Allows any character except digits
+                      FilteringTextInputFormatter.allow(RegExp(
+                          r'[^\d]')), // Allows any character except digits
                     ],
                     decoration: InputDecoration(
                         border: const OutlineInputBorder(),
@@ -274,34 +405,67 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus> {
                                     context,
                                     'remove weekoffs from selection',
                                     Colors.red);
-                              } 
-                              else {
-                                Provider.of<UserDataProvider>(
-                                                context,
-                                                listen: false)
-                                            .updateUserEvents([Dates(date: dates.toString().substring(0,10), info: notOptController.text).toJson()],false);
+                              } else {
+                                Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .setConnected(isConnected());
+                                if (Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getConnected) {
+                                  Provider.of<UserDataProvider>(context,
+                                          listen: false)
+                                      .updateUserEvents([
+                                    Dates(
+                                            date: dates
+                                                .toString()
+                                                .substring(0, 10),
+                                            info: notOptController.text)
+                                        .toJson()
+                                  ], false);
+                                } else {
+                                  CustomSnackBar.showSnackBar(
+                                      context, "No internet", Colors.red);
+                                }
                               }
                             } else {
-                              List<DateTime> datesList =
-                                  dates as List<DateTime>;
-                              if (datesList
-                                      .map((e) => e.weekday)
-                                      .toList()
-                                      .contains(6) ||
-                                  datesList
-                                      .map((e) => e.weekday)
-                                      .toList()
-                                      .contains(7)) {
+                              Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .setConnected(isConnected());
+                              if (Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                  .getConnected) {
+                                List<DateTime> datesList =
+                                    dates as List<DateTime>;
+                                if (datesList
+                                        .map((e) => e.weekday)
+                                        .toList()
+                                        .contains(6) ||
+                                    datesList
+                                        .map((e) => e.weekday)
+                                        .toList()
+                                        .contains(7)) {
+                                  CustomSnackBar.showSnackBar(
+                                      context,
+                                      'remove weekoffs from selection',
+                                      Colors.red);
+                                } else {
+                                  Provider.of<UserDataProvider>(context,
+                                          listen: false)
+                                      .updateUserEvents(
+                                          dates
+                                              .map((date) => Dates(
+                                                      date: date
+                                                          .toString()
+                                                          .substring(0, 10),
+                                                      info:
+                                                          notOptController.text)
+                                                  .toJson())
+                                              .toList(),
+                                          false);
+                                }
+                              } else {
                                 CustomSnackBar.showSnackBar(
-                                    context,
-                                    'remove weekoffs from selection',
-                                    Colors.red);
-                              }
-                               else {
-                                Provider.of<UserDataProvider>(
-                                                context,
-                                                listen: false)
-                                            .updateUserEvents(dates.map((date) => Dates(date: date.toString().substring(0,10), info: notOptController.text).toJson()).toList(),false);
+                                    context, "No internet", Colors.red);
                               }
                             }
                           }
@@ -351,8 +515,11 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus> {
                       CustomButton(
                         onPressed: () {
                           print(dates);
-                          Provider.of<UserDataProvider>(context, listen: false).
-                              deleteUserEvents(dates.map((e) => {"date":e.toString().substring(0,10)}).toList());
+                          Provider.of<UserDataProvider>(context, listen: false)
+                              .deleteUserEvents(dates
+                                  .map((e) =>
+                                      {"date": e.toString().substring(0, 10)})
+                                  .toList());
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;

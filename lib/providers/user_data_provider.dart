@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
@@ -24,7 +26,9 @@ class UserDataProvider extends ChangeNotifier {
   List<UserModel> _alluserSearchList=[];
   bool _isSearching = false;
   bool _connected = true;
-
+  bool eventsPresent = false;
+  // StreamController<bool> _isDataPresentController =  StreamController<bool>.broadcast();
+  bool isLoading = false;
   // getters
   List<dynamic> get holidays => _holidays;
   bool get isSearching => _isSearching;
@@ -33,7 +37,7 @@ class UserDataProvider extends ChangeNotifier {
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;
   bool get getConnected => _connected;
-
+  // Stream<bool> get isDataPresentStream => _isDataPresentController.stream; 
 
     set isSearching(value) {
     _isSearching = value;
@@ -45,6 +49,9 @@ class UserDataProvider extends ChangeNotifier {
       notifyListeners();
   }
 
+  // void setStream(){
+  //   _isDataPresentController.add(eventsPresent);
+  // }
   // getting user data from firestore collection
   Future<void> getUserinfo(String? username) async {
 
@@ -64,17 +71,18 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> updateUserEvents(List<Map<String, dynamic>> dates, bool isOpted) async {
-
-    isOpted?_optedDates.add(dates.first['date']):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
+    
     print("Dates");
     print(dates.toString());
 
     ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(_user!.data!.empId!, dates,isOpted);
     if(apiResponse.response!= null && apiResponse.response!.statusCode == 200){
-
-       
-
- print(apiResponse);
+      isOpted?_optedDates.add(dates.first['date']):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
+    print(apiResponse);
+    
+    eventsPresent=true;
+    // _isDataPresentController.add(eventsPresent);
+    // print("datastream inside provider $isDataPresentStream");
     notifyListeners();
     }else{
      _isAlreadyScanned = true;
@@ -127,6 +135,12 @@ else{ apiResponse =
       _optedDates =_userEventsModel!.data!.optedDates!;
 
       _notOptedDates = _userEventsModel!.data!.notOpted!;
+
+       
+    eventsPresent=true;
+    // _isDataPresentController.add(eventsPresent);
+    // print("datastream inside provider $isDataPresentStream");
+    isLoading=false;
       print(_optedDates);
       print(_userEventsModel!.data!.notOpted!);
       notifyListeners();

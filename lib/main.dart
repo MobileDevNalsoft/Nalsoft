@@ -58,10 +58,9 @@ void main() async {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteManagement.generateRoute,
-            home: ConnectionBasedNavigator()
-                // di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
-                //     ? UpgradeAlert(child: LoginView())
-                //     : UpgradeAlert(child: EmployeeHomeView())
+            home: di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
+                    ? UpgradeAlert(child: LoginView())
+                    : UpgradeAlert(child: EmployeeHomeView())
         )),
   ));
 }

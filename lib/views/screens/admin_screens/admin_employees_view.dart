@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:meals_management/models/user_model.dart';
+import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
@@ -15,7 +16,7 @@ class EmployeeSearch extends StatefulWidget {
   State<EmployeeSearch> createState() => _EmployeeSearchState();
 }
 
-class _EmployeeSearchState extends State<EmployeeSearch> {
+class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
   SearchController employeeSearchController = SearchController();
 
   final FocusNode _focusNode = FocusNode();
@@ -43,7 +44,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
     var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Column(
           children: [
             Padding(
@@ -115,7 +116,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> {
               builder: (context, provider, child) {
                 return provider.alluserSearchList.isEmpty &&
                             employeeSearchController.text != ''
-                        ? const Expanded(child: Text("No employee found"))
+                        ?  Expanded(child: Text(isConnected()? "No employee found":"No internet connection"))
                         : provider.isSearching
                             ? const Center(
                                 child: SpinKitCircle(
