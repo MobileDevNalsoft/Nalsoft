@@ -129,7 +129,6 @@ class AuthenticationProvider extends ChangeNotifier {
   bool get obscurePassword => _obscurePassword;
   int get getErrTxt => _errTxt;
   int get getPassErrTxt => _passErrTxt;
-  bool get getIsLoading => _isLoading;
   String getUserToken() {
     return authenticationRepo!.getUserToken();
   }
