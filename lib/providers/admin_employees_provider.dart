@@ -26,6 +26,9 @@ class AdminEmployeesProvider extends ChangeNotifier {
   String? get empID => _user!.data!.empId;
   List<dynamic>? get getAllUserList => _alluserList;
 
+   void setAllUserList() {
+     _alluserList = [];
+   }
 
   set isSearching(value) {
     _isSearching = value;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management/mixin/network_handler.dart';
+import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
@@ -7,6 +7,7 @@ import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
+
 
 
 class LoginView extends StatefulWidget {
@@ -24,9 +25,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin{
 
   @override
   Widget build(BuildContext context) {
-    if(!isConnected()){
-      Navigator.pushNamed(context, '/network_error');
-    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(

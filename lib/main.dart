@@ -9,6 +9,7 @@ import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
+import 'package:meals_management/views/screens/connection_based_navigator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
@@ -57,9 +58,10 @@ void main() async {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteManagement.generateRoute,
-            home:
-                di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
-                    ? UpgradeAlert(child: LoginView())
-                    : UpgradeAlert(child: EmployeeHomeView()))),
+            home: ConnectionBasedNavigator()
+                // di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
+                //     ? UpgradeAlert(child: LoginView())
+                //     : UpgradeAlert(child: EmployeeHomeView())
+        )),
   ));
 }

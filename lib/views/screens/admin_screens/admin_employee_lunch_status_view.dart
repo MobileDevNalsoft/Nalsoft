@@ -109,38 +109,45 @@ setState(() {
                                 style: TextStyle(
                                     color: Colors.black54, fontSize: 16),
                               ),
-                              Text(
-                                "Floor",
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 16),
-                              )
                             ],
                           ),
                           const Column(
-                            children: [Text(":"), Text(":"), Text(":")],
+                            children: [Text(" : "), Text(" : ")],
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .getUserData
-                                      .data!.empName.toString(),
-                                  style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                              Text(
-                                   Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .getUserData
-                                      .data!.department.toString(),
-                                  
-                                  style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                              SizedBox(
+                                height: size.height*0.025,
+                                width: size.width*0.45,
+                                child: Text(
+                                    Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .getUserData
+                                        .data!.empName.toString(),
+                                    style: const TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis
+                                    )),
+                              ),
+                              SizedBox(
+                                height: size.height*0.025,
+                                width: size.width*0.45,
+                                child: Text(
+                                     Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                        .getUserData
+                                        .data!.department.toString(),
+
+                                    style: const TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        overflow: TextOverflow.ellipsis
+                                    )),
+                              ),
                              
                             ],
                           )

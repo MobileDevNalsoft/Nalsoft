@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management/mixin/network_handler.dart';
+import 'package:meals_management/network_handler_mixin/network_handler.dart';
 
 class NetworkError extends StatefulWidget{
 
@@ -7,15 +7,13 @@ class NetworkError extends StatefulWidget{
   State<NetworkError> createState() => _NetworkErrorState();
 }
 
-class _NetworkErrorState extends State<NetworkError> with ConnectivityMixin{
+class _NetworkErrorState extends State<NetworkError>{
   @override
   Widget build(BuildContext context){
-    if(isConnected()){
-      Navigator.pop(context);
-    }
+
     return Scaffold(
       body: Center(
-        child: Image.asset('assets/images/no_internet.png'),
+        child: Image.asset('assets/images/no_internet.png', fit: BoxFit.cover),
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management/mixin/network_handler.dart';
+import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_events_model.dart';
 import 'package:meals_management/models/user_model.dart';

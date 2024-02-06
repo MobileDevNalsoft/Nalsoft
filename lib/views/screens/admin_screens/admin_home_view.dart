@@ -42,6 +42,7 @@ class _AdminHomePageState extends State<AdminHomePage>  {
   void initState() {
     super.initState();
    sharedPreferences = GetIt.instance.get<SharedPreferences>();
+    Provider.of<AdminEmployeesProvider>(context, listen: false).setAllUserList();
   }
 
   @override
