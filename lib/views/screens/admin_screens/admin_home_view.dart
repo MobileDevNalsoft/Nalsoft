@@ -83,7 +83,7 @@ class _AdminHomePageState extends State<AdminHomePage>  {
                                       height: size.height*0.1,
                                       width: size.width*0.6,
                                       child: Text(
-                                        'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
+                                        'Hi,\n${sharedPreferences.getString('employee_name')}',
                                         style:  TextStyle(
                                             fontSize: size.width*0.057 ,
                                             fontWeight: FontWeight.bold,
@@ -91,11 +91,7 @@ class _AdminHomePageState extends State<AdminHomePage>  {
                                       ),
                                     ),
                                     const Expanded(child: SizedBox()),
-                                    Provider.of<UserDataProvider>(context,
-                                                    listen: false)
-                                                .getUserData
-                                                .data!
-                                                .userType ==
+                                    sharedPreferences.getString('user_type') ==
                                             'E'
                                         ? Switch(
                                             value: true,

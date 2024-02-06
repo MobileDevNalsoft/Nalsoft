@@ -96,7 +96,8 @@ class CustomCalendarCard extends StatelessWidget {
                                                   !provider
                                                       .getNotOpted.map((e) => e.date).toList()
                                                       .contains(details.date.toString().substring(0, 10))) ||
-                                              ((details.date.day < now.day && details.date.month <= now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOpted.map((e) => e.date).toList().contains(details.date.toString().substring(0, 10))))
+                                              ((details.date.day < now.day && details.date.month == now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOpted.map((e) => e.date).toList().contains(details.date.toString().substring(0, 10)))
+                      || ((details.date.month < now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOpted.map((e) => e.date).toList().contains(details.date.toString().substring(0, 10))))
                                           ? Colors.grey.shade300
                                           : Colors.white30;
                     } else {
@@ -108,7 +109,6 @@ class CustomCalendarCard extends StatelessWidget {
                               ? Colors.blueGrey.shade200
                               : Colors.white30;
                     }
-
                     return Padding(
                       padding: const EdgeInsets.all(2),
                       child: Container(

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
@@ -62,18 +63,20 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
 
   Future<void> initData() async {
     print("did init");
+    _isLoading = true;
     try {
-      await Provider.of<UserDataProvider>(context, listen: false)
-          .getUserinfo('');
+      if(!sharedPreferences.containsKey('employee_name')){
+        await Provider.of<UserDataProvider>(context, listen: false)
+            .getUserinfo('');
+        print('user data got');
+      }
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserEventsData();
       await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
+      Provider.of<UserDataProvider>(context, listen: false).setConnected(isConnected());
     } finally {
       setState(() {
-        if (Provider.of<UserDataProvider>(context, listen: false)
-                .getUserData
-                .data!
-                .userType ==
+        if (sharedPreferences.getString('user_type') == 
             'V') {
           DateTime lastResetDate = sharedPreferences
                   .containsKey('lastResetDate')
@@ -117,15 +120,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
       aspectRatio: size.height/size.width,
       child: SafeArea(
           child: Scaffold(
-        body: _isLoading
-            ? const Center(
-                child: SpinKitCircle(
-                    color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
-              )
-            : Provider.of<UserDataProvider>(context, listen: false)
-                        .getUserData
-                        .data!
-                        .userType ==
+        body: sharedPreferences.getString('user_type') ==
                     'V'
                 ? Center(
                     child: Column(
@@ -360,7 +355,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                       height: size.height*0.1,
                                       width: size.width*0.6,
                                       child: Text(
-                                        'Hi,\n${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}',
+                                        'Hi,\n${sharedPreferences.getString('employee_name') ?? ' '}',
                                         style:  TextStyle(
                                             fontSize: size.width*0.057 ,
                                             fontWeight: FontWeight.bold,
@@ -368,11 +363,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                                       ),
                                     ),
                                     const Expanded(child: SizedBox()),
-                                    Provider.of<UserDataProvider>(context,
-                                                    listen: false)
-                                                .getUserData
-                                                .data!
-                                                .userType ==
+                                    sharedPreferences.getString('user_type') ==
                                             'E'
                                         ? Switch(
                                             value: false,
@@ -416,64 +407,147 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                           SizedBox(
                             height: size.height * 0.05,
                           ),
-                          CustomCalendarCard(
-                            controller: datesController,
-                            forAdmin: false,
-                            selectionMode: DateRangePickerSelectionMode.single,
-                            selectibleDayPredicate: (date) {
-                              return date.toString().substring(0, 10) ==
-                                      now.toString().substring(0, 10) &&
-                                  ![DateTime.saturday, DateTime.sunday]
-                                      .contains(date.weekday) &&
-                                  !Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .holidays
-                                      .contains(
-                                          date.toString().substring(0, 10)) &&
-                                  !Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .getNotOpted
-                                      .map((e) => e.date)
-                                      .toList()
-                                      .contains(
-                                          date.toString().substring(0, 10)) &&
-                                  !Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .getOpted
-                                      .contains(date.toString().substring(0, 10));
-                            },
-                            onSubmit: (date) {
-                              if (date == null) {
-                                CustomSnackBar.showSnackBar(
-                                    context,
-                                    'Please select today'
-                                    's date',
-                                    Colors.red);
-                              } else if (
-                                  // (now.hour > 14 ||
-                                  //   (now.hour == 14 &&
-                                  //       now.minute > 30))
-                                  false) {
-                                CustomSnackBar.showSnackBar(context,
-                                    "QR is disabled after 2.30pm", Colors.red);
-                              } else if (
-                                  // (now.hour < 12 ||
-                                  //   (now.hour == 12 &&
-                                  //       now.minute < 30))
-                                  false) {
-                                CustomSnackBar.showSnackBar(context,
-                                    "Wait till 12.30pm to get QR", Colors.red);
-                              } else {
-                                Navigator.pushNamed(
-                                    context, RouteManagement.previewPage);
-                              }
-                            },
-                            onCancel: () {
-                              datesController.selectedDate = null;
-                            },
-                            confirmText: 'Ok',
-                            cancelText: 'Cancel',
-                          ),
+                          if(_isLoading)
+                            SizedBox(
+                              width: size.width * 0.95,
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                                elevation: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 18.0, top: 4),
+                                      child: Text('Lunch Calendar'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 15.0, left: 18),
+                                      child: Text(
+                                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                        style: const TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    SizedBox(
+                                      height: size.height*0.37,
+                                      child: Center( child: SpinKitCircle(
+                                          color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
+
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if(!_isLoading && Provider.of<UserDataProvider>(context, listen: false).getConnected)
+                            CustomCalendarCard(
+                              controller: datesController,
+                              forAdmin: false,
+                              selectionMode: DateRangePickerSelectionMode.single,
+                              selectibleDayPredicate: (date) {
+                                return date.toString().substring(0, 10) ==
+                                    now.toString().substring(0, 10) &&
+                                    ![DateTime.saturday, DateTime.sunday]
+                                        .contains(date.weekday) &&
+                                    !Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                        .holidays
+                                        .contains(
+                                        date.toString().substring(0, 10)) &&
+                                    !Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                        .getNotOpted
+                                        .map((e) => e.date)
+                                        .toList()
+                                        .contains(
+                                        date.toString().substring(0, 10)) &&
+                                    !Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                        .getOpted
+                                        .contains(date.toString().substring(0, 10));
+                              },
+                              onSubmit: (date) {
+                                if (date == null) {
+                                  CustomSnackBar.showSnackBar(
+                                      context,
+                                      'Please select today'
+                                          's date',
+                                      Colors.red);
+                                } else if (
+                                // (now.hour > 14 ||
+                                //   (now.hour == 14 &&
+                                //       now.minute > 30))
+                                false) {
+                                  CustomSnackBar.showSnackBar(context,
+                                      "QR is disabled after 2.30pm", Colors.red);
+                                } else if (
+                                // (now.hour < 12 ||
+                                //   (now.hour == 12 &&
+                                //       now.minute < 30))
+                                false) {
+                                  CustomSnackBar.showSnackBar(context,
+                                      "Wait till 12.30pm to get QR", Colors.red);
+                                } else {
+                                  Navigator.pushNamed(
+                                      context, RouteManagement.previewPage);
+                                }
+                              },
+                              onCancel: () {
+                                datesController.selectedDate = null;
+                              },
+                              confirmText: 'Ok',
+                              cancelText: 'Cancel',
+                            ),
+                          if(!_isLoading && !Provider.of<UserDataProvider>(context, listen: false).getConnected)
+                            SizedBox(
+                              width: size.width * 0.95,
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                                elevation: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 18.0, top: 4),
+                                      child: Text('Lunch Calendar'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 15.0, left: 18),
+                                      child: Text(
+                                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                        style: const TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    SizedBox(
+                                      height: size.height*0.37,
+                                      child: Center( child: IconButton(
+                                        icon: Icon(Icons.refresh),
+                                        onPressed: () {
+                                          Provider.of<UserDataProvider>(context, listen: false).setConnected(isConnected());
+                                          if(!Provider.of<UserDataProvider>(context, listen: false).getConnected){
+                                            CustomSnackBar.showSnackBar(context, 'No Internet Connection', Colors.red);
+                                          }else{
+                                            setState(() {
+                                              initData();
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           const CustomLegend(),
                           Image.asset('assets/images/food.png'),
                         ],
@@ -578,14 +652,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>  with ConnectivityM
                           ],
                         ),
                       ),
-                      if(!isConnected())
-                        Positioned(
-                          top: (size.height * 0.9),
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: NoInternetSnackbar(message: 'No Internet Connection', backgroundColor: Colors.red),
-                        )
+
                     ],
                   ),
       )),

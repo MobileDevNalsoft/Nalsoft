@@ -5,6 +5,9 @@ import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../inits/di_container.dart';
 
 // ignore: must_be_immutable
 class Preview extends StatefulWidget {
@@ -15,6 +18,8 @@ class Preview extends StatefulWidget {
 }
 
 class _PreviewState extends State<Preview> {
+
+  final sharedPreferences = sl.get<SharedPreferences>();
 
   @override
   void initState() {
@@ -85,7 +90,7 @@ class _PreviewState extends State<Preview> {
                       ),
                       QrImageView(
                         data:
-                            '{"uid":"${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empId}","date":"${DateTime.now().toString().substring(0, 10)}"}',//${DateTime.now().toString().substring(0, 10)}
+                            '{"uid":"${sharedPreferences.getString('employee_id')}","date":"${DateTime.now().toString().substring(0, 10)}"}',//${DateTime.now().toString().substring(0, 10)}
                         size: 200,
                       ),
                       SizedBox(

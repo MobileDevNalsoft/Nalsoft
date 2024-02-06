@@ -35,7 +35,7 @@ Future<void> init() async {
 
   sl.registerFactory(() => AuthenticationProvider(authenticationRepo: sl()));
   sl.registerFactory(
-      () => UserDataProvider(userRepo: sl(), userEventsRepo: sl()));
+      () => UserDataProvider(userRepo: sl(), userEventsRepo: sl(), sharedPreferences: sl()));
 
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
