@@ -32,7 +32,7 @@ class UserDataProvider extends ChangeNotifier {
   // getters
   List<dynamic> get holidays => _holidays;
   bool get isSearching => _isSearching;
-  // UserModel get getUserData => _user!;
+  UserModel get getUserData => _user!;
   List<Dates> get getOpted => _optedDates;
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;

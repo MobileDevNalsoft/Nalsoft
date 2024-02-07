@@ -14,7 +14,6 @@ import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
-import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
 
@@ -35,7 +34,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus> with Connecti
 
   bool _isLoading = true;
 
-  final sharedPreferences = sl.get<SharedPreferences>();
+
 
   @override
   void initState() {
@@ -134,7 +133,7 @@ setState(() {
                                 height: size.height*0.025,
                                 width: size.width*0.45,
                                 child: Text(
-                                    sharedPreferences.getString('employee_name')!,
+                                    Provider.of<UserDataProvider>(context,listen: false).getUserData.data!.empName!,
                                     style: const TextStyle(
                                         color: Colors.black87,
                                         fontSize: 16,
@@ -146,7 +145,7 @@ setState(() {
                                 height: size.height*0.025,
                                 width: size.width*0.45,
                                 child: Text(
-                                    sharedPreferences.getString('employee_department')!,
+                                  Provider.of<UserDataProvider>(context,listen: false).getUserData.data!.department!,
 
                                     style: const TextStyle(
                                         color: Colors.black87,
@@ -166,7 +165,7 @@ setState(() {
                     ),
                      Consumer<UserDataProvider>(
                         builder: (context, provider, child) {
-                          if (provider.isLoading) {
+                          if (provider.isLoading && isConnected()) {
                             return SizedBox(
                               width: size.width * 0.95,
                               child: Card(
@@ -338,12 +337,12 @@ setState(() {
       style.wrapText = true;
 
     //   // Set the worksheet name
-      sheet.name = '${sharedPreferences.getString('employee_name')}' 's Meals data';
+      sheet.name = '${Provider.of<UserDataProvider>(context,listen: false).getUserData.data!.empName}' 's Meals data';
 
     //   // Append headers
       sheet
           .getRangeByIndex(1, 1)
-          .setText('${sharedPreferences.getString('employee_name')}(${sharedPreferences.getString('employee_id')})');
+          .setText('${Provider.of<UserDataProvider>(context,listen: false).getUserData.data!.empId}(${Provider.of<UserDataProvider>(context,listen: false).getUserData.data!.empId})');
 
       sheet.getRangeByIndex(3, 1).setText('Date');
       sheet.getRangeByIndex(3, 2).setText('Status');
@@ -403,7 +402,7 @@ setState(() {
         final List<int> bytes = workbook.saveAsStream();
 
         final path =
-            '${dir!.path}/${sharedPreferences.getString('employee_name')}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
+            '${dir!.path}/${Provider.of<UserDataProvider>(context,listen: false).getUserData.data!.empName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
         final File file = File(path);
         await file.writeAsBytes(bytes);
 
