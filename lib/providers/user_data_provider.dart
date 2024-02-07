@@ -74,12 +74,12 @@ class UserDataProvider extends ChangeNotifier {
     
     print("Dates");
     print(dates.toString());
-
-    ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(_user!.data!.empId!, dates,isOpted);
+    isLoading = true;
+    ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(sharedPreferences!.getString('employee_id')!, dates,isOpted);
     if(apiResponse.response!= null && apiResponse.response!.statusCode == 200){
       isOpted?_optedDates.add(dates.first['date']):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
     print(apiResponse);
-    
+    isLoading = false;
     eventsPresent=true;
     // _isDataPresentController.add(eventsPresent);
     // print("datastream inside provider $isDataPresentStream");
@@ -96,18 +96,6 @@ class UserDataProvider extends ChangeNotifier {
     _isAlreadyScanned = isscanned;
     notifyListeners();
   }
-
-  void setOptedDates({DateTime? date}) {
-    if (date == null) {
-      // _optedDates = _user!.opted;
-      notifyListeners();
-      // we will get this from the model after API method 1 is a success
-    } else {
-      _optedDates.add(Dates.fromJson({"date":date.toString().substring(0, 10),"info":"1234567890"}));
-      notifyListeners();
-    }
-  }
-
 
   Future<void> getHolidays() async {
       ApiResponse apiResponse =
@@ -132,7 +120,7 @@ else{ apiResponse =
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       _userEventsModel = UserEventsModel.fromJson(apiResponse.response!.data);
-      _optedDates =_userEventsModel!.data!.optedDates!;
+      _optedDates = _userEventsModel!.data!.optedDates!;
 
       _notOptedDates = _userEventsModel!.data!.notOpted!;
 
@@ -149,17 +137,18 @@ else{ apiResponse =
   }
 
 Future<void> deleteUserEvents(List dates) async {
-    dates.forEach((element) {
-    print(element);
-    _notOptedDates.removeWhere((date) => date.date==element["date"]);
-    });
+    isLoading = true;
     print(_notOptedDates);
     ApiResponse apiResponse =
-        await userEventsRepo!.deleteUserEvents(_user!.data!.empId!,dates);
+        await userEventsRepo!.deleteUserEvents(sharedPreferences!.getString('employee_id')!,dates);
     print(apiResponse.response!.data);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
-          print(apiResponse.response!.data); 
+          print(apiResponse.response!.data);
+          dates.forEach((element) {
+            _notOptedDates.removeWhere((date) => date.date==element["date"]);
+          });
+          isLoading = false;
       notifyListeners();
     }
     }
