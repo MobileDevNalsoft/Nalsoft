@@ -188,68 +188,77 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                             qrController = controller;
                             controller.scannedDataStream.listen((data) async {
                               var qrData = jsonDecode(data.code!);
-                              print(" Qr Data scanned${qrData.toString()}");
-                              if (qrData['date'] ==
-                                  now.toString().substring(0, 10)) {
-                                Provider.of<UserDataProvider>(context,
+                              Provider.of<UserDataProvider>(context,
+                                  listen: false)
+                                  .setConnected(isConnected());
+                              if(Provider.of<UserDataProvider>(context,
+                                  listen: false)
+                                  .getConnected){
+                                print(" Qr Data scanned${qrData.toString()}");
+                                if (qrData['date'] ==
+                                    now.toString().substring(0, 10)) {
+                                  Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                      .updateUserEvents([
+                                    Dates(
+                                        date: qrData['date']!,
+                                        info: now.millisecondsSinceEpoch
+                                            .toString())
+                                        .toJson()
+                                  ], true).then((value) {
+                                    if (Provider.of<UserDataProvider>(context,
                                         listen: false)
-                                    .updateUserEvents([
-                                  Dates(
-                                          date: qrData['date']!,
-                                          info: now.millisecondsSinceEpoch
-                                              .toString())
-                                      .toJson()
-                                ], true).then((value) {
-                                  if (Provider.of<UserDataProvider>(context,
-                                          listen: false)
-                                      .getIsAlreadyScanned) {
-                                    if (!_hasShownSnackbar) {
-                                      setState(() {
-                                        _showQR = false;
-                                        _hasShownSnackbar = true;
-                                        CustomSnackBar.showSnackBar(context,
-                                            'QR already scanned', Colors.red);
-                                      });
+                                        .getIsAlreadyScanned) {
+                                      if (!_hasShownSnackbar) {
+                                        setState(() {
+                                          _showQR = false;
+                                          _hasShownSnackbar = true;
+                                          CustomSnackBar.showSnackBar(context,
+                                              'QR already scanned', Colors.red);
+                                        });
 
-                                      Provider.of<UserDataProvider>(context,
-                                              listen: false)
-                                          .setScanned(false);
+                                        Provider.of<UserDataProvider>(context,
+                                            listen: false)
+                                            .setScanned(false);
+                                        controller.pauseCamera();
+                                      }
+                                    } else {
+                                      FlutterBeep.beep();
+                                      if (!_isIncremented) {
+                                        // ignore: use_build_context_synchronously
+                                        Provider.of<HomeStatusProvider>(context,
+                                            listen: false)
+                                            .incrEmpCount();
+                                        sharedPreferences.setInt(
+                                            'employeeCount',
+                                            // ignore: use_build_context_synchronously
+                                            Provider.of<HomeStatusProvider>(
+                                                context,
+                                                listen: false)
+                                                .getEmployeeCount!);
+                                        _isIncremented = true;
+                                      }
                                       controller.pauseCamera();
+                                      Future.delayed(const Duration(seconds: 2),
+                                              () {
+                                            controller.resumeCamera();
+                                            _isIncremented = false;
+                                          });
                                     }
-                                  } else {
-                                    FlutterBeep.beep();
-                                    if (!_isIncremented) {
-                                      // ignore: use_build_context_synchronously
-                                      Provider.of<HomeStatusProvider>(context,
-                                              listen: false)
-                                          .incrEmpCount();
-                                      sharedPreferences.setInt(
-                                          'employeeCount',
-                                          // ignore: use_build_context_synchronously
-                                          Provider.of<HomeStatusProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .getEmployeeCount!);
-                                      _isIncremented = true;
-                                    }
-                                    controller.pauseCamera();
-                                    Future.delayed(const Duration(seconds: 2),
-                                        () {
-                                      controller.resumeCamera();
-                                      _isIncremented = false;
-                                    });
-                                  }
-                                });
-                              } else {
-                                if (!_hasShownSnackbar) {
-                                  setState(() {
-                                    _showQR = false;
-                                    _hasShownSnackbar = true;
-                                    CustomSnackBar.showSnackBar(
-                                        context, 'Invalid QR', Colors.red);
                                   });
-                                  controller.pauseCamera();
+                                } else {
+                                  if (!_hasShownSnackbar) {
+                                    setState(() {
+                                      _showQR = false;
+                                      _hasShownSnackbar = true;
+                                      CustomSnackBar.showSnackBar(
+                                          context, 'Invalid QR', Colors.red);
+                                    });
+                                    controller.pauseCamera();
+                                  }
                                 }
+                              }else{
+                                CustomSnackBar.showSnackBar(context, 'No Internet', Colors.red);
                               }
                             });
                           },

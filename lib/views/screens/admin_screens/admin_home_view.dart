@@ -272,6 +272,12 @@ if (Provider.of<UserDataProvider>(context,
     excel.Style style = workbook.styles.add('style');
 
     style.wrapText = true;
+    style.borders.all.lineStyle = excel.LineStyle.double;
+    sheet.getRangeByIndex(2, 1).builtInStyle = excel.BuiltInStyles.heading4;
+    sheet.getRangeByIndex(2, 2).builtInStyle = excel.BuiltInStyles.heading4;
+    sheet.getRangeByIndex(2, 3).builtInStyle = excel.BuiltInStyles.heading4;
+    sheet.getRangeByIndex(2, 4).builtInStyle = excel.BuiltInStyles.heading4;
+
 
     // Set the worksheet name
     sheet.name = 'Today\'s Meals opted employees';
@@ -287,25 +293,6 @@ if (Provider.of<UserDataProvider>(context,
     int rowIndex = 3;
     for (var data in empData) {
       Data userdata = data;
-      // if (data['opted'].contains(date.toString().substring(0, 10))) {
-      //   sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
-      //   sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
-      //   sheet.getRangeByIndex(rowIndex, 3).setText('Opted');
-      // } else if (data['notOpted']
-      //     .keys
-      //     .contains(date.toString().substring(0, 10))) {
-      //   sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
-      //   sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
-      //   sheet.getRangeByIndex(rowIndex, 3).setText('Not Opted');
-      //   sheet
-      //       .getRangeByIndex(rowIndex, 4)
-      //       .setText(data['notOpted'][date.toString().substring(0, 10)]);
-      // } else {
-      //   sheet.getRangeByIndex(rowIndex, 1).setText(data['employee_id']);
-      //   sheet.getRangeByIndex(rowIndex, 2).setText(data['username']);
-      //   sheet.getRangeByIndex(rowIndex, 3).setText('No Status');
-      // }
-      
       sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
       sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
       sheet.getRangeByIndex(rowIndex, 3).setText(userdata.status);
