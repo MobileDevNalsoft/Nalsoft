@@ -353,6 +353,9 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     sheet.getRangeByIndex(3, 1).setText('Date');
     sheet.getRangeByIndex(3, 2).setText('Status');
     sheet.getRangeByIndex(3, 3).setText('Info');
+    sheet.getRangeByIndex(3, 1).builtInStyle = excel.BuiltInStyles.heading4;
+    sheet.getRangeByIndex(3, 2).builtInStyle = excel.BuiltInStyles.heading4;
+    sheet.getRangeByIndex(3, 3).builtInStyle = excel.BuiltInStyles.heading4;
 
     List<DateTime> rangeDates = List.generate(
         now.difference(DateTime(now.year, now.month, 1)).inDays + 1,

@@ -25,7 +25,8 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class EmployeeHomeView extends StatefulWidget {
-  const EmployeeHomeView({super.key});
+  Function? initData;
+  EmployeeHomeView({super.key, this.initData});
 
   @override
   State<EmployeeHomeView> createState() => _EmployeeHomeViewState();
@@ -55,59 +56,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
   bool _isIncremented = false;
   // bool _isLoading = true;
   static int cnt = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    initData();
-  }
-
-  Future<void> initData() async {
-    print("did init${cnt++}");
-
-    Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
-    try {
-      if (!sharedPreferences.containsKey('employee_name')) {
-        await Provider.of<UserDataProvider>(context, listen: false)
-            .getUserinfo('');
-        print('user data got');
-      }
-      await Provider.of<UserDataProvider>(context, listen: false)
-          .getUserEventsData();
-      await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
-
-      Provider.of<UserDataProvider>(context, listen: false)
-          .setConnected(isConnected());
-    } finally {
-      setState(() {
-        if (sharedPreferences.getString('user_type') == 'V') {
-          DateTime lastResetDate = sharedPreferences
-                  .containsKey('lastResetDate')
-              ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
-              : DateTime.now();
-
-          if (!sharedPreferences.containsKey('lastResetDate')) {
-            sharedPreferences.setString('lastResetDate', now.toString());
-            sharedPreferences.setInt('employeeCount', 0);
-            Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(
-                    sharedPreferences.getInt('employeeCount') ?? 0);
-          } else if (now.day != lastResetDate.day) {
-            sharedPreferences.setString('lastResetDate', now.toString());
-            sharedPreferences.setInt('employeeCount', 0);
-            Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(
-                    sharedPreferences.getInt('employeeCount') ?? 0);
-          } else {
-            Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(
-                    sharedPreferences.getInt('employeeCount') ?? 0);
-          }
-        }
-        Provider.of<UserDataProvider>(context, listen: false).isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -578,7 +526,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                                         listen: false)
                                                     .setConnected(
                                                         isConnected());
-                                                initData();
+                                                widget.initData!;
                                                 Provider.of<UserDataProvider>(
                                                         context,
                                                         listen: false)
@@ -687,7 +635,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               onPressed: () {
                                 Navigator.pushNamed(context,
                                     RouteManagement.updateUpcomingStatus,
-                                    arguments: {'initData': initData});
+                                    arguments: {'initData': widget.initData});
                               },
                             ),
                             size: size),
