@@ -27,7 +27,7 @@ class UserDataProvider extends ChangeNotifier {
   bool _isSearching = false;
   bool _connected = true;
   bool eventsPresent = false;
-  // StreamController<bool> _isDataPresentController =  StreamController<bool>.broadcast();
+  bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
   // getters
   List<dynamic> get holidays => _holidays;
@@ -126,6 +126,7 @@ else{ apiResponse =
 
        
     eventsPresent=true;
+    isAdminEmployeeDataPresent=true;
     // _isDataPresentController.add(eventsPresent);
     // print("datastream inside provider $isDataPresentStream");
     isLoading=false;
