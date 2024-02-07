@@ -343,11 +343,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                   TextFormField(
                     focusNode: _focusNode,
                     controller: notOptController,
-                    keyboardType: TextInputType.text,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(
-                          r'[^\d]')), // Allows any character except digits
-                    ],
                     decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         hintText: 'reason for not opting...',
@@ -428,12 +423,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                 }
                               }
                             } else {
-                              Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .setConnected(isConnected());
-                              if (Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .getConnected) {
                                 List<DateTime> datesList =
                                     dates as List<DateTime>;
                                 if (datesList
@@ -450,6 +439,12 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                       Colors.red);
                                 } else {
                                   Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                      .setConnected(isConnected());
+                                  if (Provider.of<UserDataProvider>(context,
+                                      listen: false)
+                                      .getConnected) {
+                                  Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .updateUserEvents(
                                           dates
@@ -462,10 +457,10 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                                   .toJson())
                                               .toList(),
                                           false);
-                                }
-                              } else {
-                                CustomSnackBar.showSnackBar(
-                                    context, "No internet", Colors.red);
+                                }else {
+                                    CustomSnackBar.showSnackBar(
+                                        context, "No internet", Colors.red);
+                                  }
                               }
                             }
                           }
@@ -515,11 +510,22 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       CustomButton(
                         onPressed: () {
                           print(dates);
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .deleteUserEvents(dates
-                                  .map((e) =>
-                                      {"date": e.toString().substring(0, 10)})
-                                  .toList());
+                          Provider.of<UserDataProvider>(context,
+                              listen: false)
+                              .setConnected(isConnected());
+                          if(Provider.of<UserDataProvider>(context,
+                              listen: false)
+                              .getConnected){
+                            Provider.of<UserDataProvider>(context, listen: false)
+                                .deleteUserEvents(dates
+                                .map((e) =>
+                            {"date": e.toString().substring(0, 10)})
+                                .toList());
+                          }else{
+                            CustomSnackBar.showSnackBar(
+                                context, "No internet", Colors.red);
+                          }
+
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;
