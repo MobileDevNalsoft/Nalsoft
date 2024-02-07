@@ -45,8 +45,8 @@ class RouteManagement {
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) {
             final args = settings.arguments as Map<String, dynamic>;
-            final intiData=args["initData"] as Function;
-        return UpdateLunchStatus(initData: intiData,);});
+            final initData=args["initData"] as Function;
+        return UpdateLunchStatus(initData: initData,);});
       case '/employeeSearch':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/generateNotification':
