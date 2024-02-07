@@ -6,6 +6,7 @@ import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
+import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 
 import 'package:provider/provider.dart';
 
@@ -91,10 +92,7 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
                                 fontSize: 14)),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.search),
-                    )
+                   
                   ],
                 ),
               ),
@@ -137,14 +135,14 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
                                                 elevation: 3,
                                                 child: TextButton(
                                                   onPressed: () {
-                                                    Navigator.pushNamed(
+                                                   isConnected()? Navigator.pushNamed(
                                                         context,
                                                         RouteManagement
                                                             .employeeLunchStatus,
                                                         arguments: {
                                                           'username': (item as Data).userName.toString(),
                                                           'empid':(item as Data).empId.toString()
-                                                        });
+                                                        }):CustomSnackBar.showSnackBar(context, "No internet", Colors.red);
                                                   },
                                                   style: TextButton.styleFrom(
                                                       alignment:
