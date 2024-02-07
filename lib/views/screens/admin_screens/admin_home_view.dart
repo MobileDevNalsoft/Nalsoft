@@ -204,7 +204,8 @@ if (Provider.of<UserDataProvider>(context,
                     onSubmit: (date) {
                       if (date != null) {
                         date = date as DateTime;
-                        sendMail(date, context);
+                        isConnected()? sendMail(date,context):CustomSnackBar.showSnackBar(context, "No internet", Colors.red);
+
                       } else {
                         CustomSnackBar.showSnackBar(
                             context, 'please select a date', Colors.red);

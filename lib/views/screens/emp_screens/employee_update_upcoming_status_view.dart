@@ -500,7 +500,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Do you want to remove this date\nfrom NotOpted ?'),
+                  Text('Do you want to remove from \nNotOpted ?'),
                   const SizedBox(
                     height: 12,
                   ),

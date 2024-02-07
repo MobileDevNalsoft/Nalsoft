@@ -289,7 +289,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                             },
 
                             //TODO
-                            onSubmit: (p0) => sendMail(context),
+                            onSubmit: (p0) => isConnected()? sendMail(context):CustomSnackBar.showSnackBar(context, "No internet", Colors.red),
 
                             onCancel: () {
                               datesController.selectedDate = null;
