@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/admin_generate_notification_provider.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
@@ -11,7 +12,8 @@ class GenerateNotification extends StatefulWidget {
   State<GenerateNotification> createState() => _GenerateNotificationState();
 }
 
-class _GenerateNotificationState extends State<GenerateNotification> {
+class _GenerateNotificationState extends State<GenerateNotification>
+    with ConnectivityMixin {
   TextEditingController titleController = TextEditingController();
 
   TextEditingController descriptionController = TextEditingController();
@@ -63,47 +65,52 @@ class _GenerateNotificationState extends State<GenerateNotification> {
           ),
           SizedBox(
             width: size.width * 0.35,
-            child:
-                Provider.of<GenerateNotificationProvider>(context, listen: true)
-                        .isLoading
-                    ? const SpinKitCircle(
-                        color: Color.fromARGB(255, 185, 147, 255),
-                      )
-                    : CustomButton(
-                        color: const MaterialStatePropertyAll(Colors.blue),
-                        onPressed: () async {
-                          FocusScope.of(context).requestFocus(focusNode);
-                          if (titleController.text.isEmpty) {
+            child: Provider.of<GenerateNotificationProvider>(context,
+                        listen: true)
+                    .isLoading
+                ? const SpinKitCircle(
+                    color: Color.fromARGB(255, 185, 147, 255),
+                  )
+                : CustomButton(
+                    color: const MaterialStatePropertyAll(Colors.blue),
+                    onPressed: () async {
+                      if (isConnected()) {
+                        FocusScope.of(context).requestFocus(focusNode);
+                        if (titleController.text.isEmpty) {
+                          CustomSnackBar.showSnackBar(
+                              context, "Title cannot be empty", Colors.red);
+                        } else {
+                          bool result =
+                              await Provider.of<GenerateNotificationProvider>(
+                                      context,
+                                      listen: false)
+                                  .sendNotification(titleController.text,
+                                      descriptionController.text);
+                          if (result) {
                             CustomSnackBar.showSnackBar(
-                                context, "Title cannot be empty", Colors.red);
+                                context, "Successfully sent", Colors.green);
                           } else {
-                            bool result =
-                                await Provider.of<GenerateNotificationProvider>(
-                                        context,
-                                        listen: false)
-                                    .sendNotification(titleController.text,
-                                        descriptionController.text);
-                            if (result) {
-                              CustomSnackBar.showSnackBar(
-                                  context, "Successfully sent", Colors.green);
-                            } else {
-                              CustomSnackBar.showSnackBar(context,
-                                  "Could not send notification", Colors.red);
-                            }
+                            CustomSnackBar.showSnackBar(context,
+                                "Could not send notification", Colors.red);
                           }
-                        },
-                        child: const Row(mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.published_with_changes,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              " Publish",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        )),
+                        }
+                      } else
+                        CustomSnackBar.showSnackBar(
+                            context, "No internet connection", Colors.red);
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.published_with_changes,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          " Publish",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    )),
           )
         ],
       ),

@@ -17,6 +17,7 @@ class GenerateNotificationProvider extends ChangeNotifier {
   Future<bool> sendNotification(String title, String description) async {
     isLoading=true;
     notifyListeners();
+    print("isLoading$isLoading");
     _title = title;
     _description = description.length == 0 ? "" : description;
 
@@ -28,7 +29,12 @@ class GenerateNotificationProvider extends ChangeNotifier {
     };
 
     String accessToken = await notificationRepo.getToken();
-  print(accessToken);
+     print(accessToken);
+     if( accessToken==''){
+     isLoading=false;
+        notifyListeners();
+      return false;
+     }
     try {
       final url = Uri.parse(
           "https://fcm.googleapis.com/v1/projects/meals-management-app-37e6a/messages:send");
@@ -42,7 +48,7 @@ class GenerateNotificationProvider extends ChangeNotifier {
         headers: headers,
         body: jsonEncode(notificationPayload),
       );
-      
+      print("response status code${response.statusCode}");
       if (response.statusCode == 200) {
         print("Notification sent successfully!");
         isLoading=false;
