@@ -97,7 +97,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin  {
                                         ? Switch(
                                             value: true,
                                             onChanged: (value) {
-                                              Navigator.pushReplacementNamed(
+                                              Navigator.pop(
                                                   context,
                                                   RouteManagement.employeeHomePage);
                                             },

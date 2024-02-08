@@ -326,7 +326,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     ? Switch(
                                         value: false,
                                         onChanged: (value) {
-                                          Navigator.pushReplacementNamed(
+                                          Navigator.pushNamed(
                                               context,
                                               RouteManagement.adminHomePage);
                                         },
