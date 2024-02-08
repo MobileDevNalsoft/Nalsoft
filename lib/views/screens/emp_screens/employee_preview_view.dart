@@ -41,8 +41,8 @@ class _PreviewState extends State<Preview> {
               Icons.arrow_back,
             ),
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, RouteManagement.employeeHomePage, (route) => false);
+              Navigator.pop(
+                  context);
             },
           ),
         ),

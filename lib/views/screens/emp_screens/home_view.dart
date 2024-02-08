@@ -25,7 +25,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class EmployeeHomeView extends StatefulWidget {
-  Function? initData;
+  late Function? initData;
   EmployeeHomeView({super.key, this.initData});
 
   @override
@@ -55,7 +55,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
   // bool _isLoading = true;
-  static int cnt = 0;
+
 
   @override
   Widget build(BuildContext context) {

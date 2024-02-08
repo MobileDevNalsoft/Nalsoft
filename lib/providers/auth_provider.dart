@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
+import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
@@ -94,7 +95,7 @@ class AuthenticationProvider extends ChangeNotifier {
         authenticationRepo!.saveUserNameandPassword(username, password);
         print("token $authToken");
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => EmployeeHomeView()));
+            MaterialPageRoute(builder: (context) => DataLoader()));
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successfull'),
