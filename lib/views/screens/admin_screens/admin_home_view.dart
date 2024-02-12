@@ -190,6 +190,7 @@ if (Provider.of<UserDataProvider>(context,
                       style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100))),
                   CustomCalendarCard(
                     forAdmin: true,
+                    isUDP: true,
                     controller: datesController,
                     selectionMode: DateRangePickerSelectionMode.single,
                     selectibleDayPredicate: (date) {

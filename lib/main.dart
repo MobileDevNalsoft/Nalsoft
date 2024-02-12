@@ -48,8 +48,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => di.sl<UserDataProvider>()),
       ChangeNotifierProvider(create: (_) => di.sl<AuthenticationProvider>()),
-      ChangeNotifierProvider<AdminEmployeesProvider>(
-          create: (_) => AdminEmployeesProvider()),
+      ChangeNotifierProvider(create: (_) => di.sl<AdminEmployeesProvider>()),
       ChangeNotifierProvider<HomeStatusProvider>(
           create: (_) => HomeStatusProvider()),
       ChangeNotifierProvider<GenerateNotificationProvider>(

@@ -44,13 +44,13 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
   Future<void> intiData() async {
     print(_isLoading);
-    Provider.of<UserDataProvider>(context, listen: false).isAdminEmployeeDataPresent=false;
+    Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent=false;
     try {
-      await Provider.of<UserDataProvider>(context, listen: false)
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getUserinfo(widget.userName);
-      await Provider.of<UserDataProvider>(context, listen: false)
+      await Provider.of<AdminEmployeesProvider>(context, listen: false)
                   .getUserEventsData(empID: widget.empID);
-      print("isdatapresent${Provider.of<UserDataProvider>(context, listen: false).isAdminEmployeeDataPresent}");
+      print("isdatapresent${Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent}");
     } finally {
       setState(() {
         _isLoading = false;
@@ -134,7 +134,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                 height: size.height * 0.025,
                                 width: size.width * 0.45,
                                 child: Text(
-                                   Provider.of<UserDataProvider>(context, listen: true).isAdminEmployeeDataPresent?Provider.of<UserDataProvider>(
+                                   Provider.of<AdminEmployeesProvider>(context, listen: true).isAdminEmployeeDataPresent?Provider.of<AdminEmployeesProvider>(
                                                     context,
                                                     listen: false)
                                                 .getUserData
@@ -151,7 +151,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                               SizedBox(
                                 height: size.height * 0.025,
                                 width: size.width * 0.45,
-                                child: Text(Provider.of<UserDataProvider>(context, listen: true).isAdminEmployeeDataPresent?Provider.of<UserDataProvider>(
+                                child: Text(Provider.of<AdminEmployeesProvider>(context, listen: true).isAdminEmployeeDataPresent?Provider.of<AdminEmployeesProvider>(
                                                     context,
                                                     listen: false)
                                                 .getUserData
@@ -171,7 +171,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                     SizedBox(
                       height: size.height * 0.02,
                     ),
-                    Consumer<UserDataProvider>(
+                    Consumer<AdminEmployeesProvider>(
                       builder: (context, provider, child) {
                         if (provider.isLoading && isConnected()) {
                           return SizedBox(
@@ -214,7 +214,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                               ),
                             ),
                           );
-                        } else if (!Provider.of<UserDataProvider>(context, listen: false).isAdminEmployeeDataPresent) {
+                        } else if (!Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent) {
                           return SizedBox(
                             width: size.width * 0.95,
                             child: Card(
@@ -266,7 +266,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                                       listen: false)
                                                   .setConnected(isConnected());
                                               intiData();
-                                              Provider.of<UserDataProvider>(
+                                              Provider.of<AdminEmployeesProvider>(
                                                       context,
                                                       listen: false)
                                                   .isLoading = true;
@@ -282,6 +282,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                           );
                         } else {
                           return CustomCalendarCard(
+                            isUDP: false,
                             forAdmin: false,
                             selectionMode: DateRangePickerSelectionMode.single,
                             selectibleDayPredicate: (date) {
@@ -343,12 +344,12 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
     //   // Set the worksheet name
     sheet.name =
-        '${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}'
+        '${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}'
         's Meals data';
 
     //   // Append headers
     sheet.getRangeByIndex(1, 1).setText(
-        '${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empId}(${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empId})');
+        '${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empId}(${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empId})');
 
     sheet.getRangeByIndex(3, 1).setText('Date');
     sheet.getRangeByIndex(3, 2).setText('Status');
@@ -364,7 +365,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     int rowIndex = 4;
 
     for (var date in rangeDates) {
-      if (Provider.of<UserDataProvider>(context, listen: false)
+      if (Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getOpted
           .any((element) => date.toString().substring(0, 10) == element.date)) {
         sheet
@@ -372,14 +373,14 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
         sheet.getRangeByIndex(rowIndex, 3).setText(
-            Provider.of<UserDataProvider>(context, listen: false)
+            Provider.of<AdminEmployeesProvider>(context, listen: false)
                 .getOpted
                 .where((element) =>
                     date.toString().substring(0, 10) == element.date)
                 .first
                 .info);
         rowIndex++;
-      } else if (Provider.of<UserDataProvider>(context, listen: false)
+      } else if (Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getNotOpted
           .any((element) => date.toString().substring(0, 10) == element.date)) {
         sheet
@@ -387,7 +388,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
         sheet.getRangeByIndex(rowIndex, 3).setText(
-            Provider.of<UserDataProvider>(context, listen: false)
+            Provider.of<AdminEmployeesProvider>(context, listen: false)
                 .getOpted
                 .where((element) =>
                     date.toString().substring(0, 10) == element.date)
@@ -404,7 +405,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     }
 
     for (var date
-        in Provider.of<UserDataProvider>(context, listen: false).getNotOpted) {
+        in Provider.of<AdminEmployeesProvider>(context, listen: false).getNotOpted) {
       if ((DateTime.parse(date.date!).day > now.day &&
               DateTime.parse(date.date!).month == now.month) ||
           DateTime.parse(date.date!).month > now.month) {
@@ -424,7 +425,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       final List<int> bytes = workbook.saveAsStream();
 
       final path =
-          '${dir!.path}/${Provider.of<UserDataProvider>(context, listen: false).getUserData.data!.empName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
+          '${dir!.path}/${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/providers/admin_employees_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -18,6 +19,7 @@ class CustomCalendarCard extends StatelessWidget {
   String confirmText;
   String cancelText;
   void Function(DateRangePickerSelectionChangedArgs)? onSelectionChanged;
+  bool isUDP = true;
 
   CustomCalendarCard(
       {super.key,
@@ -29,7 +31,9 @@ class CustomCalendarCard extends StatelessWidget {
       required this.onSubmit,
       required this.onCancel,
       required this.confirmText,
-      required this.cancelText});
+      required this.cancelText,
+      required this.isUDP
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +63,7 @@ class CustomCalendarCard extends StatelessWidget {
               ),
             ),
             const Divider(),
+            if(isUDP)
             Consumer<UserDataProvider>(
 
               builder: (context, provider, child) {
@@ -108,6 +113,81 @@ class CustomCalendarCard extends StatelessWidget {
                                   details.date.weekday == DateTime.saturday)
                               ? Colors.blueGrey.shade200
                               : Colors.white30;
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Container(
+                        width: details.bounds.width / 2,
+                        height: details.bounds.width / 2,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: circleColor,
+                        ),
+                        child: Center(child: Text(details.date.day.toString())),
+                      ),
+                    );
+                  },
+                  allowViewNavigation: false,
+                  showActionButtons: true,
+                  selectionMode: selectionMode,
+                  showNavigationArrow: true,
+                  onSubmit: onSubmit,
+                  onCancel: onCancel,
+                  confirmText: confirmText,
+                  cancelText: cancelText,
+                );
+              },
+            ),
+            if(!isUDP)
+            Consumer<AdminEmployeesProvider>(
+
+              builder: (context, provider, child) {
+                return SfDateRangePicker(
+                  controller: controller,
+                  minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
+                  maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
+                  selectionColor: Colors.deepPurple.shade100,
+                  selectableDayPredicate: selectibleDayPredicate,
+                  cellBuilder: (BuildContext context,
+                      DateRangePickerCellDetails details) {
+                    Color circleColor;
+
+                    if (!forAdmin) {
+                      circleColor = provider.getOpted.any((element) => element.date==details.date.toString().substring(0, 10))
+                          ? Colors.green.shade200
+                          : provider.getNotOpted.map((e) => e.date).toList().contains(
+                          details.date.toString().substring(0, 10))
+                          ? Colors.orange.shade200
+                          : Provider.of<UserDataProvider>(context, listen: false).holidays.contains(
+                          details.date.toString().substring(0, 10))
+                          ? Colors.red.shade100
+                          : (details.date.weekday == DateTime.sunday ||
+                          details.date.weekday ==
+                              DateTime.saturday)
+                          ? Colors.blueGrey.shade200
+                          : ((details.date.day == now.day &&
+                          details.date.month <=
+                              now.month &&
+                          now.hour >= 15 &&
+                          !provider.getOpted.contains(
+                              details.date
+                                  .toString()
+                                  .substring(0, 10)) &&
+                          !provider
+                              .getNotOpted.map((e) => e.date).toList()
+                              .contains(details.date.toString().substring(0, 10))) ||
+                          ((details.date.day < now.day && details.date.month == now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOpted.map((e) => e.date).toList().contains(details.date.toString().substring(0, 10)))
+                          || ((details.date.month < now.month) && !provider.getOpted.contains(details.date.toString().substring(0, 10)) && !provider.getNotOpted.map((e) => e.date).toList().contains(details.date.toString().substring(0, 10))))
+                          ? Colors.grey.shade300
+                          : Colors.white30;
+                    } else {
+                      circleColor = Provider.of<UserDataProvider>(context, listen: false).holidays.contains(
+                          details.date.toString().substring(0, 10))
+                          ? Colors.red.shade100
+                          : (details.date.weekday == DateTime.sunday ||
+                          details.date.weekday == DateTime.saturday)
+                          ? Colors.blueGrey.shade200
+                          : Colors.white30;
                     }
                     return Padding(
                       padding: const EdgeInsets.all(2),

@@ -113,9 +113,9 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
                 return provider.alluserSearchList.isEmpty &&
-                            employeeSearchController.text != ''
+                            employeeSearchController.text != '' && employeeSearchController.text.length < 4
                         ?  Expanded(child: Text(isConnected()? "No employee found":"No internet connection"))
-                        : provider.isSearching
+                        : provider.isSearching && employeeSearchController.text.length >= 4 && isConnected()
                             ? const Center(
                                 child: SpinKitCircle(
                                     color: Color.fromARGB(255, 179, 157, 219),

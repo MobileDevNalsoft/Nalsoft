@@ -4,6 +4,7 @@ import 'package:meals_management/views/screens/admin_screens/admin_employees_vie
 import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_generate_notification_view.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
+import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
 import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
@@ -23,6 +24,7 @@ class RouteManagement {
   static const String digitalSignature = '/sign';
   static const String generateNotification = '/generateNotification';
   static const String network_error = '/network_error';
+  static const String dataLoader = '/dataLoader';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/login_page':
@@ -53,6 +55,8 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => GenerateNotification());
       case '/network_error':
         return MaterialPageRoute(builder: (_) => NetworkError());
+      case '/dataLoader':
+        return MaterialPageRoute(builder: (_) => DataLoader());
       default:
         return null;
     }

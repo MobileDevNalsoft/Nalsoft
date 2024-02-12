@@ -155,6 +155,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       );
                     } else if (provider.eventsPresent) {
                       return CustomCalendarCard(
+                        isUDP: true,
                         forAdmin: false,
                         controller: datesController,
                         selectionMode: Provider.of<HomeStatusProvider>(context,

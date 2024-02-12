@@ -4,8 +4,16 @@ import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/user_events_model.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
+
+  final UserEventsRepo? userEventsRepo;
+  final SharedPreferences? sharedPreferences;
+
+  AdminEmployeesProvider({this.userEventsRepo, this.sharedPreferences});
 
    final UserRepo userRepo = UserRepo(dioClient2: sl());
   List<Map<String, dynamic>> _empData = [];
@@ -13,6 +21,12 @@ class AdminEmployeesProvider extends ChangeNotifier {
   bool _isSearching = false;
   UserModel? _user = UserModel();
   bool _isMailLoading = false;
+ List<Dates> _optedDates = [];
+ List<Dates> _notOptedDates = [];
+ UserEventsModel? _userEventsModel;
+ bool eventsPresent = false;
+ bool isAdminEmployeeDataPresent = false;
+ bool isLoading = false;
 
 
 
@@ -25,6 +39,9 @@ class AdminEmployeesProvider extends ChangeNotifier {
   String? get userType => _user!.data!.userType;
   String? get empID => _user!.data!.empId;
   List<dynamic>? get getAllUserList => _alluserList;
+  UserModel get getUserData => _user!;
+  List<Dates> get getOpted => _optedDates;
+  List<Dates> get getNotOpted => _notOptedDates;
 
    void setAllUserList() {
      _alluserList = [];
@@ -40,15 +57,6 @@ class AdminEmployeesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> setEmpList({String search = ''}) async {
-  //   // var allEmpinfoList = await _db.getEmployees(search: search);
-  //   // API method 6 for Get Request
-  //   // here we fetch the entire column of names from company's empoyees table
-  //   // then for each change in search text field we trigger that get method
-  //   // empList = allEmpinfoList;
-  //   isSearching = false;
-  //   notifyListeners();
-  // }
 
   Future<void> getAllUsers(String date) async {
   ApiResponse apiResponse = await  userRepo.getAllUserData(date);   
@@ -74,17 +82,49 @@ class AdminEmployeesProvider extends ChangeNotifier {
    } 
   }
 
+   Future<void> getUserEventsData({String? empID}) async {
+     ApiResponse apiResponse;
+     print(empID);
+     if (empID==null)
+     {  apiResponse =
+     await userEventsRepo!.getUserEventsData(sharedPreferences!.getString('employee_id')!);}
+     else{ apiResponse =
+     await userEventsRepo!.getUserEventsData(empID);}
 
-  Future<void> setEmpDataWithID({String? empid}) async {
-    // _user = await _db.readDataWithID(empid: empid);
-    // here we can use API method 1 Get method
-    notifyListeners();
-  }
+     if (apiResponse.response != null &&
+         apiResponse.response!.statusCode == 200) {
+       _userEventsModel = UserEventsModel.fromJson(apiResponse.response!.data);
+       _optedDates = _userEventsModel!.data!.optedDates!;
 
-  Future<void> setEmpData() async {
-    // _empData = await _db.readUsers();
-    notifyListeners();
-  }
+       _notOptedDates = _userEventsModel!.data!.notOpted!;
+
+
+       eventsPresent=true;
+       isAdminEmployeeDataPresent=true;
+       // _isDataPresentController.add(eventsPresent);
+       // print("datastream inside provider $isDataPresentStream");
+       isLoading=false;
+       print(_optedDates);
+       print(_userEventsModel!.data!.notOpted!);
+       notifyListeners();
+     }
+   }
+   Future<void> getUserinfo(String? username) async {
+
+     String username = "raviteja.singamsetty@nalsoft.net";
+     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
+
+     if (apiResponse.response != null &&
+         apiResponse.response!.statusCode == 200) {
+       _user = UserModel.fromJson(apiResponse.response!.data);
+       sharedPreferences!.setString('employee_name', _user!.data!.empName!);
+       sharedPreferences!.setString('employee_id', _user!.data!.empId!);
+       sharedPreferences!.setString('employee_department', _user!.data!.department!);
+       sharedPreferences!.setString('user_type', _user!.data!.userType!);
+     }
+     print(_user);
+     notifyListeners();
+   }
 
 
 }
