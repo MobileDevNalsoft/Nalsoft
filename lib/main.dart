@@ -9,19 +9,16 @@ import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
-import 'package:meals_management/views/screens/connection_based_navigator.dart';
 import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
-import 'package:meals_management/views/screens/emp_screens/home_view.dart';
 import 'package:upgrader/upgrader.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Upgrader.clearSavedSettings(); 
+  await Upgrader.clearSavedSettings();
 
   await di.init();
 
@@ -58,9 +55,10 @@ void main() async {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteManagement.generateRoute,
-            home: di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) == ''
+            home:
+                di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) ==
+                        ''
                     ? UpgradeAlert(child: LoginView())
-                    : UpgradeAlert(child: DataLoader())
-        )),
+                    : UpgradeAlert(child: DataLoader()))),
   ));
 }

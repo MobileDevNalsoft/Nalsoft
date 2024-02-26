@@ -1,3 +1,4 @@
+import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
@@ -68,10 +69,8 @@ class _GenerateNotificationState extends State<GenerateNotification>
             child: Provider.of<GenerateNotificationProvider>(context,
                         listen: true)
                     .isLoading
-                ? const SpinKitCircle(
-                    color: Color.fromARGB(255, 185, 147, 255),
-                  )
-                : CustomButton(
+                ? CustomWidgets.CustomCircularLoader()
+                : CustomElevatedButton(
                     color: const MaterialStatePropertyAll(Colors.blue),
                     onPressed: () async {
                       if (isConnected()) {

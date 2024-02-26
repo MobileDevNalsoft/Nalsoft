@@ -16,7 +16,7 @@ import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
-
+import 'package:custom_widgets/src.dart';
 import "../../../inits/di_container.dart";
 
 // ignore: must_be_immutable
@@ -44,13 +44,15 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
   Future<void> intiData() async {
     print(_isLoading);
-    Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent=false;
+    Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .isAdminEmployeeDataPresent = false;
     try {
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getUserinfo(widget.userName);
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
-                  .getUserEventsData(empID: widget.empID);
-      print("isdatapresent${Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent}");
+          .getUserEventsData(empID: widget.empID);
+      print(
+          "isdatapresent${Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent}");
     } finally {
       setState(() {
         _isLoading = false;
@@ -95,10 +97,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                 bottomRight: Radius.circular(25))),
       ),
       body: _isLoading
-          ? const Center(
-              child: SpinKitCircle(
-                  color: Color.fromARGB(255, 179, 157, 219), size: 50.0),
-            )
+          ? CustomWidgets.CustomCircularLoader()
           : Stack(
               children: [
                 Column(
@@ -134,14 +133,16 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                 height: size.height * 0.025,
                                 width: size.width * 0.45,
                                 child: Text(
-                                   Provider.of<AdminEmployeesProvider>(context, listen: true).isAdminEmployeeDataPresent?Provider.of<AdminEmployeesProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getUserData
-                                                .data!
-                                                .empName!
-                                                :''
-                                   ,
+                                    Provider.of<AdminEmployeesProvider>(context,
+                                                listen: true)
+                                            .isAdminEmployeeDataPresent
+                                        ? Provider.of<AdminEmployeesProvider>(
+                                                context,
+                                                listen: false)
+                                            .getUserData
+                                            .data!
+                                            .empName!
+                                        : '',
                                     style: const TextStyle(
                                         color: Colors.black87,
                                         fontSize: 16,
@@ -151,12 +152,17 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                               SizedBox(
                                 height: size.height * 0.025,
                                 width: size.width * 0.45,
-                                child: Text(Provider.of<AdminEmployeesProvider>(context, listen: true).isAdminEmployeeDataPresent?Provider.of<AdminEmployeesProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getUserData
-                                                .data!
-                                                .department!:'',
+                                child: Text(
+                                    Provider.of<AdminEmployeesProvider>(context,
+                                                listen: true)
+                                            .isAdminEmployeeDataPresent
+                                        ? Provider.of<AdminEmployeesProvider>(
+                                                context,
+                                                listen: false)
+                                            .getUserData
+                                            .data!
+                                            .department!
+                                        : '',
                                     style: const TextStyle(
                                         color: Colors.black87,
                                         fontSize: 16,
@@ -202,19 +208,16 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                   ),
                                   const Divider(),
                                   SizedBox(
-                                    height: size.height * 0.37,
-                                    child: Center(
-                                      child: SpinKitCircle(
-                                          color: Color.fromARGB(
-                                              255, 179, 157, 219),
-                                          size: 50.0),
-                                    ),
-                                  ),
+                                      height: size.height * 0.37,
+                                      child:
+                                          CustomWidgets.CustomCircularLoader()),
                                 ],
                               ),
                             ),
                           );
-                        } else if (!Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent) {
+                        } else if (!Provider.of<AdminEmployeesProvider>(context,
+                                listen: false)
+                            .isAdminEmployeeDataPresent) {
                           return SizedBox(
                             width: size.width * 0.95,
                             child: Card(
@@ -290,7 +293,10 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                             },
 
                             //TODO
-                            onSubmit: (p0) => isConnected()? sendMail(context):CustomSnackBar.showSnackBar(context, "No internet", Colors.red),
+                            onSubmit: (p0) => isConnected()
+                                ? sendMail(context)
+                                : CustomSnackBar.showSnackBar(
+                                    context, "No internet", Colors.red),
 
                             onCancel: () {
                               datesController.selectedDate = null;
@@ -313,11 +319,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                     right: 0,
                     bottom: 0,
                     child: Container(
-                      color: Colors.black38,
-                      child: const SpinKitCircle(
-                        color: Color.fromARGB(255, 185, 147, 255),
-                      ),
-                    ),
+                        color: Colors.black38,
+                        child: CustomWidgets.CustomCircularLoader()),
                   ),
               ],
             ),
@@ -389,7 +392,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
         sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
         sheet.getRangeByIndex(rowIndex, 3).setText(
             Provider.of<AdminEmployeesProvider>(context, listen: false)
-                .getOpted
+                .getNotOpted
                 .where((element) =>
                     date.toString().substring(0, 10) == element.date)
                 .first
@@ -404,8 +407,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       }
     }
 
-    for (var date
-        in Provider.of<AdminEmployeesProvider>(context, listen: false).getNotOpted) {
+    for (var date in Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .getNotOpted) {
       if ((DateTime.parse(date.date!).day > now.day &&
               DateTime.parse(date.date!).month == now.month) ||
           DateTime.parse(date.date!).month > now.month) {

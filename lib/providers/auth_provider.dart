@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
 import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
-import 'package:meals_management/views/screens/emp_screens/home_view.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
-  final AuthenticationRepo? authenticationRepo ;
+  final AuthenticationRepo? authenticationRepo;
   AuthenticationProvider({this.authenticationRepo});
 
   bool _obscurePassword = true;

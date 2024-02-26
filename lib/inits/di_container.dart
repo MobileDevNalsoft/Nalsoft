@@ -13,7 +13,7 @@ import 'package:meals_management/repositories/user_repo.dart';
 
 import 'package:meals_management/utils/constants.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
-import 'package:meals_management/views/screens/emp_screens/home_view.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -31,14 +31,12 @@ Future<void> init() async {
       () => AuthenticationRepo(dioClient1: sl(), sharedPreferences: sl()));
   sl.registerLazySingleton(() => UserRepo(dioClient2: sl()));
   sl.registerLazySingleton(() => UserEventsRepo(dioClient2: sl()));
-  
 
   sl.registerFactory(() => AuthenticationProvider(authenticationRepo: sl()));
-  sl.registerFactory(
-      () => UserDataProvider(userRepo: sl(), userEventsRepo: sl(), sharedPreferences: sl()));
-  sl.registerFactory(
-          () => AdminEmployeesProvider(userEventsRepo: sl(), sharedPreferences: sl()));
-
+  sl.registerFactory(() => UserDataProvider(
+      userRepo: sl(), userEventsRepo: sl(), sharedPreferences: sl()));
+  sl.registerFactory(() =>
+      AdminEmployeesProvider(userEventsRepo: sl(), sharedPreferences: sl()));
 
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
