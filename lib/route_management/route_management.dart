@@ -5,10 +5,9 @@ import 'package:meals_management/views/screens/admin_screens/admin_home_view.dar
 import 'package:meals_management/views/screens/admin_screens/admin_generate_notification_view.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
-import 'package:meals_management/views/screens/emp_screens/home_view.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
-import 'package:meals_management/views/screens/network_error.dart';
 
 class RouteManagement {
   RouteManagement._();
@@ -38,23 +37,27 @@ class RouteManagement {
       case '/employees':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/employeeLunchStatus':
-        return MaterialPageRoute(builder : (_) { 
-            final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(builder: (_) {
+          final args = settings.arguments as Map<String, dynamic>;
           final empid = args['empid'];
-         final username = args['username'];
-          return EmployeeLunchStatus(userName:username,empID: empid,);
+          final username = args['username'];
+          return EmployeeLunchStatus(
+            userName: username,
+            empID: empid,
+          );
         });
       case '/updateUpcomingStatus':
         return MaterialPageRoute(builder: (_) {
-            final args = settings.arguments as Map<String, dynamic>;
-            final initData=args["initData"] as Function;
-        return UpdateLunchStatus(initData: initData,);});
+          final args = settings.arguments as Map<String, dynamic>;
+          final initData = args["initData"] as Function;
+          return UpdateLunchStatus(
+            initData: initData,
+          );
+        });
       case '/employeeSearch':
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
       case '/generateNotification':
         return MaterialPageRoute(builder: (_) => GenerateNotification());
-      case '/network_error':
-        return MaterialPageRoute(builder: (_) => NetworkError());
       case '/dataLoader':
         return MaterialPageRoute(builder: (_) => DataLoader());
       default:

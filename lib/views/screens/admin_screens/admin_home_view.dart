@@ -1,4 +1,5 @@
 import "dart:io";
+import "package:custom_widgets/src.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:get_it/get_it.dart";
 import "package:meals_management/models/user_model.dart";
@@ -26,13 +27,13 @@ import '../../../providers/home_status_provider.dart';
 import '../../../repositories/auth_repo.dart';
 
 class AdminHomePage extends StatefulWidget {
-const AdminHomePage({super.key});
+  const AdminHomePage({super.key});
 
   @override
   State<AdminHomePage> createState() => _AdminHomePageState();
 }
 
-class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin  {
+class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   DateTime now = DateTime.now();
 
   late SharedPreferences sharedPreferences;
@@ -42,18 +43,18 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin  {
   @override
   void initState() {
     super.initState();
-   sharedPreferences = GetIt.instance.get<SharedPreferences>();
-    Provider.of<AdminEmployeesProvider>(context, listen: false).setAllUserList();
+    sharedPreferences = GetIt.instance.get<SharedPreferences>();
+    Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .setAllUserList();
   }
 
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
     DateRangePickerController datesController = DateRangePickerController();
 
     return AspectRatio(
-      aspectRatio: size.height/size.width,
+      aspectRatio: size.height / size.width,
       child: SafeArea(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -73,65 +74,68 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin  {
                           bottomRight: Radius.circular(50),
                         )),
                     child: Column(
-                              children: [
-                                SizedBox(height: size.height*0.015,),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(width: size.width*0.05,),
-                                    SizedBox(
-                                      height: size.height*0.1,
-                                      width: size.width*0.6,
-                                      child: Text(
-                                        'Hi,\n${sharedPreferences.getString('employee_name')}',
-                                        style:  TextStyle(
-                                            fontSize: size.width*0.057 ,
-                                            fontWeight: FontWeight.bold,
-                                            overflow: TextOverflow.ellipsis),
-                                      ),
-                                    ),
-                                    const Expanded(child: SizedBox()),
-                                    sharedPreferences.getString('user_type') ==
-                                            'E'
-                                        ? Switch(
-                                            value: true,
-                                            onChanged: (value) {
-                                              Navigator.pop(
-                                                  context,
-                                                  RouteManagement.employeeHomePage);
-                                            },
-                                            activeColor: const Color.fromARGB(
-                                                255, 181, 129, 248),
-                                          )
-                                        : const SizedBox(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right:10.0, top: 10, left: 10),
-                                      child: PopupMenuButton(
-                                        itemBuilder: (BuildContext context) {
-                                          return [
-                                            PopupMenuItem(
-                                                value: 'Sign Out',
-                                                height: 10,
-                                                onTap: () {
-                                                 sharedPreferences.setString(
-                                                      AppConstants.TOKEN, '');
-                                                  Navigator.pushNamedAndRemoveUntil(
-                                                      context,
-                                                      RouteManagement.loginPage,
-                                                      (route) => false);
-                                                },
-                                                child: const Text('Sign Out'))
-                                          ];
-                                        },
-                                        child: const Icon(
-                                            Icons.power_settings_new_sharp),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
+                      children: [
+                        SizedBox(
+                          height: size.height * 0.015,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: size.width * 0.05,
                             ),
+                            SizedBox(
+                              height: size.height * 0.1,
+                              width: size.width * 0.6,
+                              child: Text(
+                                'Hi,\n${sharedPreferences.getString('employee_name')}',
+                                style: TextStyle(
+                                    fontSize: size.width * 0.057,
+                                    fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                            const Expanded(child: SizedBox()),
+                            sharedPreferences.getString('user_type') == 'E'
+                                ? Switch(
+                                    value: true,
+                                    onChanged: (value) {
+                                      Navigator.pop(context,
+                                          RouteManagement.employeeHomePage);
+                                    },
+                                    activeColor: const Color.fromARGB(
+                                        255, 181, 129, 248),
+                                  )
+                                : const SizedBox(),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 10.0, top: 10, left: 10),
+                              child: PopupMenuButton(
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    PopupMenuItem(
+                                        value: 'Sign Out',
+                                        height: 10,
+                                        onTap: () {
+                                          sharedPreferences.setString(
+                                              AppConstants.TOKEN, '');
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              RouteManagement.loginPage,
+                                              (route) => false);
+                                        },
+                                        child: const Text('Sign Out'))
+                                  ];
+                                },
+                                child:
+                                    const Icon(Icons.power_settings_new_sharp),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -144,31 +148,30 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin  {
                       ),
                       child: InkWell(
                         onTap: () {
-                          Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .setConnected(isConnected());
-if (Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                  .getConnected)
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      EmployeeSearch(),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
-                       else{
-                           CustomSnackBar.showSnackBar(
-                                      context, "No internet", Colors.red);
-                       }
+                          Provider.of<UserDataProvider>(context, listen: false)
+                              .setConnected(isConnected());
+                          if (Provider.of<UserDataProvider>(context,
+                                  listen: false)
+                              .getConnected)
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        EmployeeSearch(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          else {
+                            CustomSnackBar.showSnackBar(
+                                context, "No internet", Colors.red);
+                          }
                         },
                         child: Row(
                           children: [
@@ -179,7 +182,8 @@ if (Provider.of<UserDataProvider>(context,
                             const Expanded(
                                 child: Text("Search employee",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(73, 69, 79, 100)))),
+                                        color:
+                                            Color.fromRGBO(73, 69, 79, 100)))),
                             const Icon(Icons.search),
                           ],
                         ),
@@ -205,8 +209,10 @@ if (Provider.of<UserDataProvider>(context,
                     onSubmit: (date) {
                       if (date != null) {
                         date = date as DateTime;
-                        isConnected()? sendMail(date,context):CustomSnackBar.showSnackBar(context, "No internet", Colors.red);
-
+                        isConnected()
+                            ? sendMail(date, context)
+                            : CustomSnackBar.showSnackBar(
+                                context, "No internet", Colors.red);
                       } else {
                         CustomSnackBar.showSnackBar(
                             context, 'please select a date', Colors.red);
@@ -219,7 +225,7 @@ if (Provider.of<UserDataProvider>(context,
                     confirmText: 'Send Mail',
                     cancelText: 'Clear Selection',
                   ),
-                  CustomButton(
+                  CustomElevatedButton(
                       color: MaterialStatePropertyAll(Colors.blue),
                       onPressed: () {
                         Navigator.pushNamed(
@@ -238,11 +244,8 @@ if (Provider.of<UserDataProvider>(context,
                   right: 0,
                   bottom: 0,
                   child: Container(
-                    color: Colors.black38,
-                    child: const SpinKitCircle(
-                      color: Color.fromARGB(255, 185, 147, 255),
-                    ),
-                  ),
+                      color: Colors.black38,
+                      child: CustomWidgets.CustomCircularLoader()),
                 ),
             ],
           ),
@@ -255,13 +258,12 @@ if (Provider.of<UserDataProvider>(context,
     Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
         true;
 
-     await Provider.of<AdminEmployeesProvider>(context, listen: false)
-        .getAllUsers(date.toString().substring(0,10)) ;  
-    
-    List<dynamic>  empData =  Provider.of<AdminEmployeesProvider>(context, listen: false)
-        .getAllUserList!;
-        
-    
+    await Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .getAllUsers(date.toString().substring(0, 10));
+
+    List<dynamic> empData =
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+            .getAllUserList!;
 
     final dir = await getTemporaryDirectory();
 
@@ -280,12 +282,11 @@ if (Provider.of<UserDataProvider>(context,
     sheet.getRangeByIndex(2, 3).builtInStyle = excel.BuiltInStyles.heading4;
     sheet.getRangeByIndex(2, 4).builtInStyle = excel.BuiltInStyles.heading4;
 
-
     // Set the worksheet name
     sheet.name = 'Today\'s Meals opted employees';
 
     // Append headers
-    sheet.getRangeByIndex(1, 3).setText(date.toString().substring(0,10));
+    sheet.getRangeByIndex(1, 3).setText(date.toString().substring(0, 10));
     sheet.getRangeByIndex(2, 1).setText('Employee ID');
     sheet.getRangeByIndex(2, 2).setText('Employee Name');
     sheet.getRangeByIndex(2, 3).setText("Status");

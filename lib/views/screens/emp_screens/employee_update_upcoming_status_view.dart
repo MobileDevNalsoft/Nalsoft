@@ -1,3 +1,4 @@
+import "package:custom_widgets/src.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_spinkit/flutter_spinkit.dart";
@@ -11,7 +12,7 @@ import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
-import "package:meals_management/views/screens/emp_screens/home_view.dart";
+import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
@@ -142,13 +143,8 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                               ),
                               const Divider(),
                               SizedBox(
-                                height: size.height * 0.37,
-                                child: Center(
-                                  child: SpinKitCircle(
-                                      color: Color.fromARGB(255, 179, 157, 219),
-                                      size: 50.0),
-                                ),
-                              ),
+                                  height: size.height * 0.37,
+                                  child: CustomWidgets.CustomCircularLoader()),
                             ],
                           ),
                         ),
@@ -367,7 +363,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      CustomButton(
+                      CustomElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                           datesController.selectedDate = null;
@@ -383,7 +379,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       const SizedBox(
                         width: 5,
                       ),
-                      CustomButton(
+                      CustomElevatedButton(
                         onPressed: () {
                           if (notOptController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
@@ -424,27 +420,27 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                 }
                               }
                             } else {
-                                List<DateTime> datesList =
-                                    dates as List<DateTime>;
-                                if (datesList
-                                        .map((e) => e.weekday)
-                                        .toList()
-                                        .contains(6) ||
-                                    datesList
-                                        .map((e) => e.weekday)
-                                        .toList()
-                                        .contains(7)) {
-                                  CustomSnackBar.showSnackBar(
-                                      context,
-                                      'remove weekoffs from selection',
-                                      Colors.red);
-                                } else {
-                                  Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                      .setConnected(isConnected());
-                                  if (Provider.of<UserDataProvider>(context,
-                                      listen: false)
-                                      .getConnected) {
+                              List<DateTime> datesList =
+                                  dates as List<DateTime>;
+                              if (datesList
+                                      .map((e) => e.weekday)
+                                      .toList()
+                                      .contains(6) ||
+                                  datesList
+                                      .map((e) => e.weekday)
+                                      .toList()
+                                      .contains(7)) {
+                                CustomSnackBar.showSnackBar(
+                                    context,
+                                    'remove weekoffs from selection',
+                                    Colors.red);
+                              } else {
+                                Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .setConnected(isConnected());
+                                if (Provider.of<UserDataProvider>(context,
+                                        listen: false)
+                                    .getConnected) {
                                   Provider.of<UserDataProvider>(context,
                                           listen: false)
                                       .updateUserEvents(
@@ -458,10 +454,10 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                                   .toJson())
                                               .toList(),
                                           false);
-                                }else {
-                                    CustomSnackBar.showSnackBar(
-                                        context, "No internet", Colors.red);
-                                  }
+                                } else {
+                                  CustomSnackBar.showSnackBar(
+                                      context, "No internet", Colors.red);
+                                }
                               }
                             }
                           }
@@ -508,21 +504,21 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      CustomButton(
+                      CustomElevatedButton(
                         onPressed: () {
                           print(dates);
-                          Provider.of<UserDataProvider>(context,
-                              listen: false)
+                          Provider.of<UserDataProvider>(context, listen: false)
                               .setConnected(isConnected());
-                          if(Provider.of<UserDataProvider>(context,
-                              listen: false)
-                              .getConnected){
-                            Provider.of<UserDataProvider>(context, listen: false)
+                          if (Provider.of<UserDataProvider>(context,
+                                  listen: false)
+                              .getConnected) {
+                            Provider.of<UserDataProvider>(context,
+                                    listen: false)
                                 .deleteUserEvents(dates
-                                .map((e) =>
-                            {"date": e.toString().substring(0, 10)})
-                                .toList());
-                          }else{
+                                    .map((e) =>
+                                        {"date": e.toString().substring(0, 10)})
+                                    .toList());
+                          } else {
                             CustomSnackBar.showSnackBar(
                                 context, "No internet", Colors.red);
                           }
@@ -541,7 +537,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       const SizedBox(
                         width: 5,
                       ),
-                      CustomButton(
+                      CustomElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                           datesController.selectedDate = null;

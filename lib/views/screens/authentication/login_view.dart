@@ -8,16 +8,14 @@ import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 
-
-
 class LoginView extends StatefulWidget {
-  const   LoginView({super.key});
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> with ConnectivityMixin{
+class _LoginViewState extends State<LoginView> with ConnectivityMixin {
   final GlobalKey _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -25,7 +23,6 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin{
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -116,7 +113,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin{
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CustomButton(
+                              CustomElevatedButton(
                                 onPressed: () async {
                                   if (_emailController.text.isEmpty) {
                                     CustomSnackBar.showSnackBar(context,
@@ -143,11 +140,13 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin{
                                         'Password must include atleast one special symbol, lowercase and uppercase letter',
                                         Colors.red);
                                   } else {
-                                    await Provider.of<AuthenticationProvider>(context,
+                                    await Provider.of<AuthenticationProvider>(
+                                            context,
                                             listen: false)
                                         .getToken()
                                         .then((value) =>
-                                            Provider.of<AuthenticationProvider>(context,
+                                            Provider.of<AuthenticationProvider>(
+                                                    context,
                                                     listen: false)
                                                 .authenticateUserName(
                                                     _emailController.text,

@@ -1,3 +1,4 @@
+import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:meals_management/models/user_model.dart';
@@ -17,7 +18,8 @@ class EmployeeSearch extends StatefulWidget {
   State<EmployeeSearch> createState() => _EmployeeSearchState();
 }
 
-class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
+class _EmployeeSearchState extends State<EmployeeSearch>
+    with ConnectivityMixin {
   SearchController employeeSearchController = SearchController();
 
   final FocusNode _focusNode = FocusNode();
@@ -41,7 +43,6 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
 
   @override
   Widget build(BuildContext context) {
-    
     var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
@@ -71,13 +72,13 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
                         focusNode: _focusNode,
                         controller: employeeSearchController,
                         onChanged: (searchText) {
-                          if(searchText.length>3){
-                          Provider.of<AdminEmployeesProvider>(context,
-                                  listen: false)
-                              .getSearchData(searchText).then((value) =>  print( "search list ${(Provider.of<AdminEmployeesProvider>(context,
-                                  listen: false).alluserSearchList[0] as Data).empName}"));
-                             
-                              }
+                          if (searchText.length > 3) {
+                            Provider.of<AdminEmployeesProvider>(context,
+                                    listen: false)
+                                .getSearchData(searchText)
+                                .then((value) => print(
+                                    "search list ${(Provider.of<AdminEmployeesProvider>(context, listen: false).alluserSearchList[0] as Data).empName}"));
+                          }
                         },
                         decoration: const InputDecoration(
                             border: InputBorder.none,
@@ -92,7 +93,6 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
                                 fontSize: 14)),
                       ),
                     ),
-                   
                   ],
                 ),
               ),
@@ -113,57 +113,72 @@ class _EmployeeSearchState extends State<EmployeeSearch> with ConnectivityMixin{
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
                 return provider.alluserSearchList.isEmpty &&
-                            employeeSearchController.text != '' && employeeSearchController.text.length < 4
-                        ?  Expanded(child: Text(isConnected()? "No employee found":"No internet connection"))
-                        : provider.isSearching && employeeSearchController.text.length >= 4 && isConnected()
-                            ? const Center(
-                                child: SpinKitCircle(
-                                    color: Color.fromARGB(255, 179, 157, 219),
-                                    size: 50.0),
-                              )
-                            : Expanded(
-                                child: Scrollbar(
-                                  child: ListView(
-                                    children: provider.alluserSearchList
-                                        .map((item) => Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 10.0,
-                                                  right: 10.0,
-                                                  bottom: 4.0),
-                                              height: size.height * 0.1,
-                                              child: Card(
-                                                elevation: 3,
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                   isConnected()? Navigator.pushNamed(
+                        employeeSearchController.text != '' &&
+                        employeeSearchController.text.length < 4
+                    ? Expanded(
+                        child: Text(isConnected()
+                            ? "No employee found"
+                            : "No internet connection"))
+                    : provider.isSearching &&
+                            employeeSearchController.text.length >= 4 &&
+                            isConnected()
+                        ? CustomWidgets.CustomCircularLoader()
+                        : Expanded(
+                            child: Scrollbar(
+                              child: ListView(
+                                children: provider.alluserSearchList
+                                    .map((item) => Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 10.0,
+                                              right: 10.0,
+                                              bottom: 4.0),
+                                          height: size.height * 0.1,
+                                          child: Card(
+                                            elevation: 3,
+                                            child: TextButton(
+                                              onPressed: () {
+                                                isConnected()
+                                                    ? Navigator.pushNamed(
                                                         context,
                                                         RouteManagement
                                                             .employeeLunchStatus,
                                                         arguments: {
-                                                          'username': (item as Data).userName.toString(),
-                                                          'empid':(item as Data).empId.toString()
-                                                        }):CustomSnackBar.showSnackBar(context, "No internet", Colors.red);
-                                                  },
-                                                  style: TextButton.styleFrom(
-                                                      alignment:
-                                                          Alignment.centerLeft),
-                                                  child: Row(
-                                                    children: [
-                                                      Text((item as Data).empName.toString()),
-                                                      Expanded(
-                                                          child: SizedBox()),
-                                                      Text(
-                                                        (item as Data).empId.toString()
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                                            'username':
+                                                                (item as Data)
+                                                                    .userName
+                                                                    .toString(),
+                                                            'empid':
+                                                                (item as Data)
+                                                                    .empId
+                                                                    .toString()
+                                                          })
+                                                    : CustomSnackBar
+                                                        .showSnackBar(
+                                                            context,
+                                                            "No internet",
+                                                            Colors.red);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                  alignment:
+                                                      Alignment.centerLeft),
+                                              child: Row(
+                                                children: [
+                                                  Text((item as Data)
+                                                      .empName
+                                                      .toString()),
+                                                  Expanded(child: SizedBox()),
+                                                  Text((item as Data)
+                                                      .empId
+                                                      .toString()),
+                                                ],
                                               ),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                              );
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          );
               },
             ),
             MediaQuery.of(context).viewInsets.bottom == 0
