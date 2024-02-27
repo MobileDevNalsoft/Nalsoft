@@ -22,6 +22,18 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getToken();
+   
+  }
+  getToken() async{
+     await Provider.of<AuthenticationProvider>(context, listen: false)
+                  .getToken();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -140,18 +152,25 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                         'Password must include atleast one special symbol, lowercase and uppercase letter',
                                         Colors.red);
                                   } else {
-                                    await Provider.of<AuthenticationProvider>(
-                                            context,
-                                            listen: false)
-                                        .getToken()
-                                        .then((value) =>
-                                            Provider.of<AuthenticationProvider>(
+                                    Provider.of<AuthenticationProvider>(
                                                     context,
                                                     listen: false)
                                                 .authenticateUserName(
                                                     _emailController.text,
                                                     _passwordController.text,
-                                                    context));
+                                                    context);
+                                  //   await Provider.of<AuthenticationProvider>(
+                                  //           context,
+                                  //           listen: false)
+                                  //       .getToken()
+                                  //       .then((value) =>
+                                  //           Provider.of<AuthenticationProvider>(
+                                  //                   context,
+                                  //                   listen: false)
+                                  //               .authenticateUserName(
+                                  //                   _emailController.text,
+                                  //                   _passwordController.text,
+                                  //                   context));
                                   }
                                 },
                                 color: MaterialStatePropertyAll(

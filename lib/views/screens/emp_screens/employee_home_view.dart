@@ -57,9 +57,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
       aspectRatio: size.height / size.width,
       child: SafeArea(
           child: Scaffold(
-        body: sharedPreferences.getString('user_type') == 'V'
-            ? VendorHomeView()
-            : Stack(
+        body:  Stack(
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

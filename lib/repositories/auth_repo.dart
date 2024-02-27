@@ -18,6 +18,10 @@ class AuthenticationRepo {
   Future<ApiResponse> authenticateUser(String username, String password) async {
     try {
       print('before response');
+      print(sharedPreferences!.getString(AppConstants.TOKEN));
+      print(sharedPreferences!.getString(AppConstants.REQ_STATE));
+      
+
       Response response =
           await dioClient1!.post(AppConstants.AUTHENCTICATE_USER_NAME,
               data: {

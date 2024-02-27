@@ -55,7 +55,7 @@ class UserDataProvider extends ChangeNotifier {
   // getting user data from firestore collection
   Future<void> getUserinfo(String? username) async {
 
-    String username = "raviteja.singamsetty@nalsoft.net";
+    String username = "saisanjit.dubbaka@nalsoft.net";
     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
 
     if (apiResponse.response != null &&
@@ -77,7 +77,7 @@ class UserDataProvider extends ChangeNotifier {
     isLoading = true;
     ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(sharedPreferences!.getString('employee_id')!, dates,isOpted);
     if(apiResponse.response!= null && apiResponse.response!.statusCode == 200){
-      isOpted?_optedDates.add(dates.first['date']):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
+      isOpted?_optedDates.add(Dates.fromJson(dates.first)):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
     print(apiResponse);
     isLoading = false;
     eventsPresent=true;

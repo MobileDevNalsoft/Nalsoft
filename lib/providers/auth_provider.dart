@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
+import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
 import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
+import 'package:provider/provider.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
   final AuthenticationRepo? authenticationRepo;
@@ -29,7 +31,7 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future getToken() async {
-    notifyListeners();
+   
     ApiResponse apiResponse = await authenticationRepo!.gettoken();
 
     if (apiResponse.response != null &&
@@ -94,8 +96,9 @@ class AuthenticationProvider extends ChangeNotifier {
         authenticationRepo!.saveAuthToken(authToken);
         authenticationRepo!.saveUserNameandPassword(username, password);
         print("token $authToken");
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DataLoader()));
+        Provider.of<UserDataProvider>(context,listen:false).getUserinfo(username).then((value) =>  Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => DataLoader())));
+       
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successfull'),

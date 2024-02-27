@@ -7,6 +7,7 @@ import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
+import 'package:meals_management/views/screens/vendor_screen/vendor_home_view.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,10 +50,10 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
     print("did init${cnt++}");
 
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
-    try {
+    
       if (!sharedPreferences.containsKey('employee_name')) {
-        await Provider.of<UserDataProvider>(context, listen: false)
-            .getUserinfo('');
+        // await Provider.of<UserDataProvider>(context, listen: false)
+        //     .getUserinfo('');
         await Provider.of<UserDataProvider>(context, listen: false)
             .getUserEventsData();
         await Provider.of<UserDataProvider>(context, listen: false)
@@ -66,16 +67,15 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
               .getHolidays();
         }
       }
-      Provider.of<UserDataProvider>(context, listen: false)
+     
+         Provider.of<UserDataProvider>(context, listen: false)
           .setConnected(isConnected());
-    } finally {
-      setState(() {
-        if (sharedPreferences.getString('user_type') == 'V') {
+          
+     if (sharedPreferences.getString('user_type') == 'V') {
           DateTime lastResetDate = sharedPreferences
                   .containsKey('lastResetDate')
               ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
               : DateTime.now();
-
           if (!sharedPreferences.containsKey('lastResetDate')) {
             sharedPreferences.setString('lastResetDate', now.toString());
             sharedPreferences.setInt('employeeCount', 0);
@@ -95,14 +95,12 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
           }
         }
         Provider.of<UserDataProvider>(context, listen: false).isLoading = false;
-      });
-    }
+     
   }
 
   @override
   Widget build(BuildContext context) {
-    return EmployeeHomeView(
-      initData: initData,
-    );
+    print(sharedPreferences.getString('user_type'));
+    return sharedPreferences.getString('user_type') == 'E' ? EmployeeHomeView( initData: initData,) : VendorHomeView();
   }
 }

@@ -56,8 +56,7 @@ void main() async {
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteManagement.generateRoute,
             home:
-                di.sl.get<SharedPreferences>().getString(AppConstants.TOKEN) ==
-                        ''
+                !di.sl.get<SharedPreferences>().containsKey(AppConstants.TOKEN)
                     ? UpgradeAlert(child: LoginView())
                     : UpgradeAlert(child: DataLoader()))),
   ));
