@@ -75,9 +75,7 @@ class _EmployeeSearchState extends State<EmployeeSearch>
                           if (searchText.length > 3) {
                             Provider.of<AdminEmployeesProvider>(context,
                                     listen: false)
-                                .getSearchData(searchText)
-                                .then((value) => print(
-                                    "search list ${(Provider.of<AdminEmployeesProvider>(context, listen: false).alluserSearchList[0] as Data).empName}"));
+                                .getSearchData(searchText);
                           }
                         },
                         decoration: const InputDecoration(
@@ -105,25 +103,22 @@ class _EmployeeSearchState extends State<EmployeeSearch>
                         .isNotEmpty &&
                     !Provider.of<AdminEmployeesProvider>(context, listen: true)
                         .isSearching
-                ? const Text(
-                    "Select Employee",
+                ?  Text(
+                  isConnected()?
+                    "Select Employee":'',
                     style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100)),
                   )
                 : const Text(''),
             Consumer<AdminEmployeesProvider>(
               builder: (context, provider, child) {
-                return provider.alluserSearchList.isEmpty &&
-                        employeeSearchController.text != '' &&
-                        employeeSearchController.text.length < 4
-                    ? Expanded(
-                        child: Text(isConnected()
-                            ? "No employee found"
-                            : "No internet connection"))
-                    : provider.isSearching &&
+                print(isConnected());
+                print(provider.alluserSearchList.isEmpty);
+                return !isConnected()?Expanded(child: Text("No internet connection")):
+                provider.isSearching &&
                             employeeSearchController.text.length >= 4 &&
                             isConnected()
-                        ? CustomWidgets.CustomCircularLoader()
-                        : Expanded(
+                        ? Expanded(child: CustomWidgets.CustomCircularLoader())
+                        :  provider.alluserSearchList.isEmpty?Expanded(child: Text(employeeSearchController.text.length>3?"No employee found":'')):Expanded(
                             child: Scrollbar(
                               child: ListView(
                                 children: provider.alluserSearchList
