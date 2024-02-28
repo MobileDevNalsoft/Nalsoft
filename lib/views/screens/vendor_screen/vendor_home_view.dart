@@ -82,7 +82,8 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                           value: 'Sign Out',
                           height: 10,
                           onTap: () {
-                            sharedPreferences.setString(AppConstants.TOKEN, '');
+                            sharedPreferences
+                                            .remove('employee_name');
                             Navigator.pushNamedAndRemoveUntil(context,
                                 RouteManagement.loginPage, (route) => false);
                           },

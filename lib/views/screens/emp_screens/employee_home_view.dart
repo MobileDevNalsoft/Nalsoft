@@ -102,10 +102,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                       value: 'Sign Out',
                                       height: 10,
                                       onTap: () {
-                                        
                                         sharedPreferences
                                             .remove('employee_name');
-                                      
                                         Navigator.pushReplacementNamed(
                                             context,
                                             RouteManagement.loginPage,
