@@ -1,19 +1,14 @@
 import "dart:io";
 import "package:custom_widgets/src.dart";
-import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:get_it/get_it.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
-
-import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
-
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
-import "package:intl/intl.dart";
 import "package:meals_management/providers/admin_employees_provider.dart";
 import "package:meals_management/providers/user_data_provider.dart";
 import "package:meals_management/route_management/route_management.dart";
@@ -23,8 +18,6 @@ import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
-import '../../../providers/home_status_provider.dart';
-import '../../../repositories/auth_repo.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});

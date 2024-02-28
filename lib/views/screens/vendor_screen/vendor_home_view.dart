@@ -36,6 +36,29 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
   QRViewController? qrController;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
+          ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+          : DateTime.now();
+      if (!sharedPreferences.containsKey('lastResetDate')) {
+        sharedPreferences.setString('lastResetDate', now.toString());
+        sharedPreferences.setInt('employeeCount', 0);
+        Provider.of<HomeStatusProvider>(context, listen: false)
+            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+      } else if (now.day != lastResetDate.day) {
+        sharedPreferences.setString('lastResetDate', now.toString());
+        sharedPreferences.setInt('employeeCount', 0);
+        Provider.of<HomeStatusProvider>(context, listen: false)
+            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+      } else {
+        Provider.of<HomeStatusProvider>(context, listen: false)
+            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+      }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 

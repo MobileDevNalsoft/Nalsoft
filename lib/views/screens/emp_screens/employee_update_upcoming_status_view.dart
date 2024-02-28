@@ -1,18 +1,15 @@
 import "package:custom_widgets/src.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:flutter_spinkit/flutter_spinkit.dart";
 import "package:intl/intl.dart";
 import "package:meals_management/models/user_events_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
 import 'package:meals_management/providers/home_status_provider.dart';
 import "package:meals_management/providers/user_data_provider.dart";
-import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
-import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
@@ -35,10 +32,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
   TextEditingController notOptController = TextEditingController();
   bool _isLoading = false;
   final FocusNode _focusNode = FocusNode();
-  @override
-  initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

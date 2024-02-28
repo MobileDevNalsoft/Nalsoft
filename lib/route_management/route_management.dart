@@ -26,17 +26,17 @@ class RouteManagement {
   static const String dataLoader = '/dataLoader';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case '/login_page':
+      case loginPage:
         return MaterialPageRoute(builder: (_) => LoginView());
-      case '/homepage':
+      case employeeHomePage:
         return MaterialPageRoute(builder: (_) => EmployeeHomeView());
-      case '/preview':
+      case previewPage:
         return MaterialPageRoute(builder: (_) => Preview());
-      case '/adminHomePage':
+      case adminHomePage:
         return MaterialPageRoute(builder: (_) => AdminHomePage());
-      case '/employees':
+      case adminEmployees:
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
-      case '/employeeLunchStatus':
+      case employeeLunchStatus:
         return MaterialPageRoute(builder: (_) {
           final args = settings.arguments as Map<String, dynamic>;
           final empid = args['empid'];
@@ -46,7 +46,7 @@ class RouteManagement {
             empID: empid,
           );
         });
-      case '/updateUpcomingStatus':
+      case updateUpcomingStatus:
         return MaterialPageRoute(builder: (_) {
           final args = settings.arguments as Map<String, dynamic>;
           final initData = args["initData"] as Function;
@@ -54,11 +54,11 @@ class RouteManagement {
             initData: initData,
           );
         });
-      case '/employeeSearch':
+      case employeeSearch:
         return MaterialPageRoute(builder: (_) => EmployeeSearch());
-      case '/generateNotification':
+      case generateNotification:
         return MaterialPageRoute(builder: (_) => GenerateNotification());
-      case '/dataLoader':
+      case dataLoader:
         return MaterialPageRoute(builder: (_) => DataLoader());
       default:
         return null;

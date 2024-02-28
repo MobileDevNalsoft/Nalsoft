@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/auth_provider.dart';
-import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/utils/constants.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
@@ -16,18 +15,10 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> with ConnectivityMixin {
-@override
-void initState() {
-  super.initState();
-}
 
   final GlobalKey _formKey = GlobalKey<FormState>();
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -126,20 +117,10 @@ void initState() {
                                         'Password must include atleast one special symbol, lowercase and uppercase letter',
                                         Colors.red);
                                   } else {
-                                   
                                      Provider.of<AuthenticationProvider>(
                                             context,
                                             listen: false)
                                         .getToken(_emailController.text,_passwordController.text,context);
-                                        // .then((value) =>
-                                            // Provider.of<AuthenticationProvider>(
-                                            //         context,
-                                            //         listen: false)
-                                            //     .authenticateUserName(
-                                            //         _emailController.text,
-                                            //         _passwordController.text,
-                                            //         context)
-                                            //         );
                                   }
                                 },
                                 color: MaterialStatePropertyAll(

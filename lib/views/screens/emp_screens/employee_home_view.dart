@@ -1,31 +1,20 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_beep/flutter_beep.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
-import 'package:meals_management/models/user_events_model.dart';
-import 'package:meals_management/providers/auth_provider.dart';
-import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/utils/constants.dart';
-import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
-import 'package:meals_management/views/screens/vendor_screen/vendor_home_view.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:custom_widgets/src.dart';
 
+// ignore: must_be_immutable
 class EmployeeHomeView extends StatefulWidget {
   late Function? initData;
   EmployeeHomeView({super.key, this.initData});
@@ -36,7 +25,6 @@ class EmployeeHomeView extends StatefulWidget {
 
 class _EmployeeHomeViewState extends State<EmployeeHomeView>
     with ConnectivityMixin {
-
 
   DateTime now = DateTime.now();
 
@@ -50,11 +38,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    Map<String, dynamic> timings = {
-      "start_time": "12:30 pm",
-      "end_time": "2:30 pm"
-    };
 
     return AspectRatio(
       aspectRatio: size.height / size.width,

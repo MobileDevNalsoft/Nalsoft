@@ -23,35 +23,6 @@ class AuthenticationRepo {
   final SharedPreferences? sharedPreferences;
   AuthenticationRepo({this.dioClient1, this.sharedPreferences});
 
-  // Future<ApiResponse> authenticateUser(String username, String password,token,reqState) async {
-  //   try {
-  //     // print('before response');
-  //     // print(sharedPreferences!.getString(AppConstants.TOKEN));
-  //     // print(sharedPreferences!.getString(AppConstants.REQ_STATE));
-      
-
-  //     Response response =
-  //         await dioClient1!.post(AppConstants.AUTHENCTICATE_USER_NAME,
-  //             data: {
-  //               "op": "credSubmit",
-  //               "credentials": {"username": username, "password": password},
-  //               "requestState":
-  //                   reqState ?? ""
-  //             },
-  //             options: Options(headers: {
-  //               'Authorization':
-  //                   'Bearer ${token ?? ""}',
-  //               'Content-Type': 'application/json'
-  //             }));
-  //     print('after response');
-  //     return ApiResponse.withSuccess(response);
-  //   } catch (e) {
-  //     print(e);
-
-  //     return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-  //   }
-  // }
-
  Future authenticateUser(String username, String password, String token, String reqState,context) async {
   try {
     final Map<String, dynamic> requestData = {
@@ -73,7 +44,7 @@ class AuthenticationRepo {
      print("authntoken${resp["authnToken"]}");
      if (resp["authnToken"]!=null){
       Provider.of<UserDataProvider>(context,listen:false).getUserinfo(username).then((value) =>  Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DataLoader())));
+            MaterialPageRoute(builder: (context) => const DataLoader())));
        
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -89,30 +60,6 @@ class AuthenticationRepo {
     // Handle any exceptions
   }
 }
-
-  // Future<ApiResponse> gettoken() async {
-  //   try {
-  //     print('in repo get token');
-  //     String username = 'c75d0cfcb0d44f6f83ab0923b6ee886b';
-  //     String password = '8f3203a2-8c52-4b44-a8a0-03eb0c39f50c';
-  //     String basicAuth =
-  //         'Basic ' + base64.encode(utf8.encode('$username:$password'));
-
-  //     Response response = await dioClient1!.post('${AppConstants.GetOCITOKEN}',
-  //         data: {
-  //           'grant_type': 'client_credentials',
-  //           'scope': 'urn:opc:idm:__myscopes__',
-  //         },
-  //         options: Options(headers: {
-  //           'Authorization': basicAuth,
-  //           'Content-Type': 'application/x-www-form-urlencoded'
-  //         }));
-  //     return ApiResponse.withSuccess(response);
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-  //   }
-  // }
 
   Future gettoken(String email,String pass,context) async {
   
@@ -136,35 +83,11 @@ class AuthenticationRepo {
           var resp = jsonDecode(response.body);
           print(resp["access_token"]);
           print("body ${response.body.toString()}");
-          // saveUserToken(resp["access_token"]);
           getRequestState(email,pass,resp["access_token"],context);
-  //  return resp["access_token"];
     } catch (e) {
       print(e.toString());
-      // return "";
     }
   }
-
-
-// Future<ApiResponse> getRequestState(String token) async{
-// try {
-//       print('inside get request state');
-//       print("token inside get request $token");
-//       Response response = await dioClient1!.get(
-//         AppConstants.AUTHENCTICATE_USER_NAME,
-//        options: Options(
-//         headers: {
-//           'Authorization': 'Bearer ${token ?? ""}',
-//       'Content-Type':'application/x-www-form-urlencoded' 
-//         }
-//        )
-//       );
-//       return ApiResponse.withSuccess(response);
-//     } catch (e) {
-//       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-//     }
-// }
-
 
 Future getRequestState(email,pass,String token,context) async {
   try {
@@ -182,16 +105,6 @@ Future getRequestState(email,pass,String token,context) async {
  var resp = jsonDecode(response.body);
           print(resp["requestState"]); 
           authenticateUser(email, pass,token,resp["requestState"],context);
-          // return resp["requestState"];
-    // if (response.statusCode == 200) {
-    //   // Successful response
-    //   return ApiResponse.withSuccess(response);
-    // } else {
-    //   // Handle other status codes if needed
-    //   return ApiResponse.withError('Request failed with status: ${response.statusCode}');
-    // }
-    // return res[""];
-
   } catch (e) {
     // Handle any exceptions
     return "";
@@ -222,16 +135,6 @@ saveUserNameandPassword(String username,String password)  {
       throw e;
     }
   }
-
-     saveReqSate(String req_state)  {
-    try {
-       sharedPreferences!.setString(AppConstants.REQ_STATE, req_state);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-
 
   String getUserToken() {
     return sharedPreferences!.getString(AppConstants.TOKEN) ?? "";

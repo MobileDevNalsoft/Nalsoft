@@ -48,11 +48,7 @@ class UserDataProvider extends ChangeNotifier {
       _connected = value;
       notifyListeners();
   }
-
-  // void setStream(){
-  //   _isDataPresentController.add(eventsPresent);
-  // }
-  // getting user data from firestore collection
+  
   Future<void> getUserinfo(String? username) async {
 
     String username = "saisanjit.dubbaka@nalsoft.net";
