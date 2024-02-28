@@ -41,6 +41,7 @@ class _PreviewState extends State<Preview> {
               Icons.arrow_back,
             ),
             onPressed: () {
+              Provider.of<UserDataProvider>(context,listen: false).getUserEventsData();
               Navigator.pop(
                   context);
             },

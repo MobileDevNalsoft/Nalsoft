@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/models/user_events_model.dart';
+import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
@@ -35,6 +36,8 @@ class EmployeeHomeView extends StatefulWidget {
 
 class _EmployeeHomeViewState extends State<EmployeeHomeView>
     with ConnectivityMixin {
+
+
   DateTime now = DateTime.now();
 
   // used to work with the selected dates in SfDateRangePicker
@@ -116,18 +119,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                       value: 'Sign Out',
                                       height: 10,
                                       onTap: () {
-                                        sharedPreferences
-                                            .remove(AppConstants.TOKEN);
+                                        
                                         sharedPreferences
                                             .remove('employee_name');
-                                        print(sharedPreferences
-                                            .get('employee_name'));
-                                        Navigator.pushNamedAndRemoveUntil(
+                                      
+                                        Navigator.pushReplacementNamed(
                                             context,
                                             RouteManagement.loginPage,
-                                            (route) => false);
+                                            );
                                       },
-                                      child: const Text('Sign Out'))
+                                      child: const Text('Sign Out')),
+                              
                                 ];
                               },
                               child: const Icon(Icons.power_settings_new_sharp),

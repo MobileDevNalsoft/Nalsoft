@@ -9,29 +9,25 @@ import 'package:meals_management/views/custom_widgets/custom_textformfield.dart'
 import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  const LoginView();
 
   @override
   State<LoginView> createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> with ConnectivityMixin {
+@override
+void initState() {
+  super.initState();
+}
+
   final GlobalKey _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getToken();
-   
-  }
-  getToken() async{
-     await Provider.of<AuthenticationProvider>(context, listen: false)
-                  .getToken();
-  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -97,28 +93,6 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                               ),
                             );
                           }),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const TextButton(
-                                onPressed: null,
-                                child: Text(
-                                  'forgot password?',
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, RouteManagement.signUp);
-                                },
-                                child: const Text(
-                                  'Register',
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                              )
-                            ],
-                          ),
                           const SizedBox(
                             height: 15,
                           ),
@@ -126,7 +100,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomElevatedButton(
-                                onPressed: () async {
+                                onPressed: ()  {
                                   if (_emailController.text.isEmpty) {
                                     CustomSnackBar.showSnackBar(context,
                                         'Email cannot be empty', Colors.red);
@@ -152,25 +126,20 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                         'Password must include atleast one special symbol, lowercase and uppercase letter',
                                         Colors.red);
                                   } else {
-                                    Provider.of<AuthenticationProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .authenticateUserName(
-                                                    _emailController.text,
-                                                    _passwordController.text,
-                                                    context);
-                                  //   await Provider.of<AuthenticationProvider>(
-                                  //           context,
-                                  //           listen: false)
-                                  //       .getToken()
-                                  //       .then((value) =>
-                                  //           Provider.of<AuthenticationProvider>(
-                                  //                   context,
-                                  //                   listen: false)
-                                  //               .authenticateUserName(
-                                  //                   _emailController.text,
-                                  //                   _passwordController.text,
-                                  //                   context));
+                                   
+                                     Provider.of<AuthenticationProvider>(
+                                            context,
+                                            listen: false)
+                                        .getToken(_emailController.text,_passwordController.text,context);
+                                        // .then((value) =>
+                                            // Provider.of<AuthenticationProvider>(
+                                            //         context,
+                                            //         listen: false)
+                                            //     .authenticateUserName(
+                                            //         _emailController.text,
+                                            //         _passwordController.text,
+                                            //         context)
+                                            //         );
                                   }
                                 },
                                 color: MaterialStatePropertyAll(

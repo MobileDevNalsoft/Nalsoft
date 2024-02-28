@@ -118,8 +118,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                         value: 'Sign Out',
                                         height: 10,
                                         onTap: () {
-                                          sharedPreferences
-                                              .remove(AppConstants.TOKEN);
+                                        
                                           sharedPreferences
                                               .remove('employee_name');
                                           Navigator.pushNamedAndRemoveUntil(

@@ -13,6 +13,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:custom_widgets/src.dart';
 
 class DataLoader extends StatefulWidget {
   const DataLoader({super.key});
@@ -96,7 +97,8 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
   @override
   Widget build(BuildContext context) {
     print(sharedPreferences.getString('user_type'));
-    return sharedPreferences.getString('user_type') == 'E'
+    
+    return sharedPreferences.getString('employee_name')==null? CustomWidgets.CustomCircularLoader():  sharedPreferences.getString('user_type') == 'E'||sharedPreferences.getString('user_type') == 'A'
         ? UpgradeAlert(
             child: EmployeeHomeView(
             initData: initData,
