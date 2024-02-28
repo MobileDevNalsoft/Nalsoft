@@ -55,9 +55,8 @@ void main() async {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteManagement.generateRoute,
-            home:
-                !di.sl.get<SharedPreferences>().containsKey(AppConstants.TOKEN)
-                    ? UpgradeAlert(child: LoginView())
-                    : UpgradeAlert(child: DataLoader()))),
+            home: !di.sl.get<SharedPreferences>().containsKey('employee_name')
+                ? UpgradeAlert(child: LoginView())
+                : DataLoader())),
   ));
 }

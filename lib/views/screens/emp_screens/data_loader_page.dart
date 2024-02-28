@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:upgrader/upgrader.dart';
 
 class DataLoader extends StatefulWidget {
   const DataLoader({super.key});
@@ -50,57 +51,56 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
     print("did init${cnt++}");
 
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
-    
-      if (!sharedPreferences.containsKey('employee_name')) {
-        // await Provider.of<UserDataProvider>(context, listen: false)
-        //     .getUserinfo('');
+
+    if (!sharedPreferences.containsKey('employee_name')) {
+      // await Provider.of<UserDataProvider>(context, listen: false)
+      //     .getUserinfo('');
+      await Provider.of<UserDataProvider>(context, listen: false)
+          .getUserEventsData();
+      await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
+      print('user data got');
+    } else {
+      if (sharedPreferences.getString('user_type') != 'V') {
         await Provider.of<UserDataProvider>(context, listen: false)
             .getUserEventsData();
         await Provider.of<UserDataProvider>(context, listen: false)
             .getHolidays();
-        print('user data got');
-      } else {
-        if (sharedPreferences.getString('user_type') != 'V') {
-          await Provider.of<UserDataProvider>(context, listen: false)
-              .getUserEventsData();
-          await Provider.of<UserDataProvider>(context, listen: false)
-              .getHolidays();
-        }
       }
-     
-         Provider.of<UserDataProvider>(context, listen: false)
-          .setConnected(isConnected());
-          
-     if (sharedPreferences.getString('user_type') == 'V') {
-          DateTime lastResetDate = sharedPreferences
-                  .containsKey('lastResetDate')
-              ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
-              : DateTime.now();
-          if (!sharedPreferences.containsKey('lastResetDate')) {
-            sharedPreferences.setString('lastResetDate', now.toString());
-            sharedPreferences.setInt('employeeCount', 0);
-            Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(
-                    sharedPreferences.getInt('employeeCount') ?? 0);
-          } else if (now.day != lastResetDate.day) {
-            sharedPreferences.setString('lastResetDate', now.toString());
-            sharedPreferences.setInt('employeeCount', 0);
-            Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(
-                    sharedPreferences.getInt('employeeCount') ?? 0);
-          } else {
-            Provider.of<HomeStatusProvider>(context, listen: false)
-                .setEmployeeCount(
-                    sharedPreferences.getInt('employeeCount') ?? 0);
-          }
-        }
-        Provider.of<UserDataProvider>(context, listen: false).isLoading = false;
-     
+    }
+
+    Provider.of<UserDataProvider>(context, listen: false)
+        .setConnected(isConnected());
+
+    if (sharedPreferences.getString('user_type') == 'V') {
+      DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
+          ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+          : DateTime.now();
+      if (!sharedPreferences.containsKey('lastResetDate')) {
+        sharedPreferences.setString('lastResetDate', now.toString());
+        sharedPreferences.setInt('employeeCount', 0);
+        Provider.of<HomeStatusProvider>(context, listen: false)
+            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+      } else if (now.day != lastResetDate.day) {
+        sharedPreferences.setString('lastResetDate', now.toString());
+        sharedPreferences.setInt('employeeCount', 0);
+        Provider.of<HomeStatusProvider>(context, listen: false)
+            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+      } else {
+        Provider.of<HomeStatusProvider>(context, listen: false)
+            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+      }
+    }
+    Provider.of<UserDataProvider>(context, listen: false).isLoading = false;
   }
 
   @override
   Widget build(BuildContext context) {
     print(sharedPreferences.getString('user_type'));
-    return sharedPreferences.getString('user_type') == 'E' ? EmployeeHomeView( initData: initData,) : VendorHomeView();
+    return sharedPreferences.getString('user_type') == 'E'
+        ? UpgradeAlert(
+            child: EmployeeHomeView(
+            initData: initData,
+          ))
+        : UpgradeAlert(child: VendorHomeView());
   }
 }
