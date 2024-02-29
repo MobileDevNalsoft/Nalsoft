@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_events_model.dart';
 import 'package:meals_management/models/user_model.dart';
@@ -51,9 +49,7 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> getUserinfo(String username) async {
-    String username = "madhankumar.ch@nalsoft.net";
     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
-
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       _user = UserModel.fromJson(apiResponse.response!.data);
@@ -67,12 +63,13 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> updateUserEvents(
-      List<Map<String, dynamic>> dates, bool isOpted) async {
+      List<Map<String, dynamic>> dates, bool isOpted,String? empid) async {
     print("Dates");
     print(dates.toString());
     isLoading = true;
+    
     ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(
-        sharedPreferences!.getString('employee_id')!, dates, isOpted);
+        empid??sharedPreferences!.getString('employee_id')!, dates, isOpted);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       isOpted
@@ -83,8 +80,6 @@ class UserDataProvider extends ChangeNotifier {
       print(apiResponse);
       isLoading = false;
       eventsPresent = true;
-      // _isDataPresentController.add(eventsPresent);
-      // print("datastream inside provider $isDataPresentStream");
       notifyListeners();
     } else {
       _isAlreadyScanned = true;

@@ -5,7 +5,6 @@ import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/user_events_model.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
@@ -111,16 +110,11 @@ class AdminEmployeesProvider extends ChangeNotifier {
    }
    Future<void> getUserinfo(String? username) async {
 
-     String username = "raviteja.singamsetty@nalsoft.net";
-     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
+     ApiResponse apiResponse = await userRepo.getUserinfo(username!);
 
      if (apiResponse.response != null &&
          apiResponse.response!.statusCode == 200) {
        _user = UserModel.fromJson(apiResponse.response!.data);
-       sharedPreferences!.setString('employee_name', _user!.data!.empName!);
-       sharedPreferences!.setString('employee_id', _user!.data!.empId!);
-       sharedPreferences!.setString('employee_department', _user!.data!.department!);
-       sharedPreferences!.setString('user_type', _user!.data!.userType!);
      }
      print(_user);
      notifyListeners();

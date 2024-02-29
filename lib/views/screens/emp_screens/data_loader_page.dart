@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
+import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
-import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
 import 'package:meals_management/views/screens/vendor_screen/vendor_home_view.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:upgrader/upgrader.dart';
-import 'package:custom_widgets/src.dart';
 
 class DataLoader extends StatefulWidget {
   const DataLoader({super.key});
@@ -24,22 +21,7 @@ class DataLoader extends StatefulWidget {
 class _DataLoader extends State<DataLoader> with ConnectivityMixin {
   DateTime now = DateTime.now();
 
-  // used to work with the selected dates in SfDateRangePicker
-  DateRangePickerController datesController = DateRangePickerController();
-
-  // used to modify QR view
-  QRViewController? qrController;
-
-  late StreamSubscription subscription;
-
-  // to identify QR widget in widget tree
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-
-  UserRepo userRepo = UserRepo();
-
   final sharedPreferences = sl.get<SharedPreferences>();
-
-  static int cnt = 0;
 
   @override
   void initState() {
@@ -48,7 +30,6 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
   }
 
   Future<void> initData() async {
-    print("did init${cnt++}");
 
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
 
@@ -62,6 +43,25 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
             .getUserEventsData();
         await Provider.of<UserDataProvider>(context, listen: false)
             .getHolidays();
+      }
+      if (sharedPreferences.getString('user_type') == 'E'){
+        DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
+        ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+        : DateTime.now();
+    if (!sharedPreferences.containsKey('lastResetDate')) {
+      sharedPreferences.setString('lastResetDate', now.toString());
+      sharedPreferences.setInt('employeeCount', 0);
+      Provider.of<HomeStatusProvider>(context, listen: false)
+          .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+    } else if (now.day != lastResetDate.day) {
+      sharedPreferences.setString('lastResetDate', now.toString());
+      sharedPreferences.setInt('employeeCount', 0);
+      Provider.of<HomeStatusProvider>(context, listen: false)
+          .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+    } else {
+      Provider.of<HomeStatusProvider>(context, listen: false)
+          .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+    }
       }
     }
 

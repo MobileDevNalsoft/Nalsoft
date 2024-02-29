@@ -1,11 +1,7 @@
 import 'dart:convert';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:meals_management/repositories/push_notifications_repo.dart';
-import 'package:oauth2/oauth2.dart' as oauth2;
 
 class GenerateNotificationProvider extends ChangeNotifier {
   PushNotitficationsRepo notificationRepo = PushNotitficationsRepo();

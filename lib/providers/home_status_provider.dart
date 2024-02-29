@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management/repositories/user_events_repo.dart';
 
 class HomeStatusProvider extends ChangeNotifier {
-  final UserEventsRepo _db = UserEventsRepo();
 
   List<Map<String, Map<String, dynamic>>> _floorDetails = [];
   bool _reasonStatusEmpty = false;

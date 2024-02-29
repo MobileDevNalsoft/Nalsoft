@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:meals_management/APIClient/interceptor.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioClient1 {

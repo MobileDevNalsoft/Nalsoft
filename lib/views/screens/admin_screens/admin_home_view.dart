@@ -32,6 +32,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
 
   late SharedPreferences sharedPreferences;
 
+  DateRangePickerController datesController = DateRangePickerController();
+
   String qrResult = '';
 
   @override
@@ -42,14 +44,19 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
         .setAllUserList();
   }
 
+    @override
+  void dispose(){
+    datesController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    DateRangePickerController datesController = DateRangePickerController();
 
-    return AspectRatio(
-      aspectRatio: size.height / size.width,
-      child: SafeArea(
+    return SafeArea(
+      child: AspectRatio(
+        aspectRatio: size.height / size.width,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(
@@ -109,18 +116,22 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                 itemBuilder: (BuildContext context) {
                                   return [
                                     PopupMenuItem(
-                                        value: 'Sign Out',
+                                        value: 'Log Out',
                                         height: 10,
                                         onTap: () {
-                                        init();
-                                          sharedPreferences
-                                              .remove('employee_name');
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              RouteManagement.loginPage,
-                                              (route) => false);
+                                            init();
+                                        sharedPreferences
+                                            .remove('employee_name');
+                                            sharedPreferences
+                                            .remove('employee_id');
+                                             sharedPreferences.remove('employee_department');
+                                        sharedPreferences.remove('user_type');
+                                        Navigator.pushReplacementNamed(
+                                          context,
+                                          RouteManagement.loginPage,
+                                        );
                                         },
-                                        child: const Text('Sign Out'))
+                                        child: const Text('Log Out'))
                                   ];
                                 },
                                 child:
@@ -221,13 +232,14 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     cancelText: 'Clear Selection',
                   ),
                   CustomElevatedButton(
-                      color: MaterialStatePropertyAll(Colors.blue),
+                      color:MaterialStatePropertyAll(
+                                          Colors.grey.shade300),
                       onPressed: () {
                         Navigator.pushNamed(
                             context, RouteManagement.generateNotification);
                       },
                       child: const Text("Notify",
-                          style: TextStyle(color: Colors.white))),
+                         style: TextStyle(color: Colors.black), )),
                   Image.asset("assets/images/food.png")
                 ],
               ),
@@ -294,6 +306,9 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
       sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
       sheet.getRangeByIndex(rowIndex, 3).setText(userdata.status);
+      if(userdata.status == '1'){
+        userdata.info = DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!)).toString().substring(11,19);
+      }
       sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
       rowIndex++;
     }

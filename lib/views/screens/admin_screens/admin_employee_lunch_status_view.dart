@@ -38,6 +38,12 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     intiData();
   }
 
+  @override
+  void dispose(){
+    datesController.dispose();
+    super.dispose();
+  }
+
   Future<void> intiData() async {
     print(_isLoading);
     Provider.of<AdminEmployeesProvider>(context, listen: false)
@@ -63,264 +69,267 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     DateTime now = DateTime.now();
 
     return SafeArea(
-        child: Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back)),
-        title: const Text(
-          "Lunch Status",
-          style: TextStyle(fontSize: 18),
-        ),
-        centerTitle: true,
-        actions: const [
-          Icon(
-            Icons.account_circle_sharp,
-            size: 30,
+        child: AspectRatio(
+          aspectRatio: size.height/size.width,
+          child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back)),
+          title: const Text(
+            "Lunch Status",
+            style: TextStyle(fontSize: 18),
           ),
-          SizedBox(
-            width: 10,
-          )
-        ],
-        backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
-        elevation: 4,
-        shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(25),
-                bottomRight: Radius.circular(25))),
-      ),
-      body: _isLoading
-          ? CustomWidgets.CustomCircularLoader()
-          : Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Employee name",
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 16),
-                              ),
-                              Text(
-                                "Department",
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          const Column(
-                            children: [Text(" : "), Text(" : ")],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: size.height * 0.025,
-                                width: size.width * 0.45,
-                                child: Text(
-                                    Provider.of<AdminEmployeesProvider>(context,
-                                                listen: true)
-                                            .isAdminEmployeeDataPresent
-                                        ? Provider.of<AdminEmployeesProvider>(
-                                                context,
-                                                listen: false)
-                                            .getUserData
-                                            .data!
-                                            .empName!
-                                        : '',
-                                    style: const TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis)),
-                              ),
-                              SizedBox(
-                                height: size.height * 0.025,
-                                width: size.width * 0.45,
-                                child: Text(
-                                    Provider.of<AdminEmployeesProvider>(context,
-                                                listen: true)
-                                            .isAdminEmployeeDataPresent
-                                        ? Provider.of<AdminEmployeesProvider>(
-                                                context,
-                                                listen: false)
-                                            .getUserData
-                                            .data!
-                                            .department!
-                                        : '',
-                                    style: const TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis)),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: size.height * 0.02,
-                    ),
-                    Consumer<AdminEmployeesProvider>(
-                      builder: (context, provider, child) {
-                        if (provider.isLoading && isConnected()) {
-                          return SizedBox(
-                            width: size.width * 0.95,
-                            child: Card(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              elevation: 8,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 18.0, top: 4),
-                                    child: Text('Lunch Calendar'),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 15.0, left: 18),
-                                    child: Text(
-                                      '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
-                                      style: const TextStyle(fontSize: 30),
-                                    ),
-                                  ),
-                                  const Divider(),
-                                  SizedBox(
-                                      height: size.height * 0.37,
-                                      child:
-                                          CustomWidgets.CustomCircularLoader()),
-                                ],
-                              ),
+          centerTitle: true,
+          actions: const [
+            Icon(
+              Icons.account_circle_sharp,
+              size: 30,
+            ),
+            SizedBox(
+              width: 10,
+            )
+          ],
+          backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
+          elevation: 4,
+          shape: const ContinuousRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(25),
+                  bottomRight: Radius.circular(25))),
+                ),
+                body: _isLoading
+            ? CustomWidgets.CustomCircularLoader()
+            : Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Employee name",
+                                  style: TextStyle(
+                                      color: Colors.black54, fontSize: 16),
+                                ),
+                                Text(
+                                  "Department",
+                                  style: TextStyle(
+                                      color: Colors.black54, fontSize: 16),
+                                ),
+                              ],
                             ),
-                          );
-                        } else if (!Provider.of<AdminEmployeesProvider>(context,
-                                listen: false)
-                            .isAdminEmployeeDataPresent) {
-                          return SizedBox(
-                            width: size.width * 0.95,
-                            child: Card(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              elevation: 8,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 18.0, top: 4),
-                                    child: Text('Lunch Calendar'),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 15.0, left: 18),
-                                    child: Text(
-                                      '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
-                                      style: const TextStyle(fontSize: 30),
-                                    ),
-                                  ),
-                                  const Divider(),
-                                  SizedBox(
-                                    height: size.height * 0.37,
-                                    child: Center(
-                                      child: IconButton(
-                                        icon: Icon(Icons.refresh),
-                                        onPressed: () {
-                                          Provider.of<UserDataProvider>(context,
-                                                  listen: false)
-                                              .setConnected(isConnected());
-                                          if (!Provider.of<UserDataProvider>(
+                            const Column(
+                              children: [Text(" : "), Text(" : ")],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: size.height * 0.025,
+                                  width: size.width * 0.45,
+                                  child: Text(
+                                      Provider.of<AdminEmployeesProvider>(context,
+                                                  listen: true)
+                                              .isAdminEmployeeDataPresent
+                                          ? Provider.of<AdminEmployeesProvider>(
                                                   context,
                                                   listen: false)
-                                              .getConnected) {
-                                            CustomSnackBar.showSnackBar(
-                                                context,
-                                                'No Internet Connection',
-                                                Colors.red);
-                                          } else {
-                                            setState(() {
-                                              Provider.of<UserDataProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .setConnected(isConnected());
-                                              intiData();
-                                              Provider.of<AdminEmployeesProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .isLoading = true;
-                                            });
-                                          }
-                                        },
+                                              .getUserData
+                                              .data!
+                                              .empName!
+                                          : '',
+                                      style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis)),
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.025,
+                                  width: size.width * 0.45,
+                                  child: Text(
+                                      Provider.of<AdminEmployeesProvider>(context,
+                                                  listen: true)
+                                              .isAdminEmployeeDataPresent
+                                          ? Provider.of<AdminEmployeesProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserData
+                                              .data!
+                                              .department!
+                                          : '',
+                                      style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis)),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
+                      Consumer<AdminEmployeesProvider>(
+                        builder: (context, provider, child) {
+                          if (provider.isLoading && isConnected()) {
+                            return SizedBox(
+                              width: size.width * 0.95,
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                elevation: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 18.0, top: 4),
+                                      child: Text('Lunch Calendar'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 15.0, left: 18),
+                                      child: Text(
+                                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                        style: const TextStyle(fontSize: 30),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const Divider(),
+                                    SizedBox(
+                                        height: size.height * 0.37,
+                                        child:
+                                            CustomWidgets.CustomCircularLoader()),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        } else {
-                          return CustomCalendarCard(
-                            isUDP: false,
-                            forAdmin: false,
-                            selectionMode: DateRangePickerSelectionMode.single,
-                            selectibleDayPredicate: (date) {
-                              return false;
-                            },
-
-                            //TODO
-                            onSubmit: (p0) => isConnected()
-                                ? sendMail(context)
-                                : CustomSnackBar.showSnackBar(
-                                    context, "No internet", Colors.red),
-
-                            onCancel: () {
-                              datesController.selectedDate = null;
-                            },
-                            confirmText: 'Send Mail',
-                            cancelText: 'Clear Selection',
-                          );
-                        }
-                      },
-                    ),
-                    const CustomLegend(),
-                    Image.asset("assets/images/food.png"),
-                  ],
-                ),
-                if (Provider.of<AdminEmployeesProvider>(context, listen: true)
-                    .isMailLoading)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                        color: Colors.black38,
-                        child: CustomWidgets.CustomCircularLoader()),
+                            );
+                          } else if (!Provider.of<AdminEmployeesProvider>(context,
+                                  listen: false)
+                              .isAdminEmployeeDataPresent) {
+                            return SizedBox(
+                              width: size.width * 0.95,
+                              child: Card(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                elevation: 8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 18.0, top: 4),
+                                      child: Text('Lunch Calendar'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 15.0, left: 18),
+                                      child: Text(
+                                        '${DateFormat('EEEE').format(now).substring(0, 3)}, ${DateFormat('MMMM').format(now).substring(0, 3)} ${now.day}',
+                                        style: const TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    SizedBox(
+                                      height: size.height * 0.37,
+                                      child: Center(
+                                        child: IconButton(
+                                          icon: Icon(Icons.refresh),
+                                          onPressed: () {
+                                            Provider.of<UserDataProvider>(context,
+                                                    listen: false)
+                                                .setConnected(isConnected());
+                                            if (!Provider.of<UserDataProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getConnected) {
+                                              CustomSnackBar.showSnackBar(
+                                                  context,
+                                                  'No Internet Connection',
+                                                  Colors.red);
+                                            } else {
+                                              setState(() {
+                                                Provider.of<UserDataProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .setConnected(isConnected());
+                                                intiData();
+                                                Provider.of<AdminEmployeesProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .isLoading = true;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return CustomCalendarCard(
+                              isUDP: false,
+                              forAdmin: false,
+                              selectionMode: DateRangePickerSelectionMode.single,
+                              selectibleDayPredicate: (date) {
+                                return false;
+                              },
+          
+                              //TODO
+                              onSubmit: (p0) => isConnected()
+                                  ? sendMail(context)
+                                  : CustomSnackBar.showSnackBar(
+                                      context, "No internet", Colors.red),
+          
+                              onCancel: () {
+                                datesController.selectedDate = null;
+                              },
+                              confirmText: 'Send Mail',
+                              cancelText: 'Clear Selection',
+                            );
+                          }
+                        },
+                      ),
+                      const CustomLegend(),
+                      Image.asset("assets/images/food.png"),
+                    ],
                   ),
-              ],
-            ),
-    ));
+                  if (Provider.of<AdminEmployeesProvider>(context, listen: true)
+                      .isMailLoading)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                          color: Colors.black38,
+                          child: CustomWidgets.CustomCircularLoader()),
+                    ),
+                ],
+              ),
+              ),
+        ));
   }
 
   Future<void> sendMail(BuildContext context) async {
@@ -348,7 +357,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
     //   // Append headers
     sheet.getRangeByIndex(1, 1).setText(
-        '${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empId}(${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empId})');
+        '${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.userName}(${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empId})');
 
     sheet.getRangeByIndex(3, 1).setText('Date');
     sheet.getRangeByIndex(3, 2).setText('Status');
@@ -371,6 +380,17 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .getRangeByIndex(rowIndex, 1)
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+                .getOpted
+                .where((element) =>
+                    date.toString().substring(0, 10) == element.date)
+                .first
+                .info = DateTime.fromMillisecondsSinceEpoch(int.parse(Provider.of<AdminEmployeesProvider>(context, listen: false)
+                .getOpted
+                .where((element) =>
+                    date.toString().substring(0, 10) == element.date)
+                .first
+                .info!)).toString().substring(11,19);
         sheet.getRangeByIndex(rowIndex, 3).setText(
             Provider.of<AdminEmployeesProvider>(context, listen: false)
                 .getOpted

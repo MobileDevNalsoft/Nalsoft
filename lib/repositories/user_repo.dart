@@ -6,8 +6,6 @@ import 'package:meals_management/APIClient/exceptions/api_error_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/utils/constants.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 class UserRepo {
   final DioClient2? dioClient2;
 

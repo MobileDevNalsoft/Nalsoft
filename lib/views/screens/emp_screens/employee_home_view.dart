@@ -34,14 +34,20 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
 
   final sharedPreferences = sl.get<SharedPreferences>();
 
+      @override
+  void dispose(){
+    datesController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return AspectRatio(
-      aspectRatio: size.height / size.width,
-      child: SafeArea(
-          child: Scaffold(
+    return SafeArea(
+      child: AspectRatio(
+        aspectRatio: size.height / size.width,
+        child: Scaffold(
         body: Stack(
           children: [
             Column(
@@ -98,18 +104,22 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               itemBuilder: (BuildContext context) {
                                 return [
                                   PopupMenuItem(
-                                      value: 'Sign Out',
+                                      value: 'Log Out',
                                       height: 10,
                                       onTap: () {
+                                            init();
                                         sharedPreferences
                                             .remove('employee_name');
-                                            init();
+                                            sharedPreferences
+                                            .remove('employee_id');
+                                             sharedPreferences.remove('employee_department');
+                                        sharedPreferences.remove('user_type');
                                         Navigator.pushReplacementNamed(
                                           context,
                                           RouteManagement.loginPage,
                                         );
                                       },
-                                      child: const Text('Sign Out')),
+                                      child: const Text('Log Out')),
                                 ];
                               },
                               child: const Icon(Icons.power_settings_new_sharp),
@@ -379,7 +389,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
             ),
           ],
         ),
-      )),
+      ),
+      ),
     );
   }
 

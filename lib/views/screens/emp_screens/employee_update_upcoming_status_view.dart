@@ -10,7 +10,6 @@ import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
-
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 
@@ -30,8 +29,14 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
 
   // used to work with the content entered in TextField by user
   TextEditingController notOptController = TextEditingController();
-  bool _isLoading = false;
+
   final FocusNode _focusNode = FocusNode();
+
+      @override
+  void dispose(){
+    datesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +44,9 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
 
     var now = DateTime.now();
 
-    return AspectRatio(
-      aspectRatio: size.height / size.width,
-      child: SafeArea(
+    return SafeArea(
+      child: AspectRatio(
+        aspectRatio: size.height / size.width,
         child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
@@ -397,7 +402,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                                 .substring(0, 10),
                                             info: notOptController.text)
                                         .toJson()
-                                  ], false);
+                                  ], false,null);
                                 } else {
                                   CustomSnackBar.showSnackBar(
                                       context, "No internet", Colors.red);
@@ -437,7 +442,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                                           notOptController.text)
                                                   .toJson())
                                               .toList(),
-                                          false);
+                                          false,null);
                                 } else {
                                   CustomSnackBar.showSnackBar(
                                       context, "No internet", Colors.red);

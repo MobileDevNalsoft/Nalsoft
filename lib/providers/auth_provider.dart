@@ -12,6 +12,7 @@ class AuthenticationProvider extends ChangeNotifier {
   bool _obscurePassword = true;
   int _errTxt = 0;
   int _passErrTxt = 0;
+  bool loginLoader=false;
 
   void obscureToggle() {
     _obscurePassword = !_obscurePassword;
@@ -29,7 +30,8 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future getToken() async {
-   
+   loginLoader=true;
+   notifyListeners();
     ApiResponse apiResponse = await authenticationRepo!.gettoken();
 
     if (apiResponse.response != null &&
@@ -46,7 +48,7 @@ class AuthenticationProvider extends ChangeNotifier {
         authenticationRepo!.saveUserToken(token);
         print("token$token");
         getRequestState();
-        notifyListeners();
+ 
       }
     }
   }
@@ -126,6 +128,8 @@ class AuthenticationProvider extends ChangeNotifier {
         ),
       );
     }
+    loginLoader=false;
+    notifyListeners();
   }
 
   bool get obscurePassword => _obscurePassword;

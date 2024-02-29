@@ -1,17 +1,11 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:meals_management/APIClient/dio_client2.dart';
 import 'package:meals_management/APIClient/exceptions/api_error_handler.dart';
 import 'package:meals_management/models/api_response_model.dart';
-import 'package:meals_management/models/user_events_model.dart';
-
 import 'package:meals_management/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user_model.dart';
 
 class UserEventsRepo {
   final _db = FirebaseFirestore.instance;
