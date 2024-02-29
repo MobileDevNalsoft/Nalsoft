@@ -56,15 +56,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
               ),
               centerTitle: true,
               backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
-              actions: const [
-                Icon(
-                  Icons.account_circle_sharp,
-                  size: 30,
-                ),
-                SizedBox(
-                  width: 10,
-                )
-              ],
               elevation: 4,
               shape: const ContinuousRectangleBorder(
                   borderRadius: BorderRadius.only(

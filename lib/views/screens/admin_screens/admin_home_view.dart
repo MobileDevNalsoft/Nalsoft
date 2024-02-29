@@ -1,6 +1,7 @@
 import "dart:io";
 import "package:custom_widgets/src.dart";
 import "package:get_it/get_it.dart";
+import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
@@ -111,7 +112,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                         value: 'Sign Out',
                                         height: 10,
                                         onTap: () {
-                                        
+                                        init();
                                           sharedPreferences
                                               .remove('employee_name');
                                           Navigator.pushNamedAndRemoveUntil(

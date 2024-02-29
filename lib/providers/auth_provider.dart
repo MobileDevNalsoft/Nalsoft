@@ -14,8 +14,7 @@ class AuthenticationProvider extends ChangeNotifier {
   bool _obscurePassword = true;
   int _errTxt = 0;
   int _passErrTxt = 0;
-  String _reqState ="";
-  String _authToken="";
+
   void obscureToggle() {
     _obscurePassword = !_obscurePassword;
     notifyListeners();
@@ -31,8 +30,104 @@ class AuthenticationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getToken(email,pass,context) async {
-   await authenticationRepo!.gettoken(email,pass,context);
+  Future getToken() async {
+   
+    ApiResponse apiResponse = await authenticationRepo!.gettoken();
+
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      Map map = apiResponse.response!.data;
+
+      String token = '';
+
+      try {
+        token = map["access_token"];
+      } catch (e) {}
+
+      if (token.isNotEmpty) {
+        authenticationRepo!.saveUserToken(token);
+        print("token$token");
+        getRequestState();
+        notifyListeners();
+      }
+    }
+  }
+
+  Future getRequestState() async {
+    ApiResponse apiResponse = await authenticationRepo!.getRequestState();
+
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      Map map = apiResponse.response!.data;
+
+      String requestState = '';
+
+      try {
+        requestState = map["requestState"];
+      } catch (e) {}
+
+      if (requestState.isNotEmpty) {
+        authenticationRepo!.saveReqSate(requestState);
+        print("req_state$requestState");
+        notifyListeners();
+      }
+    }
+  }
+
+  Future authenticateUserName(
+      String username, String password, BuildContext context) async {
+    ApiResponse apiResponse =
+        await authenticationRepo!.authenticateUser(username, password);
+
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      Map map = apiResponse.response!.data;
+
+      String authToken = "";
+      String status = "";
+      try {
+        authToken = map["authnToken"];
+      } catch (e) {}
+      try {
+        status = map["status"];
+      } catch (e) {}
+
+      if (authToken.isNotEmpty && status == "success") {
+        authenticationRepo!.saveAuthToken(authToken);
+        authenticationRepo!.saveUserNameandPassword(username, password);
+        print("token $authToken");
+        Provider.of<UserDataProvider>(context,listen:false).getUserinfo(username).then((value) =>  Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => DataLoader())));
+       
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login Successfull'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Something Went Wrong..',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Something Went Wrong..',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   bool get obscurePassword => _obscurePassword;

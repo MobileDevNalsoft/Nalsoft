@@ -51,7 +51,7 @@ class UserDataProvider extends ChangeNotifier {
   
   Future<void> getUserinfo(String? username) async {
 
-    String username = "saisanjit.dubbaka@nalsoft.net";
+    String username = "rohith.sudam@nalsoft.net";
     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
 
     if (apiResponse.response != null &&

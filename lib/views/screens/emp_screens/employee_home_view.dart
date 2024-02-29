@@ -104,6 +104,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                       onTap: () {
                                         sharedPreferences
                                             .remove('employee_name');
+                                            init();
                                         Navigator.pushReplacementNamed(
                                             context,
                                             RouteManagement.loginPage,

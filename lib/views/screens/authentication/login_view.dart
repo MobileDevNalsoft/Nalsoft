@@ -117,10 +117,18 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                         'Password must include atleast one special symbol, lowercase and uppercase letter',
                                         Colors.red);
                                   } else {
-                                     Provider.of<AuthenticationProvider>(
+                                       Provider.of<AuthenticationProvider>(
                                             context,
                                             listen: false)
-                                        .getToken(_emailController.text,_passwordController.text,context);
+                                        .getToken()
+                                        .then((value) =>
+                                            Provider.of<AuthenticationProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .authenticateUserName(
+                                                    _emailController.text,
+                                                    _passwordController.text,
+                                                    context));
                                   }
                                 },
                                 color: MaterialStatePropertyAll(
