@@ -24,7 +24,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
   bool _showQR = false;
   bool _hasShownSnackbar = false;
   bool _isIncremented = false;
-  bool _isScanned= false;
+  bool _isScanned = false;
   final sharedPreferences = sl.get<SharedPreferences>();
 
   var now = DateTime.now();
@@ -40,22 +40,22 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
     // TODO: implement initState
     super.initState();
     DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
-          ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
-          : DateTime.now();
-      if (!sharedPreferences.containsKey('lastResetDate')) {
-        sharedPreferences.setString('lastResetDate', now.toString());
-        sharedPreferences.setInt('employeeCount', 0);
-        Provider.of<HomeStatusProvider>(context, listen: false)
-            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-      } else if (now.day != lastResetDate.day) {
-        sharedPreferences.setString('lastResetDate', now.toString());
-        sharedPreferences.setInt('employeeCount', 0);
-        Provider.of<HomeStatusProvider>(context, listen: false)
-            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-      } else {
-        Provider.of<HomeStatusProvider>(context, listen: false)
-            .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
-      }
+        ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
+        : DateTime.now();
+    if (!sharedPreferences.containsKey('lastResetDate')) {
+      sharedPreferences.setString('lastResetDate', now.toString());
+      sharedPreferences.setInt('employeeCount', 0);
+      Provider.of<HomeStatusProvider>(context, listen: false)
+          .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+    } else if (now.day != lastResetDate.day) {
+      sharedPreferences.setString('lastResetDate', now.toString());
+      sharedPreferences.setInt('employeeCount', 0);
+      Provider.of<HomeStatusProvider>(context, listen: false)
+          .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+    } else {
+      Provider.of<HomeStatusProvider>(context, listen: false)
+          .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
+    }
   }
 
   @override
@@ -82,8 +82,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                           value: 'Sign Out',
                           height: 10,
                           onTap: () {
-                            sharedPreferences
-                                            .remove('employee_name');
+                            sharedPreferences.remove('employee_name');
                             Navigator.pushNamedAndRemoveUntil(context,
                                 RouteManagement.loginPage, (route) => false);
                           },
@@ -126,12 +125,15 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                     qrController = controller;
 
                     controller.scannedDataStream.listen((data) async {
-                      _isScanned=true;
+                      _isScanned = true;
                       if (_isScanned) controller.pauseCamera();
-                      Future.delayed(Duration(milliseconds:500),() {
-                        controller.resumeCamera();
-                        _isScanned=false;
-                      },) ;
+                      Future.delayed(
+                        Duration(milliseconds: 500),
+                        () {
+                          controller.resumeCamera();
+                          _isScanned = false;
+                        },
+                      );
                       var qrData = jsonDecode(data.code!);
                       Provider.of<UserDataProvider>(context, listen: false)
                           .setConnected(isConnected());
@@ -139,7 +141,6 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                           .getConnected) {
                         print(" Qr Data scanned${qrData.toString()}");
                         if (qrData['date'] == now.toString().substring(0, 10)) {
-                          
                           Provider.of<UserDataProvider>(context, listen: false)
                               .updateUserEvents([
                             Dates(
@@ -154,10 +155,10 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                                 setState(() {
                                   _showQR = false;
                                   _hasShownSnackbar = true;
-                                  CustomSnackBar.showSnackBar(
-                                      context, 'QR already scanned', Colors.red);
+                                  CustomSnackBar.showSnackBar(context,
+                                      'QR already scanned', Colors.red);
                                 });
-      
+
                                 Provider.of<UserDataProvider>(context,
                                         listen: false)
                                     .setScanned(false);
@@ -177,7 +178,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                                 _isIncremented = true;
                               }
                               controller.pauseCamera();
-                              
+
                               print("camera paused");
                               Future.delayed(const Duration(seconds: 2), () {
                                 print("in delay");

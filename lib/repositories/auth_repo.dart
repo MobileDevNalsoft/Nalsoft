@@ -16,7 +16,6 @@ class AuthenticationRepo {
 
   Future gettoken(String email, String pass, context) async {
     try {
-      print('in repo get token');
       String username = 'c75d0cfcb0d44f6f83ab0923b6ee886b';
       String password = '8f3203a2-8c52-4b44-a8a0-03eb0c39f50c';
       String basicAuth =
@@ -35,8 +34,6 @@ class AuthenticationRepo {
           });
 
       var resp = jsonDecode(response.body);
-      print(resp["access_token"]);
-      print("body ${response.body.toString()}");
       getRequestState(email, pass, resp["access_token"], context);
     } catch (e) {
       print(e.toString());
@@ -45,9 +42,6 @@ class AuthenticationRepo {
 
   Future getRequestState(email, pass, String token, context) async {
     try {
-      print('inside get request state');
-      print("token inside get request $token");
-
       final response = await http.get(
         Uri.parse(
             "https://idcs-7a99f7e141c2455daf8e203757d28727.identity.oraclecloud.com/${AppConstants.AUTHENCTICATE_USER_NAME}"),
@@ -56,9 +50,7 @@ class AuthenticationRepo {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       );
-      print("req state in repo${response.body.toString()}");
       var resp = jsonDecode(response.body);
-      print(resp["requestState"]);
       authenticateUser(email, pass, token, resp["requestState"], context);
     } catch (e) {
       // Handle any exceptions
@@ -84,9 +76,7 @@ class AuthenticationRepo {
         },
         body: json.encode(requestData),
       );
-      print(response.body.toString());
       var resp = jsonDecode(response.body);
-      print("authntoken${resp["authnToken"]}");
       if (resp["authnToken"] != null) {
         Provider.of<UserDataProvider>(context, listen: false)
             .getUserinfo(username)

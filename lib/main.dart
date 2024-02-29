@@ -50,12 +50,11 @@ void main() async {
       ChangeNotifierProvider<GenerateNotificationProvider>(
           create: (_) => GenerateNotificationProvider()),
     ],
-    child: SafeArea(
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            onGenerateRoute: RouteManagement.generateRoute,
-            home: !di.sl.get<SharedPreferences>().containsKey('employee_name')
-                ? UpgradeAlert(child: LoginView())
-                : DataLoader())),
+    child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: RouteManagement.generateRoute,
+        home: !di.sl.get<SharedPreferences>().containsKey('employee_name')
+            ? UpgradeAlert(child: LoginView())
+            : const DataLoader()),
   ));
 }

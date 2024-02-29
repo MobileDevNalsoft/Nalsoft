@@ -1,6 +1,4 @@
 class AppConstants {
-  static final regex = RegExp(
-      r'(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{":;\' '?/<>,.])');
   static final empIDRegex = RegExp(r'^\d+$');
   // static bool empSearchIsLoading = true;
   static bool admHomeIsLoading = true;
@@ -18,11 +16,15 @@ class AppConstants {
   static const String REQ_STATE = 'requestState';
   static const String APIUSERNAME = 'IntegrationDeveloper';
   static const String APIPASSWORD = 'Nalsoft@123456';
-  static const String GETUSEREVENTSDATA = "/GETUSEREVENTSDATA/1.0/GetUserEventData";
-  static const String UPDATEUSEREVENTS = "/UPDATEUSEREVENTS/1.0/UpdateUserEventData";
-  static const String DELETEUSEREVENTS = "/DELETEUSEREVENTS/1.0/DeleteUserEvnts";
+  static const String GETUSEREVENTSDATA =
+      "/GETUSEREVENTSDATA/1.0/GetUserEventData";
+  static const String UPDATEUSEREVENTS =
+      "/UPDATEUSEREVENTS/1.0/UpdateUserEventData";
+  static const String DELETEUSEREVENTS =
+      "/DELETEUSEREVENTS/1.0/DeleteUserEvnts";
   static const String GETHOLIDAYS = "/GETHOLIDAYS/1.0/GetHolidays";
   static const String GETALLUSERSDATA = "/GETALLUSERDATA/1.0/GetAllUsers";
 
-  static const String SEARCH_DETAILS_API = "/SEARCH_DETAILS_API/1.0/GetUserInfo";
+  static const String SEARCH_DETAILS_API =
+      "/SEARCH_DETAILS_API/1.0/GetUserInfo";
 }
