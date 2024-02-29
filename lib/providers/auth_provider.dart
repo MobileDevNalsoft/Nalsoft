@@ -1,3 +1,4 @@
+import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/api_response_model.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -12,7 +13,7 @@ class AuthenticationProvider extends ChangeNotifier {
   bool _obscurePassword = true;
   int _errTxt = 0;
   int _passErrTxt = 0;
-  bool loginLoader=false;
+  bool loginLoader = false;
 
   void obscureToggle() {
     _obscurePassword = !_obscurePassword;
@@ -30,8 +31,6 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future getToken() async {
-   loginLoader=true;
-   notifyListeners();
     ApiResponse apiResponse = await authenticationRepo!.gettoken();
 
     if (apiResponse.response != null &&
@@ -48,7 +47,6 @@ class AuthenticationProvider extends ChangeNotifier {
         authenticationRepo!.saveUserToken(token);
         print("token$token");
         getRequestState();
- 
       }
     }
   }
@@ -96,15 +94,27 @@ class AuthenticationProvider extends ChangeNotifier {
         authenticationRepo!.saveAuthToken(authToken);
         authenticationRepo!.saveUserNameandPassword(username, password);
         print("token $authToken");
-        Provider.of<UserDataProvider>(context,listen:false).getUserinfo(username).then((value) =>  Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DataLoader())));
-       
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login Successfull'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        Provider.of<UserDataProvider>(context, listen: false)
+            .getUserinfo(username)
+            .then((value) {
+          if (Provider.of<UserDataProvider>(context, listen: false)
+                  .getUserData
+                  .data!
+                  .userName !=
+              "") {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => DataLoader()));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Login Successfull'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else {
+            CustomWidgets.CustomSnackBar(context, "No Data Found", Colors.red);
+          }
+        });
+
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +138,7 @@ class AuthenticationProvider extends ChangeNotifier {
         ),
       );
     }
-    loginLoader=false;
+    loginLoader = false;
     notifyListeners();
   }
 

@@ -44,7 +44,7 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
         await Provider.of<UserDataProvider>(context, listen: false)
             .getHolidays();
       }
-      if (sharedPreferences.getString('user_type') == 'E'){
+      if (sharedPreferences.getString('user_type') == 'V'){
         DateTime lastResetDate = sharedPreferences.containsKey('lastResetDate')
         ? DateTime.parse(sharedPreferences.getString('lastResetDate')!)
         : DateTime.now();

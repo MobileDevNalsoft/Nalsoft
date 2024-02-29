@@ -4,6 +4,7 @@ import "package:get_it/get_it.dart";
 import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
+import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
@@ -336,7 +337,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       }
 
       // Permission granted, proceed with sending email
-      const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
+      String recipientEmail = sharedPreferences.getString(AppConstants.USERNAME).toString();
       const subject = 'Excel Data';
       const body = 'Please find the attached Excel file with the data.';
 

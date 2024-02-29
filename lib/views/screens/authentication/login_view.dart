@@ -15,6 +15,14 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> with ConnectivityMixin {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<AuthenticationProvider>(
+                                              context,
+                                              listen: false)
+                                          .getToken();
+  }
   final GlobalKey _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -130,6 +138,9 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                               Colors.red);
                                         } else {
                                           if (isConnected()) {
+                                            Provider.of<AuthenticationProvider>(
+                                              context,
+                                              listen: false).loginLoader=true;
                                             Provider.of<AuthenticationProvider>(
                                               context,
                                               listen: false)
