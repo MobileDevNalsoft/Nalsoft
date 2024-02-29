@@ -72,7 +72,9 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
 
   @override
   Widget build(BuildContext context) {
-    return sharedPreferences.getString('employee_name')==null? CustomWidgets.CustomCircularLoader():  sharedPreferences.getString('user_type') == 'E'||sharedPreferences.getString('user_type') == 'A'
+    print(sharedPreferences.getKeys());
+    return sharedPreferences.getString('user_type') == 'E' ||
+            sharedPreferences.getString('user_type') == 'A'
         ? UpgradeAlert(
             child: EmployeeHomeView(
             initData: initData,

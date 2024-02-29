@@ -25,7 +25,6 @@ class EmployeeHomeView extends StatefulWidget {
 
 class _EmployeeHomeViewState extends State<EmployeeHomeView>
     with ConnectivityMixin {
-
   DateTime now = DateTime.now();
 
   // used to work with the selected dates in SfDateRangePicker
@@ -106,12 +105,11 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                             .remove('employee_name');
                                             init();
                                         Navigator.pushReplacementNamed(
-                                            context,
-                                            RouteManagement.loginPage,
-                                            );
+                                          context,
+                                          RouteManagement.loginPage,
+                                        );
                                       },
                                       child: const Text('Sign Out')),
-                              
                                 ];
                               },
                               child: const Icon(Icons.power_settings_new_sharp),
@@ -194,11 +192,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                 'Please select today'
                                 's date',
                                 Colors.red);
-                          } else if (
-                              // (now.hour > 14 ||
-                              //   (now.hour == 14 &&
-                              //       now.minute > 30))
-                              false) {
+                          } else if ((now.hour > 15 ||
+                              (now.hour == 14 && now.minute > 30))) {
                             CustomSnackBar.showSnackBar(context,
                                 "QR is disabled after 2.30pm", Colors.red);
                           } else if (

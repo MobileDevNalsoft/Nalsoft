@@ -14,7 +14,8 @@ class UserDataProvider extends ChangeNotifier {
   final UserRepo? userRepo;
   final SharedPreferences? sharedPreferences;
 
-  UserDataProvider({this.userRepo, this.userEventsRepo, this.sharedPreferences});
+  UserDataProvider(
+      {this.userRepo, this.userEventsRepo, this.sharedPreferences});
 
   // for UI updations related to user data
   UserModel? _user;
@@ -23,7 +24,7 @@ class UserDataProvider extends ChangeNotifier {
   List<dynamic> _holidays = [];
   UserEventsModel? _userEventsModel;
   bool _isAlreadyScanned = false;
-  List<UserModel> _alluserSearchList=[];
+  List<UserModel> _alluserSearchList = [];
   bool _isSearching = false;
   bool _connected = true;
   bool eventsPresent = false;
@@ -37,21 +38,20 @@ class UserDataProvider extends ChangeNotifier {
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;
   bool get getConnected => _connected;
-  // Stream<bool> get isDataPresentStream => _isDataPresentController.stream; 
+  // Stream<bool> get isDataPresentStream => _isDataPresentController.stream;
 
-    set isSearching(value) {
+  set isSearching(value) {
     _isSearching = value;
     notifyListeners();
   }
 
-  void setConnected(value){
-      _connected = value;
-      notifyListeners();
+  void setConnected(value) {
+    _connected = value;
+    notifyListeners();
   }
-  
-  Future<void> getUserinfo(String? username) async {
 
-    String username = "rohith.sudam@nalsoft.net";
+  Future<void> getUserinfo(String username) async {
+    String username = "madhankumar.ch@nalsoft.net";
     ApiResponse apiResponse = await userRepo!.getUserinfo(username);
 
     if (apiResponse.response != null &&
@@ -59,59 +59,65 @@ class UserDataProvider extends ChangeNotifier {
       _user = UserModel.fromJson(apiResponse.response!.data);
       sharedPreferences!.setString('employee_name', _user!.data!.empName!);
       sharedPreferences!.setString('employee_id', _user!.data!.empId!);
-      sharedPreferences!.setString('employee_department', _user!.data!.department!);
+      sharedPreferences!
+          .setString('employee_department', _user!.data!.department!);
       sharedPreferences!.setString('user_type', _user!.data!.userType!);
     }
-    print(_user);
     notifyListeners();
   }
 
-  Future<void> updateUserEvents(List<Map<String, dynamic>> dates, bool isOpted) async {
-    
+  Future<void> updateUserEvents(
+      List<Map<String, dynamic>> dates, bool isOpted) async {
     print("Dates");
     print(dates.toString());
     isLoading = true;
-    ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(sharedPreferences!.getString('employee_id')!, dates,isOpted);
-    if(apiResponse.response!= null && apiResponse.response!.statusCode == 200){
-      isOpted?_optedDates.add(Dates.fromJson(dates.first)):dates.forEach((element) {_notOptedDates.add(Dates.fromJson(element));});
-    print(apiResponse);
-    isLoading = false;
-    eventsPresent=true;
-    // _isDataPresentController.add(eventsPresent);
-    // print("datastream inside provider $isDataPresentStream");
-    notifyListeners();
-    }else{
-     _isAlreadyScanned = true;
+    ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(
+        sharedPreferences!.getString('employee_id')!, dates, isOpted);
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      isOpted
+          ? _optedDates.add(Dates.fromJson(dates.first))
+          : dates.forEach((element) {
+              _notOptedDates.add(Dates.fromJson(element));
+            });
+      print(apiResponse);
+      isLoading = false;
+      eventsPresent = true;
+      // _isDataPresentController.add(eventsPresent);
+      // print("datastream inside provider $isDataPresentStream");
+      notifyListeners();
+    } else {
+      _isAlreadyScanned = true;
       notifyListeners();
     }
-   
   }
 
-  void setScanned(bool isscanned){
-
+  void setScanned(bool isscanned) {
     _isAlreadyScanned = isscanned;
     notifyListeners();
   }
 
   Future<void> getHolidays() async {
-      ApiResponse apiResponse =
-        await userEventsRepo!.getHolidays();
-         if (apiResponse.response != null &&
+    ApiResponse apiResponse = await userEventsRepo!.getHolidays();
+    if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
-        print("holidays${apiResponse.response!.data}");
-          _holidays=apiResponse.response!.data["dates"].map((date)=>date["date"]).toList();
-          print(_holidays);
-          notifyListeners();
-        }
+      print("holidays${apiResponse.response!.data}");
+      _holidays = apiResponse.response!.data["dates"]
+          .map((date) => date["date"])
+          .toList();
+      print(_holidays);
+      notifyListeners();
+    }
   }
 
-Future<void> getUserEventsData({String? empID}) async {
-ApiResponse apiResponse;
-if (empID==null)
-   {  apiResponse =
-        await userEventsRepo!.getUserEventsData(sharedPreferences!.getString('employee_id')!);}
-else{ apiResponse =
-        await userEventsRepo!.getUserEventsData(empID);}
+  Future<void> getUserEventsData({String? empID}) async {
+    ApiResponse apiResponse;
+    if (empID == null) {
+      apiResponse = await userEventsRepo!
+          .getUserEventsData(sharedPreferences!.getString('employee_id')!);
+    } else {
+      apiResponse = await userEventsRepo!.getUserEventsData(empID);
+    }
 
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
@@ -120,36 +126,31 @@ else{ apiResponse =
 
       _notOptedDates = _userEventsModel!.data!.notOpted!;
 
-       
-    eventsPresent=true;
-    isAdminEmployeeDataPresent=true;
-    // _isDataPresentController.add(eventsPresent);
-    // print("datastream inside provider $isDataPresentStream");
-    isLoading=false;
+      eventsPresent = true;
+      isAdminEmployeeDataPresent = true;
+      // _isDataPresentController.add(eventsPresent);
+      // print("datastream inside provider $isDataPresentStream");
+      isLoading = false;
       print(_optedDates);
       print(_userEventsModel!.data!.notOpted!);
       notifyListeners();
     }
   }
 
-Future<void> deleteUserEvents(List dates) async {
+  Future<void> deleteUserEvents(List dates) async {
     isLoading = true;
     print(_notOptedDates);
-    ApiResponse apiResponse =
-        await userEventsRepo!.deleteUserEvents(sharedPreferences!.getString('employee_id')!,dates);
+    ApiResponse apiResponse = await userEventsRepo!
+        .deleteUserEvents(sharedPreferences!.getString('employee_id')!, dates);
     print(apiResponse.response!.data);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
-          print(apiResponse.response!.data);
-          dates.forEach((element) {
-            _notOptedDates.removeWhere((date) => date.date==element["date"]);
-          });
-          isLoading = false;
+      print(apiResponse.response!.data);
+      dates.forEach((element) {
+        _notOptedDates.removeWhere((date) => date.date == element["date"]);
+      });
+      isLoading = false;
       notifyListeners();
     }
-    }
-
-
-
-
+  }
 }
