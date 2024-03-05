@@ -3,7 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/inits/di_container.dart' as di;
 import 'package:meals_management/providers/admin_employees_provider.dart';
-import 'package:meals_management/providers/admin_generate_notification_provider.dart';
+import 'package:meals_management/providers/firebase_provider.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,21 +41,24 @@ void main() async {
     sound: true,
   );
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => di.sl<UserDataProvider>()),
-      ChangeNotifierProvider(create: (_) => di.sl<AuthenticationProvider>()),
-      ChangeNotifierProvider(create: (_) => di.sl<AdminEmployeesProvider>()),
-      ChangeNotifierProvider<HomeStatusProvider>(
-          create: (_) => HomeStatusProvider()),
-      ChangeNotifierProvider<GenerateNotificationProvider>(
-          create: (_) => GenerateNotificationProvider()),
-    ],
-    child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: RouteManagement.generateRoute,
-        home: !di.sl.get<SharedPreferences>().containsKey('employee_name')
-            ? UpgradeAlert(child: LoginView())
-            : const DataLoader()),
-  ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => di.sl<UserDataProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<AuthenticationProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<AdminEmployeesProvider>()),
+        ChangeNotifierProvider<HomeStatusProvider>(
+            create: (_) => HomeStatusProvider()),
+        ChangeNotifierProvider<FirebaseProvider>(
+            create: (_) => FirebaseProvider()),
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: RouteManagement.generateRoute,
+          home: !di.sl.get<SharedPreferences>().containsKey('employee_name')
+              ? UpgradeAlert(child: LoginView())
+              : const DataLoader()),
+    ));
+  });
 }

@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:meals_management/repositories/push_notifications_repo.dart';
+import 'package:meals_management/repositories/firebase_repo.dart';
 
-class GenerateNotificationProvider extends ChangeNotifier {
-  PushNotitficationsRepo notificationRepo = PushNotitficationsRepo();
+class FirebaseProvider extends ChangeNotifier {
+  FirebaseRepo firebaseRepo = FirebaseRepo();
 
   String? _title;
   String _description = '';
   bool isLoading = false;
 
   Future<bool> sendNotification(String title, String description) async {
-    isLoading=true;
+    isLoading = true;
     notifyListeners();
     print("isLoading$isLoading");
     _title = title;
@@ -24,13 +24,13 @@ class GenerateNotificationProvider extends ChangeNotifier {
       }
     };
 
-    String accessToken = await notificationRepo.getToken();
-     print(accessToken);
-     if( accessToken==''){
-     isLoading=false;
-        notifyListeners();
+    String accessToken = await firebaseRepo.getToken();
+    print(accessToken);
+    if (accessToken == '') {
+      isLoading = false;
+      notifyListeners();
       return false;
-     }
+    }
     try {
       final url = Uri.parse(
           "https://fcm.googleapis.com/v1/projects/meals-management-app-37e6a/messages:send");
@@ -47,18 +47,18 @@ class GenerateNotificationProvider extends ChangeNotifier {
       print("response status code${response.statusCode}");
       if (response.statusCode == 200) {
         print("Notification sent successfully!");
-        isLoading=false;
+        isLoading = false;
         notifyListeners();
         return true;
       } else {
-        isLoading=false;
+        isLoading = false;
         notifyListeners();
         print("Error sending notification: ${response.body}");
         return false;
       }
     } catch (e) {
-       isLoading=false;
-        notifyListeners();
+      isLoading = false;
+      notifyListeners();
       print("Error sending notification: $e");
       return false;
     }

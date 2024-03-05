@@ -45,8 +45,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
         .setAllUserList();
   }
 
-    @override
-  void dispose(){
+  @override
+  void dispose() {
     datesController.dispose();
     super.dispose();
   }
@@ -99,7 +99,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                               ),
                             ),
                             const Expanded(child: SizedBox()),
-                            sharedPreferences.getString('user_type') == 'E'
+                            sharedPreferences.getString('user_type') == 'A'
                                 ? Switch(
                                     value: true,
                                     onChanged: (value) {
@@ -120,17 +120,18 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                         value: 'Log Out',
                                         height: 10,
                                         onTap: () {
-                                            init();
-                                        sharedPreferences
-                                            .remove('employee_name');
-                                            sharedPreferences
-                                            .remove('employee_id');
-                                             sharedPreferences.remove('employee_department');
-                                        sharedPreferences.remove('user_type');
-                                        Navigator.pushReplacementNamed(
-                                          context,
-                                          RouteManagement.loginPage,
-                                        );
+                                          init();
+                                          sharedPreferences
+                                              .remove('employee_name');
+                                          sharedPreferences
+                                              .remove('employee_id');
+                                          sharedPreferences
+                                              .remove('employee_department');
+                                          sharedPreferences.remove('user_type');
+                                          Navigator.pushReplacementNamed(
+                                            context,
+                                            RouteManagement.loginPage,
+                                          );
                                         },
                                         child: const Text('Log Out'))
                                   ];
@@ -233,14 +234,15 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     cancelText: 'Clear Selection',
                   ),
                   CustomElevatedButton(
-                      color:MaterialStatePropertyAll(
-                                          Colors.grey.shade300),
+                      color: MaterialStatePropertyAll(Colors.grey.shade300),
                       onPressed: () {
                         Navigator.pushNamed(
                             context, RouteManagement.generateNotification);
                       },
-                      child: const Text("Notify",
-                         style: TextStyle(color: Colors.black), )),
+                      child: const Text(
+                        "Notify",
+                        style: TextStyle(color: Colors.black),
+                      )),
                   Image.asset("assets/images/food.png")
                 ],
               ),
@@ -307,8 +309,11 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
       sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
       sheet.getRangeByIndex(rowIndex, 3).setText(userdata.status);
-      if(userdata.status == '1'){
-        userdata.info = DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!)).toString().substring(11,19);
+      if (userdata.status == '1') {
+        userdata.info =
+            DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!))
+                .toString()
+                .substring(11, 19);
       }
       sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
       rowIndex++;
@@ -337,7 +342,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       }
 
       // Permission granted, proceed with sending email
-      String recipientEmail = sharedPreferences.getString(AppConstants.USERNAME).toString();
+      String recipientEmail =
+          sharedPreferences.getString(AppConstants.USERNAME).toString();
       const subject = 'Excel Data';
       const body = 'Please find the attached Excel file with the data.';
 

@@ -4,7 +4,7 @@ package="com.nalsoft.meals_management">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
-        android:label="meals_management"
+        android:label="Daily Dine"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
