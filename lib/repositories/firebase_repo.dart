@@ -22,11 +22,11 @@ class FirebaseRepo {
       await _db
           .collection("notifications")
           .doc(DateTime.now().toString().substring(0, 10))
-          .update({
+          .set({
         "message": FieldValue.arrayUnion([
           {"title": title, "description": description}
         ])
-      });
+      },SetOptions(merge: true));
       return true;
     } catch (e) {
       return false;

@@ -77,7 +77,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                         ),
                         SizedBox(
                           height: size.height * 0.1,
-                          width: size.width * 0.6,
+                          width: size.width * 0.5,
                           child: Text(
                             'Hi,\n${sharedPreferences.getString('employee_name') ?? ' '}',
                             style: TextStyle(
@@ -87,6 +87,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                           ),
                         ),
                         const Expanded(child: SizedBox()),
+                        IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.notifications),
+                            ),
                         sharedPreferences.getString('user_type') == 'A'
                             ? Switch(
                                 value: false,
@@ -109,6 +113,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     const Color.fromARGB(255, 181, 129, 248),
                               )
                             : const SizedBox(),
+                        
                         Padding(
                           padding: const EdgeInsets.only(
                               right: 10.0, top: 10, left: 10),

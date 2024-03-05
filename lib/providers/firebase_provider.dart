@@ -66,13 +66,6 @@ class FirebaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> pushNotification(Map<String, String> data) async {
-    try {
-      await firebaseRepo.pushNotifications(data);
-    } catch (e) {
-      print(e);
-    }
-  }
 
   Future<void> getNotifications() async {
     try {
