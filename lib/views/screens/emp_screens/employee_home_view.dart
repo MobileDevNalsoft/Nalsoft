@@ -86,7 +86,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                             ),
                           ),
                           const Expanded(child: SizedBox()),
-                          sharedPreferences.getString('user_type') == 'E'
+                          sharedPreferences.getString('user_type') == 'A'
                               ? Switch(
                                   value: false,
                                   onChanged: (value) {
@@ -367,18 +367,22 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                     width: size.width * 0.01,
                   ),
                   _overlayCard(
-                      child: TextButton(
-                        child: const Text(
-                          'Update upcoming\nlunch status',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        onPressed: () {
-                          Navigator.pushNamed(
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(26),
+                        onTap: () {
+                          
+                           Navigator.pushNamed(
                               context, RouteManagement.updateUpcomingStatus,
                               arguments: {'initData': widget.initData});
                         },
+                        child: Center(
+                          child: const Text(
+                            'Update upcoming\nlunch status',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
                       ),
                       size: size),
                   SizedBox(

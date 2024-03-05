@@ -3,7 +3,7 @@ class AppConstants {
   // static bool empSearchIsLoading = true;
   static bool admHomeIsLoading = true;
   static const String BASE_URL1 =
-      "https://idcs-7a99f7e141c2455daf8e203757d28727.identity.oraclecloud.com/";
+      "https://idcs-ceca8ff48a7341bebbe31aba04db25b2.identity.oraclecloud.com/";
   static const String BASE_URL2 =
       "https://nals-oic-lrx8pchwityh-ld.integration.ocp.oraclecloud.com:443/ic/api/integration/v1/flows/rest";
   static const String AUTHENCTICATE_USER_NAME = "sso/v1/sdk/authenticate";

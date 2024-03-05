@@ -26,7 +26,7 @@ class DioClient1 {
       ..options.headers = {
         'Content-Type': 'application/json; charset=UTF-8',
       };
-    // dio.interceptors.add(loggingInterceptor!);
+    dio.interceptors.add(loggingInterceptor!);
   }
 
   Future<Response> get(

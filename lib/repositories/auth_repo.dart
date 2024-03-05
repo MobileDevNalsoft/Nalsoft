@@ -44,8 +44,8 @@ class AuthenticationRepo {
 
   Future<ApiResponse> gettoken() async {
     try {
-      String username = 'c75d0cfcb0d44f6f83ab0923b6ee886b';
-      String password = '8f3203a2-8c52-4b44-a8a0-03eb0c39f50c';
+      String username = 'a07dc2a022db4c458397118abb543e57';
+      String password = 'bf06245f-33ae-4b6c-9d0e-27fc0d89f514';
       String basicAuth =
           'Basic ' + base64.encode(utf8.encode('$username:$password'));
 
