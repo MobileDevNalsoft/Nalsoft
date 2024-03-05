@@ -289,7 +289,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                   color: Color.fromARGB(255, 241, 232, 255),
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30))),
-                  elevation: 10,
+                  elevation: 5,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(26),
                     onTap: () {
