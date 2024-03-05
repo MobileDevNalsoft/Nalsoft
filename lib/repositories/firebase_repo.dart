@@ -32,4 +32,17 @@ class FirebaseRepo {
       return false;
     }
   }
+
+  Future<List<Map<String, String>>> getNotifications() async {
+    try {
+      DocumentSnapshot documentSnapshot = await _db
+          .collection("notifications")
+          .doc(DateTime.now().toString().substring(0, 11))
+          .get();
+      return (documentSnapshot.data() as List<Map<String, String>>);
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
 }

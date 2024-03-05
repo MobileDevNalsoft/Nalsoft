@@ -110,9 +110,13 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                         255, 181, 129, 248),
                                   )
                                 : const SizedBox(),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.notifications),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  right: 10.0, top: 10, left: 10),
+                                  right: 10.0, top: 5, left: 10),
                               child: PopupMenuButton(
                                 itemBuilder: (BuildContext context) {
                                   return [

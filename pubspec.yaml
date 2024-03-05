@@ -64,6 +64,7 @@ dependencies:
   upgrader: ^9.0.0
   flutter_native_splash: ^2.3.10
   flutter_windowmanager: ^0.2.0
+  badges: ^3.1.2
 
 dev_dependencies:
   flutter_test:
