@@ -33,16 +33,18 @@ class FirebaseRepo {
     }
   }
 
-  Future<List<Map<String, String>>> getNotifications() async {
+  Future<Map<String, dynamic>> getNotifications() async {
     try {
       DocumentSnapshot documentSnapshot = await _db
           .collection("notifications")
-          .doc(DateTime.now().toString().substring(0, 11))
+          .doc(DateTime.now().toString().substring(0, 10))
           .get();
-      return (documentSnapshot.data() as List<Map<String, String>>);
+      print(DateTime.now().toString().substring(0, 10));
+      print(documentSnapshot.data() as Map<String, dynamic>);
+      return (documentSnapshot.data() as Map<String, dynamic>);
     } catch (e) {
       print(e);
-      return [];
+      return {};
     }
   }
 }

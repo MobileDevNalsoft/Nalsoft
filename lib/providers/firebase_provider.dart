@@ -9,7 +9,7 @@ class FirebaseProvider extends ChangeNotifier {
   String? _title;
   String _description = '';
   bool isLoading = false;
-  List<Map<String, String>> notifications = [];
+  Map<String, dynamic> notifications = {};
 
   Future<bool> sendNotification(String title, String description) async {
     isLoading = true;
@@ -63,14 +63,6 @@ class FirebaseProvider extends ChangeNotifier {
       notifyListeners();
       print("Error sending notification: $e");
       return false;
-    }
-  }
-
-  Future<void> pushNotification(Map<String, String> data) async {
-    try {
-      await firebaseRepo.pushNotifications(data);
-    } catch (e) {
-      print(e);
     }
   }
 

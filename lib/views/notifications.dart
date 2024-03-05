@@ -29,6 +29,7 @@ class _UpcomingMeetingsView extends State<UpcomingMeetingsView> {
               width: size.width * 0.95,
               child: Consumer<FirebaseProvider>(
                   builder: (context, provider, child) {
+                    print("consumer ${provider.notifications}");
                 return ListView.builder(
                   itemCount: provider.notifications.length,
                   itemBuilder: (context, index) {
