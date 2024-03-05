@@ -45,11 +45,12 @@ class FirebaseProvider extends ChangeNotifier {
         body: jsonEncode(notificationPayload),
       );
       print("response status code${response.statusCode}");
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 &&  (await firebaseRepo.saveNotification(title,description)))  {
         print("Notification sent successfully!");
         isLoading = false;
         notifyListeners();
         return true;
+        
       } else {
         isLoading = false;
         notifyListeners();

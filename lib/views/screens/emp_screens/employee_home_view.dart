@@ -9,6 +9,9 @@ import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
+import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -88,8 +91,19 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                             ? Switch(
                                 value: false,
                                 onChanged: (value) {
-                                  Navigator.pushNamed(
-                                      context, RouteManagement.adminHomePage);
+                                  Navigator.push(
+                                      context, PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                AdminHomePage(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),);
                                 },
                                 activeColor:
                                     const Color.fromARGB(255, 181, 129, 248),
@@ -199,17 +213,27 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               'Please select today'
                               's date',
                               Colors.red);
-                        } else if ((now.hour > 15 ||
-                            (now.hour == 14 && now.minute > 30))) {
+                        } else if ((now.hour >= 15)) {
                           CustomSnackBar.showSnackBar(context,
-                              "QR is disabled after 2.30pm", Colors.red);
+                              "QR is disabled after 3pm", Colors.red);
                         } else if ((now.hour < 12 ||
                             (now.hour == 12 && now.minute < 30))) {
                           CustomSnackBar.showSnackBar(context,
                               "Wait till 12.30pm to get QR", Colors.red);
                         } else {
-                          Navigator.pushNamed(
-                              context, RouteManagement.previewPage);
+                          Navigator.push(
+                              context,  PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        Preview(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),);
                         }
                       },
                       onCancel: () {
@@ -293,9 +317,19 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                   child: InkWell(
                     borderRadius: BorderRadius.circular(26),
                     onTap: () {
-                      Navigator.pushNamed(
-                          context, RouteManagement.updateUpcomingStatus,
-                          arguments: {'initData': widget.initData});
+                      Navigator.push(
+                          context,  PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        UpdateLunchStatus(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
