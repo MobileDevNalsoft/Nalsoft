@@ -1,10 +1,10 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/models/api_response_model.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/models/meals_management/api_response_model.dart';
+import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
 import 'package:provider/provider.dart';
 
 class AuthenticationProvider extends ChangeNotifier {

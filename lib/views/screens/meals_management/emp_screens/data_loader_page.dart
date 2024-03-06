@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
-import 'package:meals_management/providers/firebase_provider.dart';
-import 'package:meals_management/providers/home_status_provider.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
-import 'package:meals_management/views/screens/vendor_screen/vendor_home_view.dart';
+import 'package:meals_management/providers/meals_management/firebase_provider.dart';
+import 'package:meals_management/providers/meals_management/home_status_provider.dart';
+import 'package:meals_management/providers/meals_management/user_data_provider.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/employee_home_view.dart';
+import 'package:meals_management/views/screens/meals_management/vendor_screen/vendor_home_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upgrader/upgrader.dart';

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:meals_management/models/api_response_model.dart';
-import 'package:meals_management/models/user_events_model.dart';
+import 'package:meals_management/models/meals_management/api_response_model.dart';
+import 'package:meals_management/models/meals_management/user_events_model.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:meals_management/repositories/user_repo.dart';
@@ -63,13 +63,13 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> updateUserEvents(
-      List<Map<String, dynamic>> dates, bool isOpted,String? empid) async {
+      List<Map<String, dynamic>> dates, bool isOpted, String? empid) async {
     print("Dates");
     print(dates.toString());
     isLoading = true;
-    
+
     ApiResponse apiResponse = await userEventsRepo!.updateUserEvents(
-        empid??sharedPreferences!.getString('employee_id')!, dates, isOpted);
+        empid ?? sharedPreferences!.getString('employee_id')!, dates, isOpted);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       isOpted

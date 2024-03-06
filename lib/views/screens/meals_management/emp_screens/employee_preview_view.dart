@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../inits/di_container.dart';
+import '../../../../inits/di_container.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
 // ignore: must_be_immutable
@@ -42,12 +42,11 @@ class _PreviewState extends State<Preview> {
 
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
 
     return SafeArea(
       child: AspectRatio(
-        aspectRatio: size.height/size.width,
+        aspectRatio: size.height / size.width,
         child: Scaffold(
             backgroundColor: const Color.fromARGB(255, 247, 242, 250),
             appBar: AppBar(

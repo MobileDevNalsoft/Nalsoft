@@ -1,6 +1,6 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_management/providers/firebase_provider.dart';
+import 'package:meals_management/providers/meals_management/firebase_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 
@@ -26,14 +26,13 @@ class _NotificationsView extends State<NotificationsView> {
         aspectRatio: size.height / size.width,
         child: Scaffold(
           appBar: AppBar(
-
             centerTitle: true,
             title: Text('Notifications'),
-            backgroundColor:Color.fromARGB(100, 179, 110, 234),
+            backgroundColor: Color.fromARGB(100, 179, 110, 234),
             shape: const ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(50),
-                      bottomRight: Radius.circular(50))),
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(50),
+                    bottomRight: Radius.circular(50))),
           ),
          
           body: Stack(

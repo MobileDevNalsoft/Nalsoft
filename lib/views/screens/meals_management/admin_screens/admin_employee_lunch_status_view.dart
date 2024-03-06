@@ -3,8 +3,8 @@ import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:intl/intl.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
-import "package:meals_management/providers/admin_employees_provider.dart";
-import "package:meals_management/providers/user_data_provider.dart";
+import "package:meals_management/providers/meals_management/admin_employees_provider.dart";
+import "package:meals_management/providers/meals_management/user_data_provider.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
@@ -39,7 +39,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
   }
 
   @override
-  void dispose(){
+  void dispose() {
     datesController.dispose();
     super.dispose();
   }
@@ -70,10 +70,10 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
     return SafeArea(
         child: AspectRatio(
-          aspectRatio: size.height/size.width,
-          child: Scaffold(
-                resizeToAvoidBottomInset: false,
-                appBar: AppBar(
+      aspectRatio: size.height / size.width,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -99,8 +99,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(25),
                   bottomRight: Radius.circular(25))),
-                ),
-                body: _isLoading
+        ),
+        body: _isLoading
             ? CustomWidgets.CustomCircularLoader()
             : Stack(
                 children: [
@@ -137,7 +137,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                   height: size.height * 0.025,
                                   width: size.width * 0.45,
                                   child: Text(
-                                      Provider.of<AdminEmployeesProvider>(context,
+                                      Provider.of<AdminEmployeesProvider>(
+                                                  context,
                                                   listen: true)
                                               .isAdminEmployeeDataPresent
                                           ? Provider.of<AdminEmployeesProvider>(
@@ -157,7 +158,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                   height: size.height * 0.025,
                                   width: size.width * 0.45,
                                   child: Text(
-                                      Provider.of<AdminEmployeesProvider>(context,
+                                      Provider.of<AdminEmployeesProvider>(
+                                                  context,
                                                   listen: true)
                                               .isAdminEmployeeDataPresent
                                           ? Provider.of<AdminEmployeesProvider>(
@@ -213,13 +215,14 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                     const Divider(),
                                     SizedBox(
                                         height: size.height * 0.37,
-                                        child:
-                                            CustomWidgets.CustomCircularLoader()),
+                                        child: CustomWidgets
+                                            .CustomCircularLoader()),
                                   ],
                                 ),
                               ),
                             );
-                          } else if (!Provider.of<AdminEmployeesProvider>(context,
+                          } else if (!Provider.of<AdminEmployeesProvider>(
+                                  context,
                                   listen: false)
                               .isAdminEmployeeDataPresent) {
                             return SizedBox(
@@ -255,7 +258,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                         child: IconButton(
                                           icon: Icon(Icons.refresh),
                                           onPressed: () {
-                                            Provider.of<UserDataProvider>(context,
+                                            Provider.of<UserDataProvider>(
+                                                    context,
                                                     listen: false)
                                                 .setConnected(isConnected());
                                             if (!Provider.of<UserDataProvider>(
@@ -271,7 +275,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                                 Provider.of<UserDataProvider>(
                                                         context,
                                                         listen: false)
-                                                    .setConnected(isConnected());
+                                                    .setConnected(
+                                                        isConnected());
                                                 intiData();
                                                 Provider.of<AdminEmployeesProvider>(
                                                         context,
@@ -291,17 +296,18 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                             return CustomCalendarCard(
                               isUDP: false,
                               forAdmin: false,
-                              selectionMode: DateRangePickerSelectionMode.single,
+                              selectionMode:
+                                  DateRangePickerSelectionMode.single,
                               selectibleDayPredicate: (date) {
                                 return false;
                               },
-          
+
                               //TODO
                               onSubmit: (p0) => isConnected()
                                   ? sendMail(context)
                                   : CustomSnackBar.showSnackBar(
                                       context, "No internet", Colors.red),
-          
+
                               onCancel: () {
                                 datesController.selectedDate = null;
                               },
@@ -328,8 +334,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                     ),
                 ],
               ),
-              ),
-        ));
+      ),
+    ));
   }
 
   Future<void> sendMail(BuildContext context) async {
@@ -381,16 +387,19 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
         Provider.of<AdminEmployeesProvider>(context, listen: false)
-                .getOpted
-                .where((element) =>
-                    date.toString().substring(0, 10) == element.date)
-                .first
-                .info = DateTime.fromMillisecondsSinceEpoch(int.parse(Provider.of<AdminEmployeesProvider>(context, listen: false)
-                .getOpted
-                .where((element) =>
-                    date.toString().substring(0, 10) == element.date)
-                .first
-                .info!)).toString().substring(11,19);
+            .getOpted
+            .where(
+                (element) => date.toString().substring(0, 10) == element.date)
+            .first
+            .info = DateTime.fromMillisecondsSinceEpoch(int.parse(
+                Provider.of<AdminEmployeesProvider>(context, listen: false)
+                    .getOpted
+                    .where((element) =>
+                        date.toString().substring(0, 10) == element.date)
+                    .first
+                    .info!))
+            .toString()
+            .substring(11, 19);
         sheet.getRangeByIndex(rowIndex, 3).setText(
             Provider.of<AdminEmployeesProvider>(context, listen: false)
                 .getOpted

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/views/app_navigation.dart';
-import 'package:meals_management/views/notifications.dart';
-import 'package:meals_management/views/screens/admin_screens/admin_employee_lunch_status_view.dart';
-import 'package:meals_management/views/screens/admin_screens/admin_employees_view.dart';
-import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
-import 'package:meals_management/views/screens/admin_screens/admin_generate_notification_view.dart';
-import 'package:meals_management/views/screens/authentication/login_view.dart';
-import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_home_view.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
-import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/notifications.dart';
+import 'package:meals_management/views/screens/meals_management/admin_screens/admin_employee_lunch_status_view.dart';
+import 'package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart';
+import 'package:meals_management/views/screens/meals_management/admin_screens/admin_home_view.dart';
+import 'package:meals_management/views/screens/meals_management/admin_screens/admin_generate_notification_view.dart';
+import 'package:meals_management/views/screens/meals_management/authentication/login_view.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/employee_home_view.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/employee_preview_view.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/employee_update_upcoming_status_view.dart';
+import 'package:meals_management/views/screens/meeting_rooms_management/check_availability_view.dart';
+import 'package:meals_management/views/screens/meeting_rooms_management/home_view.dart';
+import 'package:meals_management/views/screens/meeting_rooms_management/meeting_room_view.dart';
+import 'package:meals_management/views/screens/meeting_rooms_management/upcoming_meetings.dart';
 
 class RouteManagement {
   RouteManagement._();
+
+  //meals management
   static const String loginPage = '/login_page';
   static const String employeeHomePage = '/homepage';
   static const String adminEmployees = '/employees';
@@ -28,8 +34,15 @@ class RouteManagement {
   static const String dataLoader = '/dataLoader';
   static const String notifications = '/notifications';
   static const String appNavigation = 'appNavigation';
+
+  //meeting rooms management
+  static const String homeView = '/homeview';
+  static const String checkavalabilityStatusView = '/checkAvailability';
+  static const String upcomingMeetingsView = '/upcomingMeetings';
+  static const String meetingRoom = '/meetingRoom';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      //meals management
       case loginPage:
         return MaterialPageRoute(builder: (_) => LoginView());
       case employeeHomePage:
@@ -68,6 +81,16 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => NotificationsView());
       case appNavigation:
         return MaterialPageRoute(builder: (_) => AppNavigation());
+
+      //meeting rooms management
+      case homeView:
+        return MaterialPageRoute(builder: (_) => HomeView());
+      case upcomingMeetingsView:
+        return MaterialPageRoute(builder: (_) => UpcomingMeetingsView());
+      case meetingRoom:
+        return MaterialPageRoute(builder: (_) => MeetingRoom());
+      case checkavalabilityStatusView:
+        return MaterialPageRoute(builder: (_) => CheckAvailabilty());
       default:
         return null;
     }

@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:meals_management/inits/di_container.dart';
-import 'package:meals_management/models/user_events_model.dart';
+import 'package:meals_management/models/meals_management/user_events_model.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
-import 'package:meals_management/providers/home_status_provider.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/providers/meals_management/home_status_provider.dart';
+import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
@@ -39,7 +39,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
 
     return SafeArea(
       child: AspectRatio(
-        aspectRatio: size.height/size.width,
+        aspectRatio: size.height / size.width,
         child: Scaffold(
           body: Center(
             child: Column(
@@ -60,17 +60,15 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                               value: 'Log Out',
                               height: 10,
                               onTap: () {
-                                    init();
-                                            sharedPreferences
-                                                .remove('employee_name');
-                                                sharedPreferences
-                                                .remove('employee_id');
-                                                 sharedPreferences.remove('employee_department');
-                                            sharedPreferences.remove('user_type');
-                                            Navigator.pushReplacementNamed(
-                                              context,
-                                              RouteManagement.loginPage,
-                                            );
+                                init();
+                                sharedPreferences.remove('employee_name');
+                                sharedPreferences.remove('employee_id');
+                                sharedPreferences.remove('employee_department');
+                                sharedPreferences.remove('user_type');
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  RouteManagement.loginPage,
+                                );
                               },
                               child: const Text('Log Out'))
                         ];
@@ -109,7 +107,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                       key: qrKey,
                       onQRViewCreated: (controller) {
                         qrController = controller;
-        
+
                         controller.scannedDataStream.listen((data) async {
                           _isScanned = true;
                           if (_isScanned) controller.pauseCamera();
@@ -123,17 +121,21 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                           var qrData = jsonDecode(data.code!);
                           Provider.of<UserDataProvider>(context, listen: false)
                               .setConnected(isConnected());
-                          if (Provider.of<UserDataProvider>(context, listen: false)
+                          if (Provider.of<UserDataProvider>(context,
+                                  listen: false)
                               .getConnected) {
                             print(" Qr Data scanned${qrData.toString()}");
-                            if (qrData['date'] == now.toString().substring(0, 10)) {
-                              Provider.of<UserDataProvider>(context, listen: false)
+                            if (qrData['date'] ==
+                                now.toString().substring(0, 10)) {
+                              Provider.of<UserDataProvider>(context,
+                                      listen: false)
                                   .updateUserEvents([
                                 Dates(
                                         date: qrData['date']!,
-                                        info: now.millisecondsSinceEpoch.toString())
+                                        info: now.millisecondsSinceEpoch
+                                            .toString())
                                     .toJson()
-                              ], true,qrData["uid"]).then((value) {
+                              ], true, qrData["uid"]).then((value) {
                                 if (Provider.of<UserDataProvider>(context,
                                         listen: false)
                                     .getIsAlreadyScanned) {
@@ -144,7 +146,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                                       CustomSnackBar.showSnackBar(context,
                                           'QR already scanned', Colors.red);
                                     });
-        
+
                                     Provider.of<UserDataProvider>(context,
                                             listen: false)
                                         .setScanned(false);
@@ -164,9 +166,10 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                                     _isIncremented = true;
                                   }
                                   controller.pauseCamera();
-        
+
                                   print("camera paused");
-                                  Future.delayed(const Duration(seconds: 2), () {
+                                  Future.delayed(const Duration(seconds: 2),
+                                      () {
                                     print("in delay");
                                     controller.resumeCamera();
                                     _isIncremented = false;
