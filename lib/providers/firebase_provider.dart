@@ -9,7 +9,7 @@ class FirebaseProvider extends ChangeNotifier {
   String? _title;
   String _description = '';
   bool isLoading = false;
-  Map<String, dynamic> notifications = {};
+  Map<String, dynamic>? notifications = {};
 
   Future<bool> sendNotification(String title, String description) async {
     isLoading = true;
@@ -68,7 +68,11 @@ class FirebaseProvider extends ChangeNotifier {
 
   Future<void> getNotifications() async {
     try {
-      notifications = await firebaseRepo.getNotifications();
+      notifications = (await firebaseRepo.getNotifications());
+      if (notifications!['message']==null){
+        notifications={'message':[]};
+        print(notifications);
+      }
       notifyListeners();
     } catch (e) {
       print(e);

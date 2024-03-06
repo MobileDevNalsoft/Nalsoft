@@ -9,6 +9,7 @@ import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/notifications.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_home_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_preview_view.dart';
 import 'package:meals_management/views/screens/emp_screens/employee_update_upcoming_status_view.dart';
@@ -89,7 +90,18 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                         const Expanded(child: SizedBox()),
                         IconButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, RouteManagement.notifications);
+                                Navigator.push(context, PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                NotificationsView(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),);
                               },
                               icon: Icon(Icons.notifications),
                             ),
