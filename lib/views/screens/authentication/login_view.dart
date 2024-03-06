@@ -59,7 +59,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                   ),
                   Expanded(
                     flex: 3,
-                    child: Image.asset('assets/images/login_page_img.png'),
+                    child: Image.asset('assets/images/login_page_img.svg'),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 60.0, left: 70),
@@ -173,14 +173,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                           ),
                         ),
                       )),
-                  Expanded(
-                    flex: 2,
-                    child: Image.asset(
-                      'assets/images/food.png',
-                      fit: BoxFit.fill, // Fill the width of the screen
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                  ),
+                
                 ],
               ),
             ),

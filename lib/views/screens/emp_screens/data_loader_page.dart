@@ -31,7 +31,6 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
   }
 
   Future<void> initData() async {
-    Provider.of<FirebaseProvider>(context, listen: false).getNotifications();
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
 
     if (!sharedPreferences.containsKey('employee_name')) {

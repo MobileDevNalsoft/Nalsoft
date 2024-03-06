@@ -67,14 +67,18 @@ class FirebaseProvider extends ChangeNotifier {
   }
 
   Future<void> getNotifications() async {
+    isLoading=true;
+    notifyListeners();
     try {
       notifications = (await firebaseRepo.getNotifications());
       if (notifications!['message']==null){
         notifications={'message':[]};
         print(notifications);
       }
+      isLoading=false;
       notifyListeners();
     } catch (e) {
+      isLoading=false;
       print(e);
     }
   }

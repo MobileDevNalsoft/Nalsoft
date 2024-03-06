@@ -207,10 +207,12 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     controller: datesController,
                     selectionMode: DateRangePickerSelectionMode.single,
                     selectibleDayPredicate: (date) {
-                      return date.weekday != DateTime.saturday &&
+                      return ((date.weekday != DateTime.saturday &&
                           date.weekday != DateTime.sunday &&
                           date.day <= now.day &&
-                          date.month <= now.month &&
+                          date.month == now.month) || (date.weekday != DateTime.saturday &&
+                          date.weekday != DateTime.sunday &&
+                          date.month < now.month)) &&
                           !Provider.of<UserDataProvider>(context, listen: false)
                               .holidays
                               .contains(date.toString().substring(0, 10));
