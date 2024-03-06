@@ -60,7 +60,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                 style: TextStyle(fontSize: 18),
               ),
               centerTitle: true,
-              backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
+              backgroundColor: const Color.fromARGB(100, 179, 110, 234),
               elevation: 4,
               shape: const ContinuousRectangleBorder(
                   borderRadius: BorderRadius.only(

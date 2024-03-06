@@ -88,7 +88,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                         ),
                         const Expanded(child: SizedBox()),
                         IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushNamed(context, RouteManagement.notifications);
+                              },
                               icon: Icon(Icons.notifications),
                             ),
                         sharedPreferences.getString('user_type') == 'A'
