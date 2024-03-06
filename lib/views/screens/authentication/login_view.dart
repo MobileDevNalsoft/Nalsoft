@@ -1,5 +1,6 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
@@ -59,7 +60,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                   ),
                   Expanded(
                     flex: 3,
-                    child: Image.asset('assets/images/login_page_img.svg'),
+                    child: SvgPicture.asset('assets/images/login_page_img.svg'),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 60.0, left: 70),

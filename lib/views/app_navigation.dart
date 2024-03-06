@@ -21,7 +21,7 @@ class AppNavigation extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(
-                          width: size.width * 0.21,
+                          width: size.width * 0.22,
                         ),
                         Image.asset(
                           'assets/images/nalsoft_logo.png',
@@ -40,6 +40,7 @@ class AppNavigation extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25),
                       child: Container(
                         height: size.height * 0.2,
+                        width: size.width*0.9,
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color: Color.fromRGBO(234, 221, 255, 1),
@@ -47,6 +48,7 @@ class AppNavigation extends StatelessWidget {
                             borderRadius: BorderRadius.circular(25)),
                         child: Image.asset(
                           'assets/images/meals.png',
+                          fit: BoxFit.fill,
                         ),
                       ),
                       onTap: () {
