@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/views/app_navigation.dart';
 import 'package:meals_management/views/notifications.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_employee_lunch_status_view.dart';
 import 'package:meals_management/views/screens/admin_screens/admin_employees_view.dart';
@@ -26,6 +27,7 @@ class RouteManagement {
   static const String network_error = '/network_error';
   static const String dataLoader = '/dataLoader';
   static const String notifications = '/notifications';
+  static const String appNavigation = 'appNavigation';
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case loginPage:
@@ -64,6 +66,8 @@ class RouteManagement {
         return MaterialPageRoute(builder: (_) => DataLoader());
       case notifications:
         return MaterialPageRoute(builder: (_) => NotificationsView());
+      case appNavigation:
+        return MaterialPageRoute(builder: (_) => AppNavigation());
       default:
         return null;
     }

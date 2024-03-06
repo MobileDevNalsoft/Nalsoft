@@ -8,6 +8,7 @@ import 'package:meals_management/providers/auth_provider.dart';
 import 'package:meals_management/providers/home_status_provider.dart';
 import 'package:meals_management/providers/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/views/app_navigation.dart';
 import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,7 +59,7 @@ void main() async {
           onGenerateRoute: RouteManagement.generateRoute,
           home: !di.sl.get<SharedPreferences>().containsKey('employee_name')
               ? UpgradeAlert(child: LoginView())
-              : const DataLoader()),
+              : AppNavigation()),
     ));
   });
 }

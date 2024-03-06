@@ -110,24 +110,25 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                 value: false,
                                 onChanged: (value) {
                                   Navigator.push(
-                                      context, PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                AdminHomePage(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          AdminHomePage(),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
                                   );
-                                },
-                              ),);
                                 },
                                 activeColor:
                                     const Color.fromARGB(255, 181, 129, 248),
                               )
                             : const SizedBox(),
-                        
                         Padding(
                           padding: const EdgeInsets.only(
                               right: 10.0, top: 10, left: 10),
@@ -233,26 +234,28 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               's date',
                               Colors.red);
                         } else if ((now.hour >= 15)) {
-                          CustomSnackBar.showSnackBar(context,
-                              "QR is disabled after 3pm", Colors.red);
+                          CustomSnackBar.showSnackBar(
+                              context, "QR is disabled after 3pm", Colors.red);
                         } else if ((now.hour < 12 ||
                             (now.hour == 12 && now.minute < 30))) {
                           CustomSnackBar.showSnackBar(context,
                               "Wait till 12.30pm to get QR", Colors.red);
                         } else {
                           Navigator.push(
-                              context,  PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        Preview(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                              ),);
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      Preview(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
+                              },
+                            ),
+                          );
                         }
                       },
                       onCancel: () {
@@ -329,7 +332,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                 height: size.height * 0.06,
                 width: size.width * 0.73,
                 child: Card(
-                  color: Color.fromARGB(255, 241, 232, 255),
+                  color: Color.fromRGBO(241, 232, 255, 1),
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30))),
                   elevation: 5,
@@ -337,18 +340,20 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                     borderRadius: BorderRadius.circular(26),
                     onTap: () {
                       Navigator.push(
-                          context,  PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        UpdateLunchStatus(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                              ),);
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  UpdateLunchStatus(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
