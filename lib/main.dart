@@ -2,17 +2,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/inits/di_container.dart' as di;
-import 'package:meals_management/providers/admin_employees_provider.dart';
-import 'package:meals_management/providers/firebase_provider.dart';
-import 'package:meals_management/providers/auth_provider.dart';
-import 'package:meals_management/providers/home_status_provider.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/providers/meals_management/admin_employees_provider.dart';
+import 'package:meals_management/providers/meals_management/firebase_provider.dart';
+import 'package:meals_management/providers/meals_management/auth_provider.dart';
+import 'package:meals_management/providers/meals_management/home_status_provider.dart';
+import 'package:meals_management/providers/meals_management/user_data_provider.dart';
+import 'package:meals_management/providers/meeting_rooms_management/home_view_provider.dart';
+import 'package:meals_management/providers/meeting_rooms_management/meeting_room_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/app_navigation.dart';
-import 'package:meals_management/views/screens/emp_screens/data_loader_page.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meals_management/views/screens/authentication/login_view.dart';
+import 'package:meals_management/views/screens/meals_management/authentication/login_view.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter/services.dart';
 
@@ -53,6 +55,8 @@ void main() async {
             create: (_) => HomeStatusProvider()),
         ChangeNotifierProvider<FirebaseProvider>(
             create: (_) => FirebaseProvider()),
+        ChangeNotifierProvider(create: (_) => HomeViewProvider()),
+        ChangeNotifierProvider(create: (_) => MeetingRoomProvider())
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,

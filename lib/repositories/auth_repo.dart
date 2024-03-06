@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:meals_management/APIClient/dio_client1.dart';
 import 'package:meals_management/APIClient/exceptions/api_error_handler.dart';
-import 'package:meals_management/models/api_response_model.dart';
+import 'package:meals_management/models/meals_management/api_response_model.dart';
 import 'package:meals_management/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +16,6 @@ class AuthenticationRepo {
       print('before response');
       print(sharedPreferences!.getString(AppConstants.TOKEN));
       print(sharedPreferences!.getString(AppConstants.REQ_STATE));
-      
 
       Response response =
           await dioClient1!.post(AppConstants.AUTHENCTICATE_USER_NAME,
@@ -40,8 +39,6 @@ class AuthenticationRepo {
     }
   }
 
- 
-
   Future<ApiResponse> gettoken() async {
     try {
       String username = 'a07dc2a022db4c458397118abb543e57';
@@ -64,22 +61,20 @@ class AuthenticationRepo {
     }
   }
 
-Future<ApiResponse> getRequestState() async{
-try {
-      Response response = await dioClient1!.get(
-        AppConstants.AUTHENCTICATE_USER_NAME,
-       options: Options(
-        headers: {
-          'Authorization': 'Bearer ${sharedPreferences!.getString(AppConstants.TOKEN) ?? ""}',
-      'Content-Type':'application/x-www-form-urlencoded' 
-        }
-       )
-      );
+  Future<ApiResponse> getRequestState() async {
+    try {
+      Response response =
+          await dioClient1!.get(AppConstants.AUTHENCTICATE_USER_NAME,
+              options: Options(headers: {
+                'Authorization':
+                    'Bearer ${sharedPreferences!.getString(AppConstants.TOKEN) ?? ""}',
+                'Content-Type': 'application/x-www-form-urlencoded'
+              }));
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
-}
+  }
 
   Future<void> saveUserToken(String token) async {
     try {
@@ -97,9 +92,8 @@ try {
     }
   }
 
-  
- Future<void> saveUserNameandPassword(String username,String password) async {
-   try {
+  Future<void> saveUserNameandPassword(String username, String password) async {
+    try {
       await sharedPreferences!.setString(AppConstants.USERNAME, username);
       await sharedPreferences!.setString(AppConstants.PASSWORD, password);
     } catch (e) {
@@ -107,15 +101,13 @@ try {
     }
   }
 
-    Future<void> saveReqSate(String req_state) async {
+  Future<void> saveReqSate(String req_state) async {
     try {
       await sharedPreferences!.setString(AppConstants.REQ_STATE, req_state);
     } catch (e) {
       throw e;
     }
   }
-
-
 
   String getUserToken() {
     return sharedPreferences!.getString(AppConstants.TOKEN) ?? "";

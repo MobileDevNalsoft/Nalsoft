@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meals_management/providers/admin_employees_provider.dart';
-import 'package:meals_management/providers/user_data_provider.dart';
+import 'package:meals_management/providers/meals_management/admin_employees_provider.dart';
+import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 // ignore: depend_on_referenced_packages

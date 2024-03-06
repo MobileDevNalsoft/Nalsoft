@@ -7,12 +7,12 @@ import "package:meals_management/network_handler_mixin/network_handler.dart";
 import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
-import "package:meals_management/views/screens/admin_screens/admin_employees_view.dart";
+import "package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
-import "package:meals_management/providers/admin_employees_provider.dart";
-import "package:meals_management/providers/user_data_provider.dart";
+import "package:meals_management/providers/meals_management/admin_employees_provider.dart";
+import "package:meals_management/providers/meals_management/user_data_provider.dart";
 import "package:meals_management/route_management/route_management.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:path_provider/path_provider.dart";
@@ -110,7 +110,6 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                         255, 181, 129, 248),
                                   )
                                 : const SizedBox(),
-                            
                             Padding(
                               padding: const EdgeInsets.only(
                                   right: 10.0, top: 5, left: 10),

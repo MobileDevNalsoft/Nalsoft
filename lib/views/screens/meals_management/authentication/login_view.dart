@@ -1,7 +1,7 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
-import 'package:meals_management/providers/auth_provider.dart';
+import 'package:meals_management/providers/meals_management/auth_provider.dart';
 import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
@@ -18,19 +18,17 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthenticationProvider>(
-                                              context,
-                                              listen: false)
-                                          .getToken();
+    Provider.of<AuthenticationProvider>(context, listen: false).getToken();
   }
+
   final GlobalKey _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
 
-      @override
-  void dispose(){
+  @override
+  void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -45,8 +43,8 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
         aspectRatio: size.height / size.width,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Stack(
-            children: [Container(
+          body: Stack(children: [
+            Container(
               color: Colors.white, // background color of Container
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -71,7 +69,8 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                         child: Form(
                           key: _formKey,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 30.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,23 +138,27 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                         } else {
                                           if (isConnected()) {
                                             Provider.of<AuthenticationProvider>(
-                                              context,
-                                              listen: false).loginLoader=true;
+                                                    context,
+                                                    listen: false)
+                                                .loginLoader = true;
                                             Provider.of<AuthenticationProvider>(
-                                              context,
-                                              listen: false)
-                                          .getToken()
-                                          .then((value) =>
-                                              Provider.of<AuthenticationProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .authenticateUserName(
-                                                      _emailController.text,
-                                                      _passwordController.text,
-                                                      context));
+                                                    context,
+                                                    listen: false)
+                                                .getToken()
+                                                .then((value) => Provider.of<
+                                                            AuthenticationProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .authenticateUserName(
+                                                        _emailController.text,
+                                                        _passwordController
+                                                            .text,
+                                                        context));
                                           } else {
-                                            CustomWidgets.CustomSnackBar(context,
-                                                'No Internet', Colors.red);
+                                            CustomWidgets.CustomSnackBar(
+                                                context,
+                                                'No Internet',
+                                                Colors.red);
                                           }
                                         }
                                       },
@@ -184,18 +187,18 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                 ],
               ),
             ),
-             if (Provider.of<AuthenticationProvider>(context, listen: true)
-                  .loginLoader)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                      color: Colors.black38,
-                      child: CustomWidgets.CustomCircularLoader()),
-                ),
-            ]),
+            if (Provider.of<AuthenticationProvider>(context, listen: true)
+                .loginLoader)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                    color: Colors.black38,
+                    child: CustomWidgets.CustomCircularLoader()),
+              ),
+          ]),
         ),
       ),
     );
