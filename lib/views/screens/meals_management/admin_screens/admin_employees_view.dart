@@ -5,6 +5,7 @@ import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/admin_employees_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/screens/meals_management/admin_screens/admin_employee_lunch_status_view.dart';
 import 'package:provider/provider.dart';
 
 class EmployeeSearch extends StatefulWidget {
@@ -140,20 +141,50 @@ class _EmployeeSearchState extends State<EmployeeSearch>
                                                   child: TextButton(
                                                     onPressed: () {
                                                       isConnected()
-                                                          ? Navigator.pushNamed(
+                                                          ? Navigator.push(
                                                               context,
-                                                              RouteManagement
-                                                                  .employeeLunchStatus,
-                                                              arguments: {
-                                                                  'username': (item
-                                                                          as Data)
-                                                                      .userName
-                                                                      .toString(),
-                                                                  'empid': (item
-                                                                          as Data)
-                                                                      .empId
-                                                                      .toString()
-                                                                })
+                                                              PageRouteBuilder(
+                                                                transitionDuration:
+                                                                    Duration(
+                                                                        milliseconds:
+                                                                            200),
+                                                                pageBuilder: (context,
+                                                                        animation,
+                                                                        secondaryAnimation) =>
+                                                                    EmployeeLunchStatus(
+                                                                  userName: item
+                                                                      .userName,
+                                                                  empID: item
+                                                                      .empId,
+                                                                ),
+                                                                transitionsBuilder:
+                                                                    (context,
+                                                                        animation,
+                                                                        secondaryAnimation,
+                                                                        child) {
+                                                                  const begin =
+                                                                      Offset(1,
+                                                                          0.0);
+                                                                  const end =
+                                                                      Offset
+                                                                          .zero;
+                                                                  final tween = Tween(
+                                                                      begin:
+                                                                          begin,
+                                                                      end: end);
+                                                                  final offsetAnimation =
+                                                                      animation
+                                                                          .drive(
+                                                                              tween);
+                                                                  return SlideTransition(
+                                                                    position:
+                                                                        offsetAnimation,
+                                                                    child:
+                                                                        child,
+                                                                  );
+                                                                },
+                                                              ),
+                                                            )
                                                           : CustomSnackBar
                                                               .showSnackBar(
                                                                   context,
@@ -165,9 +196,18 @@ class _EmployeeSearchState extends State<EmployeeSearch>
                                                             .centerLeft),
                                                     child: Row(
                                                       children: [
-                                                        Text((item as Data)
-                                                            .empName
-                                                            .toString()),
+                                                        SizedBox(
+                                                          width:
+                                                              size.width * 0.7,
+                                                          child: Text(
+                                                            (item as Data)
+                                                                .empName
+                                                                .toString(),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ),
                                                         Expanded(
                                                             child: SizedBox()),
                                                         Text((item as Data)

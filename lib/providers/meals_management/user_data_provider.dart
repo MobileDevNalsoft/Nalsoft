@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/meals_management/api_response_model.dart';
 import 'package:meals_management/models/meals_management/user_events_model.dart';
@@ -28,6 +29,13 @@ class UserDataProvider extends ChangeNotifier {
   bool eventsPresent = false;
   bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
+  Map<String, dynamic>? notifications = {};
+  int unseenNotificationsCount = 0;
+  Stream<DocumentSnapshot> stream = FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(DateTime.now().toString().substring(0, 10))
+      .snapshots();
+  StreamSubscription<DocumentSnapshot>? _streamSubscription;
   // getters
   List<dynamic> get holidays => _holidays;
   bool get isSearching => _isSearching;
@@ -146,6 +154,20 @@ class UserDataProvider extends ChangeNotifier {
       });
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getNotifications() async {
+    try {
+      _streamSubscription = stream.listen((snapshot) {
+        print("snapshot ${snapshot.data()}");
+        print(unseenNotificationsCount);
+        notifications = snapshot.data() as Map<String, dynamic>;
+        unseenNotificationsCount += 1;
+        notifyListeners();
+      });
+    } catch (e) {
+      print(e);
     }
   }
 }

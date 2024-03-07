@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:meals_management/repositories/firebase_repo.dart';
@@ -9,7 +11,6 @@ class FirebaseProvider extends ChangeNotifier {
   String? _title;
   String _description = '';
   bool isLoading = false;
-  Map<String, dynamic>? notifications = {};
 
   Future<bool> sendNotification(String title, String description) async {
     isLoading = true;
@@ -46,12 +47,12 @@ class FirebaseProvider extends ChangeNotifier {
         body: jsonEncode(notificationPayload),
       );
       print("response status code${response.statusCode}");
-      if (response.statusCode == 200 &&  (await firebaseRepo.saveNotification(title,description)))  {
+      if (response.statusCode == 200 &&
+          (await firebaseRepo.saveNotification(title, description))) {
         print("Notification sent successfully!");
         isLoading = false;
         notifyListeners();
         return true;
-        
       } else {
         isLoading = false;
         notifyListeners();
@@ -63,23 +64,6 @@ class FirebaseProvider extends ChangeNotifier {
       notifyListeners();
       print("Error sending notification: $e");
       return false;
-    }
-  }
-
-  Future<void> getNotifications() async {
-    isLoading=true;
-    notifyListeners();
-    try {
-      notifications = (await firebaseRepo.getNotifications());
-      if (notifications!['message']==null){
-        notifications={'message':[]};
-        print(notifications);
-      }
-      isLoading=false;
-      notifyListeners();
-    } catch (e) {
-      isLoading=false;
-      print(e);
     }
   }
 }

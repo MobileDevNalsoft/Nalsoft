@@ -32,6 +32,8 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
 
   Future<void> initData() async {
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
+    await Provider.of<UserDataProvider>(context, listen: false)
+        .getNotifications();
 
     if (!sharedPreferences.containsKey('employee_name')) {
       await Provider.of<UserDataProvider>(context, listen: false)

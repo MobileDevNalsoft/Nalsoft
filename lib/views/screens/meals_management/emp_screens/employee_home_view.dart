@@ -1,14 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
+import 'package:meals_management/providers/meals_management/firebase_provider.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/views/app_navigation.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_home_view.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/employee_preview_view.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/employee_update_upcoming_status_view.dart';
@@ -37,6 +41,18 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
   UserRepo userRepo = UserRepo();
 
   final sharedPreferences = sl.get<SharedPreferences>();
+
+  late Stream<DocumentSnapshot> _stream;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _stream = FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(DateTime.now().toString().substring(0, 10))
+        .snapshots();
+  }
 
   @override
   void dispose() {
@@ -88,23 +104,53 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                           ),
                         ),
                         const Expanded(child: SizedBox()),
-                        IconButton(
-                              onPressed: () {
-                                Navigator.push(context, PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                NotificationsView(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                              ),);
-                              },
-                              icon: Icon(Icons.notifications),
-                            ),
+                        Consumer<UserDataProvider>(
+                          builder: (context, provider, child) {
+                            return Stack(
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.notifications),
+                                  onPressed: () {
+                                    // Handle notification button press
+                                    provider.unseenNotificationsCount = 0;
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            Duration(milliseconds: 200),
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            NotificationsView(stream: _stream),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          const begin = Offset(1, 0.0);
+                                          const end = Offset.zero;
+                                          final tween =
+                                              Tween(begin: begin, end: end);
+                                          final offsetAnimation =
+                                              animation.drive(tween);
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+                                provider.unseenNotificationsCount > 0
+                                    ? Positioned(
+                                        right: 12,
+                                        top: 10,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.red,
+                                          maxRadius: 5,
+                                        ))
+                                    : SizedBox(),
+                              ],
+                            );
+                          },
+                        ),
                         sharedPreferences.getString('user_type') == 'A'
                             ? Switch(
                                 value: false,
@@ -138,6 +184,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                 PopupMenuItem(
                                     value: 'Log Out',
                                     height: 10,
+                                    padding: EdgeInsets.only(left: 25),
                                     onTap: () {
                                       init();
                                       sharedPreferences.remove('employee_name');
@@ -145,12 +192,65 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                       sharedPreferences
                                           .remove('employee_department');
                                       sharedPreferences.remove('user_type');
-                                      Navigator.pushReplacementNamed(
+                                      Navigator.pushReplacement(
                                         context,
-                                        RouteManagement.loginPage,
+                                        PageRouteBuilder(
+                                          transitionDuration:
+                                              Duration(milliseconds: 400),
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              LoginView(),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            const begin = Offset(-1, 0.0);
+                                            const end = Offset.zero;
+                                            final tween =
+                                                Tween(begin: begin, end: end);
+                                            final offsetAnimation =
+                                                animation.drive(tween);
+                                            return SlideTransition(
+                                              position: offsetAnimation,
+                                              child: child,
+                                            );
+                                          },
+                                        ),
                                       );
                                     },
                                     child: const Text('Log Out')),
+                                PopupMenuItem(
+                                    value: 'Exit',
+                                    padding: EdgeInsets.only(left: 25),
+                                    height: 10,
+                                    onTap: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration:
+                                              Duration(milliseconds: 400),
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              AppNavigation(),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            const begin = Offset(-1, 0.0);
+                                            const end = Offset.zero;
+                                            final tween =
+                                                Tween(begin: begin, end: end);
+                                            final offsetAnimation =
+                                                animation.drive(tween);
+                                            return SlideTransition(
+                                              position: offsetAnimation,
+                                              child: child,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Exit')),
                               ];
                             },
                             child: const Icon(Icons.power_settings_new_sharp),
@@ -342,13 +442,18 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                       Navigator.push(
                         context,
                         PageRouteBuilder(
+                          transitionDuration: Duration(milliseconds: 200),
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
                                   UpdateLunchStatus(),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
+                            const begin = Offset(1, 0.0);
+                            const end = Offset.zero;
+                            final tween = Tween(begin: begin, end: end);
+                            final offsetAnimation = animation.drive(tween);
+                            return SlideTransition(
+                              position: offsetAnimation,
                               child: child,
                             );
                           },

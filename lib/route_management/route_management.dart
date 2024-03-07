@@ -5,7 +5,7 @@ import 'package:meals_management/views/screens/meals_management/admin_screens/ad
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_home_view.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_generate_notification_view.dart';
-import 'package:meals_management/views/screens/meals_management/authentication/login_view.dart';
+import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/employee_home_view.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/employee_preview_view.dart';

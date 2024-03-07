@@ -14,7 +14,7 @@ import 'package:meals_management/views/app_navigation.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meals_management/views/screens/meals_management/authentication/login_view.dart';
+import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:flutter/services.dart';
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
+import 'package:meals_management/views/screens/meeting_rooms_management/home_view.dart';
 
 class AppNavigation extends StatelessWidget {
   @override
@@ -46,8 +48,26 @@ class AppNavigation extends StatelessWidget {
                       context: context,
                       color: Color.fromRGBO(234, 221, 255, 1),
                       onTap: () {
-                        Navigator.pushNamed(
-                            context, RouteManagement.dataLoader);
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 400),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    DataLoader(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              const begin = Offset(1, 0.0);
+                              const end = Offset.zero;
+                              final tween = Tween(begin: begin, end: end);
+                              final offsetAnimation = animation.drive(tween);
+                              return SlideTransition(
+                                position: offsetAnimation,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
                       },
                     ),
                     SizedBox(
@@ -59,7 +79,26 @@ class AppNavigation extends StatelessWidget {
                       context: context,
                       color: Color.fromARGB(255, 187, 196, 199),
                       onTap: () {
-                        Navigator.pushNamed(context, RouteManagement.homeView);
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 400),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    HomeView(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              const begin = Offset(1, 0.0);
+                              const end = Offset.zero;
+                              final tween = Tween(begin: begin, end: end);
+                              final offsetAnimation = animation.drive(tween);
+                              return SlideTransition(
+                                position: offsetAnimation,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
                       },
                     )
                   ]),
