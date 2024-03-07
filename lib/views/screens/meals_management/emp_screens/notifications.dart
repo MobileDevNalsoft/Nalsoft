@@ -41,7 +41,7 @@ class _NotificationsView extends State<NotificationsView> {
                 child: Consumer<UserDataProvider>(
                   builder: (context, provider, child) {
                     return ListView.builder(
-                      itemCount: provider.notifications!['message'].length ?? 0,
+                      itemCount: provider.notifications!.length ?? 0,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.only(top: 10),
@@ -51,28 +51,35 @@ class _NotificationsView extends State<NotificationsView> {
                               color: Color.fromRGBO(236, 230, 240, 100),
                             ),
                             padding: EdgeInsets.all(10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  provider.notifications!['message'][index]
-                                      ['title'],
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      provider.notifications![index]
+                                          ['title'],
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      provider.notifications![index]
+                                          ['description'],
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  provider.notifications!['message'][index]
-                                      ['description'],
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.bold),
-                                )
+                                Text(DateTime.fromMillisecondsSinceEpoch(provider.notifications![index]
+                                          ['time']).toString().substring(11,16))
                               ],
                             ),
                           ),

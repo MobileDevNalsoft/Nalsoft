@@ -24,7 +24,7 @@ class FirebaseRepo {
           .doc(DateTime.now().toString().substring(0, 10))
           .set({
         "message": FieldValue.arrayUnion([
-          {"title": title, "description": description}
+          {"title": title, "description": description, "time": DateTime.now().millisecondsSinceEpoch}
         ])
       }, SetOptions(merge: true));
       return true;

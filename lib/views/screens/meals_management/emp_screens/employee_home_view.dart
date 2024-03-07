@@ -112,7 +112,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                   icon: Icon(Icons.notifications),
                                   onPressed: () {
                                     // Handle notification button press
-                                    provider.unseenNotificationsCount = 0;
+                                    provider.setUnseenNotifications = 0;
                                     Navigator.push(
                                       context,
                                       PageRouteBuilder(

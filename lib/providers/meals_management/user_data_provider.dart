@@ -29,7 +29,7 @@ class UserDataProvider extends ChangeNotifier {
   bool eventsPresent = false;
   bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
-  Map<String, dynamic>? notifications = {};
+  List<dynamic>? notifications = [];
   int unseenNotificationsCount = 0;
   Stream<DocumentSnapshot> stream = FirebaseFirestore.instance
       .collection('notifications')
@@ -157,13 +157,24 @@ class UserDataProvider extends ChangeNotifier {
     }
   }
 
+  set setUnseenNotifications(value){
+    unseenNotificationsCount = value;
+    notifyListeners();
+  }
+
   Future<void> getNotifications() async {
     try {
       _streamSubscription = stream.listen((snapshot) {
         print("snapshot ${snapshot.data()}");
-        print(unseenNotificationsCount);
-        notifications = snapshot.data() as Map<String, dynamic>;
+        print(('1'));
+        var data = snapshot.data() as Map<String,dynamic>;
+        print(data['message']);
+        print('2');
+        data['message']!.sort((a,b) => int.parse(a['time']).compareTo(int.parse(b['time'])));
+        notifications = data['message'];
+        print('3');
         unseenNotificationsCount += 1;
+        print(unseenNotificationsCount);
         notifyListeners();
       });
     } catch (e) {
