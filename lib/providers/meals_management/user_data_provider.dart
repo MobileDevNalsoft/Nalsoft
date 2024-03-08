@@ -30,7 +30,6 @@ class UserDataProvider extends ChangeNotifier {
   bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
   List<dynamic>? notifications = [];
-  int unseenNotificationsCount = 0;
   Stream<DocumentSnapshot> stream = FirebaseFirestore.instance
       .collection('notifications')
       .doc(DateTime.now().toString().substring(0, 10))
@@ -44,6 +43,7 @@ class UserDataProvider extends ChangeNotifier {
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;
   bool get getConnected => _connected;
+  int? length;
   // Stream<bool> get isDataPresentStream => _isDataPresentController.stream;
 
   set isSearching(value) {
@@ -53,6 +53,11 @@ class UserDataProvider extends ChangeNotifier {
 
   void setConnected(value) {
     _connected = value;
+    notifyListeners();
+  }
+
+  set setUnseen(value){
+    sharedPreferences!.setBool('unseen', value);
     notifyListeners();
   }
 
@@ -157,25 +162,19 @@ class UserDataProvider extends ChangeNotifier {
     }
   }
 
-  set setUnseenNotifications(value){
-    unseenNotificationsCount = value;
-    notifyListeners();
-  }
-
   Future<void> getNotifications() async {
     try {
+
       _streamSubscription = stream.listen((snapshot) {
+
         print("snapshot ${snapshot.data()}");
-        print(('1'));
-        var data = snapshot.data() as Map<String,dynamic>;
-        print(data['message']);
-        print('2');
-        data['message']!.sort((a,b) => int.parse(a['time']).compareTo(int.parse(b['time'])));
-        notifications = data['message'];
-        print('3');
-        unseenNotificationsCount += 1;
-        print(unseenNotificationsCount);
-        notifyListeners();
+        var data = snapshot.data() ?? {'message':[]} as Map<String,dynamic>;
+        notifications=(data as Map<String,dynamic>)['message'].reversed.toList();
+        if(length != notifications!.length){
+          sharedPreferences!.setBool('unseen', true);
+          notifyListeners();
+        }
+        
       });
     } catch (e) {
       print(e);

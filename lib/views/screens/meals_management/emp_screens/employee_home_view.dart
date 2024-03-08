@@ -112,7 +112,8 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                   icon: Icon(Icons.notifications),
                                   onPressed: () {
                                     // Handle notification button press
-                                    provider.setUnseenNotifications = 0;
+                                    provider.setUnseen = false;
+                                     
                                     Navigator.push(
                                       context,
                                       PageRouteBuilder(
@@ -138,7 +139,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     );
                                   },
                                 ),
-                                provider.unseenNotificationsCount > 0
+                                 sharedPreferences.getBool('unseen')!
                                     ? Positioned(
                                         right: 12,
                                         top: 10,
@@ -220,7 +221,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     },
                                     child: const Text('Log Out')),
                                 PopupMenuItem(
-                                    value: 'Exit',
+                                    value: 'Main Menu',
                                     padding: EdgeInsets.only(left: 25),
                                     height: 10,
                                     onTap: () {
@@ -250,7 +251,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                         ),
                                       );
                                     },
-                                    child: const Text('Exit')),
+                                    child: const Text('Main Menu')),
                               ];
                             },
                             child: const Icon(Icons.power_settings_new_sharp),

@@ -82,7 +82,11 @@ class _GenerateNotificationState extends State<GenerateNotification>
                           if (titleController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
                                 context, "Title cannot be empty", Colors.red);
-                          } else {
+                          } else if(descriptionController.text.isEmpty){
+                            CustomSnackBar.showSnackBar(
+                                context, "Description cannot be empty", Colors.red);
+                          }
+                          else {
                             bool result = await Provider.of<FirebaseProvider>(
                                     context,
                                     listen: false)
