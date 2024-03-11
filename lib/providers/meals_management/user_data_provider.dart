@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/meals_management/api_response_model.dart';
 import 'package:meals_management/models/meals_management/user_events_model.dart';
@@ -28,6 +29,12 @@ class UserDataProvider extends ChangeNotifier {
   bool eventsPresent = false;
   bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
+  List<dynamic>? notifications = [];
+  Stream<DocumentSnapshot> stream = FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(DateTime.now().toString().substring(0, 10))
+      .snapshots();
+  StreamSubscription<DocumentSnapshot>? _streamSubscription;
   // getters
   List<dynamic> get holidays => _holidays;
   bool get isSearching => _isSearching;
@@ -36,6 +43,7 @@ class UserDataProvider extends ChangeNotifier {
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;
   bool get getConnected => _connected;
+  int? length;
   // Stream<bool> get isDataPresentStream => _isDataPresentController.stream;
 
   set isSearching(value) {
@@ -45,6 +53,11 @@ class UserDataProvider extends ChangeNotifier {
 
   void setConnected(value) {
     _connected = value;
+    notifyListeners();
+  }
+
+  set setUnseen(value){
+    sharedPreferences!.setBool('unseen', value);
     notifyListeners();
   }
 
@@ -146,6 +159,25 @@ class UserDataProvider extends ChangeNotifier {
       });
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getNotifications() async {
+    try {
+
+      _streamSubscription = stream.listen((snapshot) {
+
+        print("snapshot ${snapshot.data()}");
+        var data = snapshot.data() ?? {'message':[]} as Map<String,dynamic>;
+        notifications=(data as Map<String,dynamic>)['message'].reversed.toList();
+        if(length != notifications!.length){
+          sharedPreferences!.setBool('unseen', true);
+          notifyListeners();
+        }
+        
+      });
+    } catch (e) {
+      print(e);
     }
   }
 }

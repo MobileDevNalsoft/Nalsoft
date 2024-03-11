@@ -20,8 +20,9 @@ class DioClient2 {
     dio = dioC ?? Dio();
     dio
       ..options.baseUrl = baseUrl
-      ..options.connectTimeout = Duration(seconds: 3)
-      ..options.receiveTimeout = Duration(seconds: 3)
+      ..options.connectTimeout = Duration(seconds: 5)
+      ..options.receiveTimeout = Duration(seconds: 5)
+      ..options.maxRedirects = 5
       ..httpClientAdapter
       ..options.headers = {};
     dio.interceptors.add(loggingInterceptor!);

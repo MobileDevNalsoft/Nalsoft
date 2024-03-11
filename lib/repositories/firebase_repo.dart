@@ -42,27 +42,27 @@ final DioClient2? dioClient2;
           .doc(DateTime.now().toString().substring(0, 10))
           .set({
         "message": FieldValue.arrayUnion([
-          {"title": title, "description": description}
+          {"title": title, "description": description, "time": DateTime.now().millisecondsSinceEpoch}
         ])
-      },SetOptions(merge: true));
+      }, SetOptions(merge: true));
       return true;
     } catch (e) {
       return false;
     }
   }
 
-  Future<Map<String, dynamic>> getNotifications() async {
-    try {
-      DocumentSnapshot documentSnapshot = await _db
-          .collection("notifications")
-          .doc(DateTime.now().toString().substring(0, 10))
-          .get();
-      print(DateTime.now().toString().substring(0, 10));
-      print(documentSnapshot.data() as Map<String, dynamic>);
-      return (documentSnapshot.data() as Map<String, dynamic>);
-    } catch (e) {
-      print(e);
-      return {};
-    }
-  }
+  // Future<Map<String, dynamic>> getNotifications() async {
+  //   try {
+  //     DocumentSnapshot documentSnapshot = await _db
+  //         .collection("notifications")
+  //         .doc(DateTime.now().toString().substring(0, 10))
+  //         .get();
+  //     print(DateTime.now().toString().substring(0, 10));
+  //     print(documentSnapshot.data() as Map<String, dynamic>);
+  //     return (documentSnapshot.data() as Map<String, dynamic>);
+  //   } catch (e) {
+  //     print(e);
+  //     return {};
+  //   }
+  // }
 }

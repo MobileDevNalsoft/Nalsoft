@@ -8,6 +8,7 @@ import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart";
+import "package:meals_management/views/screens/meals_management/admin_screens/admin_generate_notification_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
@@ -164,13 +165,19 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             Navigator.push(
                               context,
                               PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 200),
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) =>
                                         EmployeeSearch(),
                                 transitionsBuilder: (context, animation,
                                     secondaryAnimation, child) {
-                                  return FadeTransition(
-                                    opacity: animation,
+                                  const begin = Offset(0, 1);
+                                  const end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final offsetAnimation =
+                                      animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
                                     child: child,
                                   );
                                 },
@@ -207,11 +214,12 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     selectionMode: DateRangePickerSelectionMode.single,
                     selectibleDayPredicate: (date) {
                       return ((date.weekday != DateTime.saturday &&
-                          date.weekday != DateTime.sunday &&
-                          date.day <= now.day &&
-                          date.month == now.month) || (date.weekday != DateTime.saturday &&
-                          date.weekday != DateTime.sunday &&
-                          date.month < now.month)) &&
+                                  date.weekday != DateTime.sunday &&
+                                  date.day <= now.day &&
+                                  date.month == now.month) ||
+                              (date.weekday != DateTime.saturday &&
+                                  date.weekday != DateTime.sunday &&
+                                  date.month < now.month)) &&
                           !Provider.of<UserDataProvider>(context, listen: false)
                               .holidays
                               .contains(date.toString().substring(0, 10));
@@ -238,8 +246,26 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                   CustomElevatedButton(
                       color: MaterialStatePropertyAll(Colors.grey.shade300),
                       onPressed: () {
-                        Navigator.pushNamed(
-                            context, RouteManagement.generateNotification);
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 200),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    GenerateNotification(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              const begin = Offset(1, 0.0);
+                              const end = Offset.zero;
+                              final tween = Tween(begin: begin, end: end);
+                              final offsetAnimation = animation.drive(tween);
+                              return SlideTransition(
+                                position: offsetAnimation,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
                       },
                       child: const Text(
                         "Notify",

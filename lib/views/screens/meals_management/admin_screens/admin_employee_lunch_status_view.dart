@@ -93,12 +93,12 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
               width: 10,
             )
           ],
-          backgroundColor: const Color.fromRGBO(236, 230, 240, 100),
+          backgroundColor: Color.fromARGB(100, 179, 110, 234),
           elevation: 4,
           shape: const ContinuousRectangleBorder(
               borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25))),
+                  bottomLeft: Radius.circular(50),
+                  bottomRight: Radius.circular(50))),
         ),
         body: _isLoading
             ? CustomWidgets.CustomCircularLoader()

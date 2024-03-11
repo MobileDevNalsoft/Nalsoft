@@ -1,5 +1,6 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/auth_provider.dart';
@@ -43,7 +44,6 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
       child: AspectRatio(
         aspectRatio: size.height / size.width,
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
           body: Stack(children: [
             Container(
               color: Colors.white, // background color of Container
@@ -177,7 +177,6 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                           ),
                         ),
                       )),
-                
                 ],
               ),
             ),
