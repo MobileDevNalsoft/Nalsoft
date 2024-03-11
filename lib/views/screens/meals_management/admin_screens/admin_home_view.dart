@@ -7,6 +7,7 @@ import "package:meals_management/network_handler_mixin/network_handler.dart";
 import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
+import "package:meals_management/views/in_app_tour.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_generate_notification_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
@@ -21,6 +22,7 @@ import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
+import "package:tutorial_coach_mark/tutorial_coach_mark.dart";
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -38,12 +40,48 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
 
   String qrResult = '';
 
+  final calendarKey = GlobalKey();
+  final searchEmployeeKey = GlobalKey();
+  final notifyKey = GlobalKey();
+
+  late TutorialCoachMark tutorialCoachMark;
+
+  void _initAddSiteInAppTour() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: addAdminHomeSiteTargets(
+        calendarKey: calendarKey,
+        searchEmployeeKey: searchEmployeeKey,
+        notifyKey: notifyKey,
+      ),
+      colorShadow: Colors.black12,
+      paddingFocus: 10,
+      hideSkip: false,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print('admin home tutorial completed');
+      },
+    );
+  }
+
+  void _showInAppTour() {
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     sharedPreferences = GetIt.instance.get<SharedPreferences>();
     Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllUserList();
+    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    _initAddSiteInAppTour();
+    _showInAppTour();
+    // }
   }
 
   @override
@@ -192,6 +230,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         }
                       },
                       child: Row(
+                        key: searchEmployeeKey,
                         children: [
                           const Icon(Icons.groups),
                           SizedBox(
@@ -209,6 +248,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                   const Text("Select Date",
                       style: TextStyle(color: Color.fromRGBO(73, 69, 79, 100))),
                   CustomCalendarCard(
+                    key: calendarKey,
                     forAdmin: true,
                     isUDP: true,
                     controller: datesController,
@@ -248,6 +288,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     height: size.height * 0.01,
                   ),
                   CustomElevatedButton(
+                      key: notifyKey,
                       color: MaterialStatePropertyAll(Colors.grey.shade300),
                       onPressed: () {
                         Navigator.push(

@@ -65,6 +65,7 @@ dependencies:
   flutter_native_splash: ^2.3.10
   flutter_windowmanager: ^0.2.0
   badges: ^3.1.2
+  tutorial_coach_mark: ^1.2.11
 
 dev_dependencies:
   flutter_test:

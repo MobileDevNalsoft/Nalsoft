@@ -88,11 +88,14 @@ class _NotificationsView extends State<NotificationsView> {
                                         )
                                       ],
                                     ),
-                                    Text(DateTime.fromMillisecondsSinceEpoch(
-                                            provider.notifications![index]
-                                                ['time'])
-                                        .toString()
-                                        .substring(11, 16))
+                                    if (provider.notifications![index]
+                                            ['time'] !=
+                                        null)
+                                      Text(DateTime.fromMillisecondsSinceEpoch(
+                                              provider.notifications![index]
+                                                  ['time'])
+                                          .toString()
+                                          .substring(11, 16))
                                   ],
                                 ),
                               ),

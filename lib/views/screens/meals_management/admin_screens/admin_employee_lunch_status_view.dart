@@ -8,12 +8,14 @@ import "package:meals_management/providers/meals_management/user_data_provider.d
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
+import "package:meals_management/views/in_app_tour.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
 import 'package:custom_widgets/src.dart';
+import "package:tutorial_coach_mark/tutorial_coach_mark.dart";
 
 // ignore: must_be_immutable
 class EmployeeLunchStatus extends StatefulWidget {
@@ -31,6 +33,34 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
   bool _isLoading = true;
   bool isDataPresent = false;
+
+  final calendarKey = GlobalKey();
+
+  late TutorialCoachMark tutorialCoachMark;
+
+  void _initAddSiteInAppTour() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: addEmployeeLunchStatusSiteTargets(
+        calendarKey: calendarKey,
+      ),
+      colorShadow: Colors.black12,
+      paddingFocus: 10,
+      hideSkip: false,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print('employee lunch status tutorial completed');
+      },
+    );
+  }
+
+  void _showInAppTour() {
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -58,6 +88,10 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     } finally {
       setState(() {
         _isLoading = false;
+        // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+        _initAddSiteInAppTour();
+        _showInAppTour();
+        // }
       });
     }
   }
@@ -184,6 +218,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                         height: size.height * 0.02,
                       ),
                       Consumer<AdminEmployeesProvider>(
+                        key: calendarKey,
                         builder: (context, provider, child) {
                           if (provider.isLoading && isConnected()) {
                             return SizedBox(

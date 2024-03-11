@@ -20,8 +20,8 @@ class DioClient2 {
     dio = dioC ?? Dio();
     dio
       ..options.baseUrl = baseUrl
-      ..options.connectTimeout = Duration(seconds: 10)
-      ..options.receiveTimeout = Duration(seconds: 10)
+      ..options.connectTimeout = Duration(seconds: 15)
+      ..options.receiveTimeout = Duration(seconds: 15)
       ..options.maxRedirects = 5
       ..httpClientAdapter
       ..options.headers = {};

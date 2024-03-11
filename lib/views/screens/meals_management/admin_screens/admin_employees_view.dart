@@ -5,8 +5,10 @@ import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/admin_employees_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/in_app_tour.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_employee_lunch_status_view.dart';
 import 'package:provider/provider.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class EmployeeSearch extends StatefulWidget {
   EmployeeSearch({super.key});
@@ -21,6 +23,33 @@ class _EmployeeSearchState extends State<EmployeeSearch>
 
   final FocusNode _focusNode = FocusNode();
 
+  final searchEmployeeKey = GlobalKey();
+
+  late TutorialCoachMark tutorialCoachMark;
+
+  void _initAddSiteInAppTour() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets:
+          addSearchEmployeeSiteTargets(searchEmployeeKey: searchEmployeeKey),
+      colorShadow: Colors.black12,
+      paddingFocus: 10,
+      hideSkip: false,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print('employee home tutorial completed');
+      },
+    );
+  }
+
+  void _showInAppTour() {
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +59,10 @@ class _EmployeeSearchState extends State<EmployeeSearch>
         FocusScope.of(context).requestFocus(_focusNode);
       },
     );
+    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    _initAddSiteInAppTour();
+    _showInAppTour();
+    // }
   }
 
   @override
@@ -60,6 +93,7 @@ class _EmployeeSearchState extends State<EmployeeSearch>
                     color: const Color.fromRGBO(236, 230, 240, 100),
                   ),
                   child: Row(
+                    key: searchEmployeeKey,
                     children: [
                       IconButton(
                           onPressed: () => Navigator.pop(context),

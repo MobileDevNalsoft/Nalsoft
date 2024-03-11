@@ -10,8 +10,10 @@ import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
+import "package:meals_management/views/in_app_tour.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
+import "package:tutorial_coach_mark/tutorial_coach_mark.dart";
 
 // ignore: must_be_immutable
 class UpdateLunchStatus extends StatefulWidget {
@@ -31,6 +33,44 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
   TextEditingController notOptController = TextEditingController();
 
   final FocusNode _focusNode = FocusNode();
+
+  final dropDownKey = GlobalKey();
+  final calendarKey = GlobalKey();
+
+  late TutorialCoachMark tutorialCoachMark;
+
+  void _initAddSiteInAppTour() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: addUpdateUpcomingLunchStatusSiteTargets(
+          dropDownKey: dropDownKey, calendarKey: calendarKey),
+      colorShadow: Colors.black12,
+      paddingFocus: 10,
+      hideSkip: false,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print('update upcoming lunch status view tutorial completed');
+      },
+    );
+  }
+
+  void _showInAppTour() {
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    _initAddSiteInAppTour();
+    _showInAppTour();
+    // }
+  }
 
   @override
   void dispose() {
@@ -81,6 +121,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       style: TextStyle(fontSize: 13),
                     ),
                     DropdownButton<String>(
+                      key: dropDownKey,
                       value:
                           Provider.of<HomeStatusProvider>(context, listen: true)
                               .getReason,
@@ -103,6 +144,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                   height: size.height * 0.05,
                 ),
                 Consumer<UserDataProvider>(
+                  key: calendarKey,
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return SizedBox(

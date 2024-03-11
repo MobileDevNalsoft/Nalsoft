@@ -12,6 +12,7 @@ import 'package:meals_management/views/app_navigation.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
+import 'package:meals_management/views/in_app_tour.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_home_view.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/employee_preview_view.dart';
@@ -21,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:custom_widgets/src.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ignore: must_be_immutable
 class EmployeeHomeView extends StatefulWidget {
@@ -44,6 +46,43 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
 
   late Stream<DocumentSnapshot> _stream;
 
+  final calendarKey = GlobalKey();
+  final legendKey = GlobalKey();
+  final updateUpcomingLunchStatusKey = GlobalKey();
+  final notificationsKey = GlobalKey();
+  final toggleKey = GlobalKey();
+  final logoutKey = GlobalKey();
+
+  late TutorialCoachMark tutorialCoachMark;
+
+  void _initAddSiteInAppTour() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: addEmployeeHomeSiteTargets(
+          calendarKey: calendarKey,
+          legendKey: legendKey,
+          updateUpcomingLunchStatusKey: updateUpcomingLunchStatusKey,
+          notificationsKey: notificationsKey,
+          toggleKey: toggleKey,
+          logoutKey: logoutKey),
+      colorShadow: Colors.black12,
+      paddingFocus: 10,
+      hideSkip: false,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print('employee home tutorial completed');
+      },
+    );
+  }
+
+  void _showInAppTour() {
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -52,6 +91,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
         .collection('notifications')
         .doc(DateTime.now().toString().substring(0, 10))
         .snapshots();
+    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    _initAddSiteInAppTour();
+    _showInAppTour();
+    // }
   }
 
   @override
@@ -109,6 +152,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                             return Stack(
                               children: [
                                 IconButton(
+                                  key: notificationsKey,
                                   icon: Icon(Icons.notifications),
                                   onPressed: () {
                                     // Handle notification button press
@@ -154,6 +198,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                         ),
                         sharedPreferences.getString('user_type') == 'A'
                             ? Switch(
+                                key: toggleKey,
                                 value: false,
                                 onChanged: (value) {
                                   Navigator.push(
@@ -180,6 +225,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                           padding: const EdgeInsets.only(
                               right: 10.0, top: 10, left: 10),
                           child: PopupMenuButton(
+                            key: logoutKey,
                             itemBuilder: (BuildContext context) {
                               return [
                                 PopupMenuItem(
@@ -266,6 +312,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                 height: size.height * 0.03,
               ),
               Consumer<UserDataProvider>(
+                key: calendarKey,
                 builder: (context, provider, child) {
                   if (provider.isLoading) {
                     return SizedBox(
@@ -428,11 +475,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                   }
                 },
               ),
-              const CustomLegend(),
+              CustomLegend(
+                key: legendKey,
+              ),
               SizedBox(
                 height: size.height * 0.06,
                 width: size.width * 0.73,
                 child: Card(
+                  key: updateUpcomingLunchStatusKey,
                   color: Color.fromRGBO(241, 232, 255, 1),
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30))),

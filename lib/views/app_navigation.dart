@@ -1,9 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/route_management/route_management.dart';
+import 'package:meals_management/views/in_app_tour.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
 import 'package:meals_management/views/screens/meeting_rooms_management/home_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class AppNavigation extends StatelessWidget {
+class AppNavigation extends StatefulWidget {
+  @override
+  State<AppNavigation> createState() => _AppNavigationState();
+}
+
+class _AppNavigationState extends State<AppNavigation> {
+  final mealsAppkey = GlobalKey();
+
+  final meetingsAppkey = GlobalKey();
+
+  final sharedPreferences = sl.get<SharedPreferences>();
+
+  late TutorialCoachMark tutorialCoachMark;
+
+  void _initAddSiteInAppTour() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: addAppNavigationSiteTargets(
+        mealsAppkey: mealsAppkey,
+        meetingsAppkey: meetingsAppkey,
+      ),
+      colorShadow: Colors.black12,
+      paddingFocus: 10,
+      hideSkip: false,
+      opacityShadow: 0.8,
+      onFinish: () {
+        print('app navigation tutorial completed');
+      },
+    );
+  }
+
+  void _showInAppTour() {
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        tutorialCoachMark.show(context: context);
+        sharedPreferences.setBool('hasSeenTutorial', true);
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    _initAddSiteInAppTour();
+    _showInAppTour();
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -43,6 +96,7 @@ class AppNavigation extends StatelessWidget {
                       height: size.height * 0.04,
                     ),
                     buildService(
+                      key: mealsAppkey,
                       image_path: 'assets/images/meals.png',
                       size: size,
                       context: context,
@@ -74,6 +128,7 @@ class AppNavigation extends StatelessWidget {
                       height: size.height * 0.02,
                     ),
                     buildService(
+                      key: meetingsAppkey,
                       image_path: 'assets/images/meetings.png',
                       size: size,
                       context: context,
@@ -106,7 +161,8 @@ class AppNavigation extends StatelessWidget {
   }
 
   Widget buildService(
-      {required String image_path,
+      {required GlobalKey key,
+      required String image_path,
       required Size size,
       required BuildContext context,
       required Color color,
@@ -114,6 +170,7 @@ class AppNavigation extends StatelessWidget {
     return InkWell(
         borderRadius: BorderRadius.circular(25),
         child: Container(
+          key: key,
           height: size.height * 0.18,
           width: size.width * 0.9,
           decoration: BoxDecoration(
