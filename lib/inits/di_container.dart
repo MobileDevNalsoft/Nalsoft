@@ -5,8 +5,10 @@ import 'package:meals_management/APIClient/dio_client2.dart';
 import 'package:meals_management/APIClient/interceptor.dart';
 import 'package:meals_management/providers/meals_management/admin_employees_provider.dart';
 import 'package:meals_management/providers/meals_management/auth_provider.dart';
+import 'package:meals_management/providers/meals_management/firebase_provider.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/repositories/auth_repo.dart';
+import 'package:meals_management/repositories/firebase_repo.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:meals_management/repositories/user_repo.dart';
 import 'package:meals_management/utils/constants.dart';
@@ -27,6 +29,7 @@ Future<void> init() async {
       () => AuthenticationRepo(dioClient1: sl(), sharedPreferences: sl()));
   sl.registerLazySingleton(() => UserRepo(dioClient2: sl()));
   sl.registerLazySingleton(() => UserEventsRepo(dioClient2: sl()));
+  sl.registerLazySingleton(() => FirebaseRepo(dioClient2: sl()));
 
   // Provider
   sl.registerFactory(() => AuthenticationProvider(authenticationRepo: sl()));
@@ -34,6 +37,8 @@ Future<void> init() async {
       userRepo: sl(), userEventsRepo: sl(), sharedPreferences: sl()));
   sl.registerFactory(() =>
       AdminEmployeesProvider(userEventsRepo: sl(), sharedPreferences: sl()));
+        sl.registerFactory(() =>
+      FirebaseProvider(firebaseRepo: sl(),));
 
   // Initializations
   final sharedPreferences = await SharedPreferences.getInstance();

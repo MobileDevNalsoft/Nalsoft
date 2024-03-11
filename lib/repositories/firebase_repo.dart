@@ -1,19 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:meals_management/APIClient/dio_client2.dart';
 
 class FirebaseRepo {
-  final _db = FirebaseFirestore.instance;
+final DioClient2? dioClient2;
+
+  FirebaseRepo({this.dioClient2});
+
+ final _db = FirebaseFirestore.instance;
 
   Future<String> getToken() async {
     print("get token");
     try {
-      DocumentSnapshot documentSnapshot =
-          await _db.collection("dynamic").doc("access_token").get();
-      print("inside notification repo$documentSnapshot");
-      return (documentSnapshot.data() as Map)["token"];
-    } catch (e) {
+
+//method 1: get auth token from firebase 
+      
+      // DocumentSnapshot documentSnapshot =
+      //     await _db.collection("dynamic").doc("access_token").get();
+      // print("inside notification repo$documentSnapshot");
+      // return (documentSnapshot.data() as Map)["token"]; 
+
+//method 2: get auth token from server
+
+      Response response = await dioClient2!
+          .get("https://nalsoft-server-3.onrender.com");
+      print(response);
+      print(response.data);
+      return "";
+    }
+     catch (e) {
       print(e);
-      return '';
+      return "";
     }
   }
 

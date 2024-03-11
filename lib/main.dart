@@ -43,7 +43,6 @@ void main() async {
     provisional: false,
     sound: true,
   );
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MultiProvider(
@@ -51,10 +50,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => di.sl<UserDataProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<AuthenticationProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<AdminEmployeesProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<FirebaseProvider>()),
         ChangeNotifierProvider<HomeStatusProvider>(
             create: (_) => HomeStatusProvider()),
-        ChangeNotifierProvider<FirebaseProvider>(
-            create: (_) => FirebaseProvider()),
         ChangeNotifierProvider(create: (_) => HomeViewProvider()),
         ChangeNotifierProvider(create: (_) => MeetingRoomProvider())
       ],
