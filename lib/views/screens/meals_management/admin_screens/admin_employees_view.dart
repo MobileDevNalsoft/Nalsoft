@@ -50,6 +50,7 @@ class _EmployeeSearchState extends State<EmployeeSearch>
       Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
+        sharedPreferences.setBool('hasSeenTutorial5', true);
       },
     );
   }
@@ -63,7 +64,7 @@ class _EmployeeSearchState extends State<EmployeeSearch>
         FocusScope.of(context).requestFocus(_focusNode);
       },
     );
-    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    if (!sharedPreferences.containsKey('hasSeenTutorial5')) {
       _initAddSiteInAppTour();
       _showInAppTour();
     }

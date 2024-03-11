@@ -79,6 +79,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
       Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
+        sharedPreferences.setBool('hasSeenTutorial2', true);
       },
     );
   }
@@ -91,7 +92,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
         .collection('notifications')
         .doc(DateTime.now().toString().substring(0, 10))
         .snapshots();
-    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    if (!sharedPreferences.containsKey('hasSeenTutorial2')) {
       _initAddSiteInAppTour();
       _showInAppTour();
     }

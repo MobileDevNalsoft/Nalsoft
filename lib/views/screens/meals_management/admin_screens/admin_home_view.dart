@@ -68,6 +68,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
+        sharedPreferences.setBool('hasSeenTutorial4', true);
       },
     );
   }
@@ -78,7 +79,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
     sharedPreferences = GetIt.instance.get<SharedPreferences>();
     Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllUserList();
-    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    if (!sharedPreferences.containsKey('hasSeenTutorial4')) {
       _initAddSiteInAppTour();
       _showInAppTour();
     }

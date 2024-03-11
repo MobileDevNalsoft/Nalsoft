@@ -62,6 +62,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
       Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
+        sharedPreferences.setBool('hasSeenTutorial3', true);
       },
     );
   }
@@ -70,7 +71,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    if (!sharedPreferences.containsKey('hasSeenTutorial3')) {
       _initAddSiteInAppTour();
       _showInAppTour();
     }

@@ -42,7 +42,7 @@ class _AppNavigationState extends State<AppNavigation> {
       Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
-        sharedPreferences.setBool('hasSeenTutorial', true);
+        sharedPreferences.setBool('hasSeenTutorial1', true);
       },
     );
   }
@@ -51,7 +51,7 @@ class _AppNavigationState extends State<AppNavigation> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+    if (!sharedPreferences.containsKey('hasSeenTutorial1')) {
       _initAddSiteInAppTour();
       _showInAppTour();
     }

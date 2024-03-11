@@ -2,6 +2,7 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:intl/intl.dart";
+import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
 import "package:meals_management/providers/meals_management/admin_employees_provider.dart";
 import "package:meals_management/providers/meals_management/user_data_provider.dart";
@@ -12,6 +13,7 @@ import "package:meals_management/views/in_app_tour.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
 import 'package:custom_widgets/src.dart';
@@ -33,6 +35,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
   bool _isLoading = true;
   bool isDataPresent = false;
+
+  final sharedPreferences = sl.get<SharedPreferences>();
 
   final calendarKey = GlobalKey();
 
@@ -58,6 +62,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
+        sharedPreferences.setBool('hasSeenTutorial6', true);
       },
     );
   }
@@ -88,10 +93,10 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     } finally {
       setState(() {
         _isLoading = false;
-        // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
-        _initAddSiteInAppTour();
-        _showInAppTour();
-        // }
+        if (!sharedPreferences.containsKey('hasSeenTutorial6')) {
+          _initAddSiteInAppTour();
+          _showInAppTour();
+        }
       });
     }
   }
