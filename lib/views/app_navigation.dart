@@ -51,10 +51,10 @@ class _AppNavigationState extends State<AppNavigation> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
-    _initAddSiteInAppTour();
-    _showInAppTour();
-    // }
+    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+      _initAddSiteInAppTour();
+      _showInAppTour();
+    }
   }
 
   @override

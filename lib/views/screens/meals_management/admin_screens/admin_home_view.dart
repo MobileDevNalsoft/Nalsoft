@@ -78,10 +78,10 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
     sharedPreferences = GetIt.instance.get<SharedPreferences>();
     Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllUserList();
-    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
-    _initAddSiteInAppTour();
-    _showInAppTour();
-    // }
+    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+      _initAddSiteInAppTour();
+      _showInAppTour();
+    }
   }
 
   @override

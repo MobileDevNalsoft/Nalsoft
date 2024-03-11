@@ -2,6 +2,7 @@ import "package:custom_widgets/src.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:intl/intl.dart";
+import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/models/meals_management/user_events_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
 import 'package:meals_management/providers/meals_management/home_status_provider.dart';
@@ -12,6 +13,7 @@ import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:meals_management/views/in_app_tour.dart";
 import "package:provider/provider.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:tutorial_coach_mark/tutorial_coach_mark.dart";
 
@@ -33,6 +35,8 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
   TextEditingController notOptController = TextEditingController();
 
   final FocusNode _focusNode = FocusNode();
+
+  final sharedPreferences = sl.get<SharedPreferences>();
 
   final dropDownKey = GlobalKey();
   final calendarKey = GlobalKey();
@@ -66,10 +70,10 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
   void initState() {
     // TODO: implement initState
     super.initState();
-    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
-    _initAddSiteInAppTour();
-    _showInAppTour();
-    // }
+    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+      _initAddSiteInAppTour();
+      _showInAppTour();
+    }
   }
 
   @override

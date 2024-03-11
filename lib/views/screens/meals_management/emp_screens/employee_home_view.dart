@@ -91,10 +91,10 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
         .collection('notifications')
         .doc(DateTime.now().toString().substring(0, 10))
         .snapshots();
-    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
-    _initAddSiteInAppTour();
-    _showInAppTour();
-    // }
+    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+      _initAddSiteInAppTour();
+      _showInAppTour();
+    }
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
+import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/admin_employees_provider.dart';
@@ -8,6 +9,7 @@ import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/in_app_tour.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_employee_lunch_status_view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class EmployeeSearch extends StatefulWidget {
@@ -22,6 +24,8 @@ class _EmployeeSearchState extends State<EmployeeSearch>
   SearchController employeeSearchController = SearchController();
 
   final FocusNode _focusNode = FocusNode();
+
+  final sharedPreferences = sl.get<SharedPreferences>();
 
   final searchEmployeeKey = GlobalKey();
 
@@ -59,10 +63,10 @@ class _EmployeeSearchState extends State<EmployeeSearch>
         FocusScope.of(context).requestFocus(_focusNode);
       },
     );
-    // if (!sharedPreferences.containsKey('hasSeenTutorial')) {
-    _initAddSiteInAppTour();
-    _showInAppTour();
-    // }
+    if (!sharedPreferences.containsKey('hasSeenTutorial')) {
+      _initAddSiteInAppTour();
+      _showInAppTour();
+    }
   }
 
   @override
