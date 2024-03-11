@@ -6,14 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:meals_management/repositories/firebase_repo.dart';
 
 class FirebaseProvider extends ChangeNotifier {
-  FirebaseRepo? firebaseRepo ;
+  FirebaseRepo? firebaseRepo;
 
   FirebaseProvider({this.firebaseRepo});
 
   String? _title;
   String _description = '';
   bool isLoading = false;
-
 
   Future<bool> sendNotification(String title, String description) async {
     isLoading = true;
@@ -51,7 +50,7 @@ class FirebaseProvider extends ChangeNotifier {
       );
       print("response status code${response.statusCode}");
       if (response.statusCode == 200 &&
-          (await firebaseRepo.saveNotification(title, description))) {
+          (await firebaseRepo!.saveNotification(title, description))) {
         print("Notification sent successfully!");
         isLoading = false;
         notifyListeners();
@@ -70,20 +69,20 @@ class FirebaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getNotifications() async {
-    isLoading=true;
-    notifyListeners();
-    try {
-      notifications = (await firebaseRepo!.getNotifications());
-      if (notifications!['message']==null){
-        notifications={'message':[]};
-        print(notifications);
-      }
-      isLoading=false;
-      notifyListeners();
-    } catch (e) {
-      isLoading=false;
-      print(e);
-    }
-  }
+  // Future<void> getNotifications() async {
+  //   isLoading=true;
+  //   notifyListeners();
+  //   try {
+  //     notifications = (await firebaseRepo!.getNotifications());
+  //     if (notifications!['message']==null){
+  //       notifications={'message':[]};
+  //       print(notifications);
+  //     }
+  //     isLoading=false;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     isLoading=false;
+  //     print(e);
+  //   }
+  // }
 }

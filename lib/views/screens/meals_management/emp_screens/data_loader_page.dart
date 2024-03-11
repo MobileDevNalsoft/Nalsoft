@@ -32,15 +32,18 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
   }
 
   Future<void> initData() async {
+    if (!sharedPreferences.containsKey('unseen'))
+      sharedPreferences.setBool('unseen', false);
 
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
-    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection("notifications")
-          .doc(DateTime.now().toString().substring(0, 10)).get();
-    var data = documentSnapshot.data() ?? {'message':[]} as Map<String,dynamic>;
-    Provider.of<UserDataProvider>(context, listen: false).length = ((data as Map<String,dynamic>)['message'] as List<dynamic>).length;
-
-    if (!sharedPreferences.containsKey('unseen'))
-    sharedPreferences.setBool('unseen', false);
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(DateTime.now().toString().substring(0, 10))
+        .get();
+    var data =
+        documentSnapshot.data() ?? {'message': []} as Map<String, dynamic>;
+    Provider.of<UserDataProvider>(context, listen: false).length =
+        ((data as Map<String, dynamic>)['message'] as List<dynamic>).length;
     await Provider.of<UserDataProvider>(context, listen: false)
         .getNotifications();
 

@@ -82,9 +82,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                     )),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: size.height * 0.015,
-                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -95,12 +92,15 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                         SizedBox(
                           height: size.height * 0.1,
                           width: size.width * 0.5,
-                          child: Text(
-                            'Hi,\n${sharedPreferences.getString('employee_name') ?? ' '}',
-                            style: TextStyle(
-                                fontSize: size.width * 0.057,
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              'Hi,\n${sharedPreferences.getString('employee_name')}',
+                              style: TextStyle(
+                                  fontSize: size.width * 0.057,
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
                           ),
                         ),
                         const Expanded(child: SizedBox()),
@@ -113,7 +113,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                   onPressed: () {
                                     // Handle notification button press
                                     provider.setUnseen = false;
-                                     
+
                                     Navigator.push(
                                       context,
                                       PageRouteBuilder(
@@ -139,13 +139,13 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     );
                                   },
                                 ),
-                                 sharedPreferences.getBool('unseen')!
+                                sharedPreferences.getBool('unseen')!
                                     ? Positioned(
-                                        right: 12,
-                                        top: 10,
+                                        right: 13,
+                                        top: 14,
                                         child: CircleAvatar(
                                           backgroundColor: Colors.red,
-                                          maxRadius: 5,
+                                          maxRadius: 4.5,
                                         ))
                                     : SizedBox(),
                               ],

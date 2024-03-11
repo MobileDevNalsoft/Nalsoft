@@ -33,74 +33,76 @@ class _NotificationsView extends State<NotificationsView> {
                     bottomLeft: Radius.circular(50),
                     bottomRight: Radius.circular(50))),
           ),
-          body: Stack(children: [
-            Center(
-              child: SizedBox(
-                height: size.height,
-                width: size.width * 0.95,
-                child: Consumer<UserDataProvider>(
-                  builder: (context, provider, child) {
-                    return ListView.builder(
-                      itemCount: provider.notifications!.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Color.fromRGBO(236, 230, 240, 100),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+          body: Center(
+            child: SizedBox(
+              height: size.height,
+              width: size.width * 0.95,
+              child: Consumer<UserDataProvider>(
+                builder: (context, provider, child) {
+                  return provider.notifications == null ||
+                          provider.notifications!.length == 0
+                      ? Center(
+                          child: Text(
+                            'No Notifications',
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: provider.notifications!.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color.fromRGBO(236, 230, 240, 100),
+                                ),
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      provider.notifications![index]
-                                          ['title'],
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          provider.notifications![index]
+                                              ['title'],
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          provider.notifications![index]
+                                              ['description'],
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
                                     ),
-                                    Text(
-                                      provider.notifications![index]
-                                          ['description'],
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
-                                          fontWeight: FontWeight.bold),
-                                    )
+                                    Text(DateTime.fromMillisecondsSinceEpoch(
+                                            provider.notifications![index]
+                                                ['time'])
+                                        .toString()
+                                        .substring(11, 16))
                                   ],
                                 ),
-                                Text(DateTime.fromMillisecondsSinceEpoch(provider.notifications![index]
-                                          ['time']).toString().substring(11,16))
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  },
-                ),
+                },
               ),
             ),
-            // if (isLoading)
-            //   Positioned(
-            //     top: 0,
-            //     left: 0,
-            //     right: 0,
-            //     bottom: 0,
-            //     child: Container(
-            //         color: Colors.black12,
-            //         child: CustomWidgets.CustomCircularLoader()),
-            //   ),
-          ]),
+          ),
         ),
       ),
     );

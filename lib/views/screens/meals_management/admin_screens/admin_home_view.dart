@@ -78,9 +78,6 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         )),
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: size.height * 0.015,
-                        ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -91,12 +88,15 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             SizedBox(
                               height: size.height * 0.1,
                               width: size.width * 0.6,
-                              child: Text(
-                                'Hi,\n${sharedPreferences.getString('employee_name')}',
-                                style: TextStyle(
-                                    fontSize: size.width * 0.057,
-                                    fontWeight: FontWeight.bold,
-                                    overflow: TextOverflow.ellipsis),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  'Hi,\n${sharedPreferences.getString('employee_name')}',
+                                  style: TextStyle(
+                                      fontSize: size.width * 0.057,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
                               ),
                             ),
                             const Expanded(child: SizedBox()),
@@ -113,13 +113,14 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                 : const SizedBox(),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  right: 10.0, top: 5, left: 10),
+                                  right: 10.0, top: 10, left: 10),
                               child: PopupMenuButton(
                                 itemBuilder: (BuildContext context) {
                                   return [
                                     PopupMenuItem(
                                         value: 'Log Out',
                                         height: 10,
+                                        padding: EdgeInsets.only(left: 25),
                                         onTap: () {
                                           init();
                                           sharedPreferences
@@ -146,62 +147,62 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: const Color.fromRGBO(236, 230, 240, 100),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .setConnected(isConnected());
-                          if (Provider.of<UserDataProvider>(context,
-                                  listen: false)
-                              .getConnected)
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                transitionDuration: Duration(milliseconds: 200),
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        EmployeeSearch(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  const begin = Offset(0, 1);
-                                  const end = Offset.zero;
-                                  final tween = Tween(begin: begin, end: end);
-                                  final offsetAnimation =
-                                      animation.drive(tween);
-                                  return SlideTransition(
-                                    position: offsetAnimation,
-                                    child: child,
-                                  );
-                                },
-                              ),
-                            );
-                          else {
-                            CustomSnackBar.showSnackBar(
-                                context, "No internet", Colors.red);
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            const Icon(Icons.groups),
-                            SizedBox(
-                              width: size.width * 0.04,
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
+                  Container(
+                    height: size.height * 0.06,
+                    width: size.width * 0.92,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      color: const Color.fromRGBO(236, 230, 240, 100),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Provider.of<UserDataProvider>(context, listen: false)
+                            .setConnected(isConnected());
+                        if (Provider.of<UserDataProvider>(context,
+                                listen: false)
+                            .getConnected)
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 200),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      EmployeeSearch(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                const begin = Offset(0, 0.2);
+                                const end = Offset.zero;
+                                final tween = Tween(begin: begin, end: end);
+                                final offsetAnimation = animation.drive(tween);
+                                return SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                );
+                              },
                             ),
-                            const Expanded(
-                                child: Text("Search employee",
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromRGBO(73, 69, 79, 100)))),
-                            const Icon(Icons.search),
-                          ],
-                        ),
+                          );
+                        else {
+                          CustomSnackBar.showSnackBar(
+                              context, "No internet", Colors.red);
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.groups),
+                          SizedBox(
+                            width: size.width * 0.04,
+                          ),
+                          const Expanded(
+                              child: Text("Search employee",
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(73, 69, 79, 100)))),
+                          const Icon(Icons.search),
+                        ],
                       ),
                     ),
                   ),
@@ -242,6 +243,9 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     },
                     confirmText: 'Send Mail',
                     cancelText: 'Clear Selection',
+                  ),
+                  SizedBox(
+                    height: size.height * 0.01,
                   ),
                   CustomElevatedButton(
                       color: MaterialStatePropertyAll(Colors.grey.shade300),
