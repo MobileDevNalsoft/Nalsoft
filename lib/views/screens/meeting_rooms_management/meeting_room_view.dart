@@ -272,12 +272,7 @@ class _MeetingRoomState extends State<MeetingRoom> {
                                                                           onPressed: () {
                                                                             Navigator.pop(context);
                                                                           },
-                                                                          style: ButtonStyle(
-                                                                            foregroundColor:
-                                                                                MaterialStateProperty.all(Colors.black),
-                                                                            backgroundColor:
-                                                                                MaterialStateProperty.all(Colors.blueGrey.shade200),
-                                                                          ),
+                                                                          backgroundColor: MaterialStateProperty.all(Colors.blueGrey.shade200),
                                                                           child: Text("Set"))
                                                                     ],
                                                                   ),
@@ -387,15 +382,10 @@ class _MeetingRoomState extends State<MeetingRoom> {
                                                     Navigator.pop(context);
                                                   },
                                                   child: Text("Book now"),
-                                                  style: ButtonStyle(
-                                                    foregroundColor:
-                                                        MaterialStateProperty
-                                                            .all(Colors.black),
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all(Colors.blueGrey
-                                                                .shade200),
-                                                  ),
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all(
+                                                          Colors.blueGrey
+                                                              .shade200),
                                                 )
                                               ],
                                             ),
@@ -406,12 +396,8 @@ class _MeetingRoomState extends State<MeetingRoom> {
                                     );
                                   },
                                   child: Text("Book now"),
-                                  style: ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStateProperty.all(Colors.black),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.blueGrey.shade200),
-                                  ),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.blueGrey.shade200),
                                 ),
                               )
                           ],

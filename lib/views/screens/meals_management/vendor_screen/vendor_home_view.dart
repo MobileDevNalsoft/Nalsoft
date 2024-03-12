@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:meals_management/inits/di_container.dart';
@@ -7,7 +8,6 @@ import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/home_status_provider.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -218,27 +218,29 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (!_showQR)
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           setState(() {
                             _showQR = true;
                             _hasShownSnackbar = false;
                           });
                         },
-                        color: MaterialStatePropertyAll(Colors.grey.shade300),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.grey.shade300),
                         child: const Text(
                           'Scan',
                           style: TextStyle(color: Colors.black),
                         ),
                       ),
                     if (_showQR)
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           setState(() {
                             qrController!.flipCamera();
                           });
                         },
-                        color: MaterialStatePropertyAll(Colors.grey.shade300),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.grey.shade300),
                         child: const Icon(Icons.flip_camera_android,
                             color: Colors.black),
                       ),
@@ -247,14 +249,15 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                         width: size.width * 0.1,
                       ),
                     if (_showQR)
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           setState(() {
                             _showQR = false;
                             qrController!.pauseCamera();
                           });
                         },
-                        color: MaterialStatePropertyAll(Colors.grey.shade300),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.grey.shade300),
                         child: const Text(
                           'Stop',
                           style: TextStyle(color: Colors.black),

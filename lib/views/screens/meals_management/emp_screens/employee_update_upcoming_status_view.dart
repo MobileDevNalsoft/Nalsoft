@@ -7,7 +7,6 @@ import "package:meals_management/models/meals_management/user_events_model.dart"
 import "package:meals_management/network_handler_mixin/network_handler.dart";
 import 'package:meals_management/providers/meals_management/home_status_provider.dart';
 import "package:meals_management/providers/meals_management/user_data_provider.dart";
-import "package:meals_management/views/custom_widgets/custom_button.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
 import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
@@ -125,24 +124,37 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       'Select Category   :     ',
                       style: TextStyle(fontSize: 13),
                     ),
-                    DropdownButton<String>(
-                      key: dropDownKey,
-                      value:
-                          Provider.of<HomeStatusProvider>(context, listen: true)
-                              .getReason,
-                      onChanged: (String? newValue) {
-                        Provider.of<HomeStatusProvider>(context, listen: false)
-                            .setReason(newValue!);
-                      },
-                      items: <String>['Single day', 'Multiple days']
-                          .map<DropdownMenuItem<String>>(
-                            (String value) => DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            ),
-                          )
-                          .toList(),
-                    ),
+                    CustomWidgets.CustomDropDown(
+                        buttonHeight: 30,
+                        buttonWidth: 160,
+                        key: dropDownKey,
+                        hintText: Provider.of<HomeStatusProvider>(context,
+                                listen: true)
+                            .getReason,
+                        onChanged: (String? newValue) {
+                          Provider.of<HomeStatusProvider>(context,
+                                  listen: false)
+                              .setReason(newValue!);
+                        },
+                        items: ['Single day', 'Multiple days'])
+                    // DropdownButton<String>(
+                    //   key: dropDownKey,
+                    //   value:
+                    //       Provider.of<HomeStatusProvider>(context, listen: true)
+                    //           .getReason,
+                    //   onChanged: (String? newValue) {
+                    //     Provider.of<HomeStatusProvider>(context, listen: false)
+                    //         .setReason(newValue!);
+                    //   },
+                    //   items: <String>['Single day', 'Multiple days']
+                    //       .map<DropdownMenuItem<String>>(
+                    //         (String value) => DropdownMenuItem<String>(
+                    //           value: value,
+                    //           child: Text(value),
+                    //         ),
+                    //       )
+                    //       .toList(),
+                    // ),
                   ],
                 ),
                 SizedBox(
@@ -399,14 +411,15 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;
                         },
-                        color: const MaterialStatePropertyAll(Colors.white),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
                         child: const Text(
                           'Cancel',
                           style: TextStyle(color: Colors.black),
@@ -415,7 +428,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       const SizedBox(
                         width: 5,
                       ),
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           if (notOptController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
@@ -504,7 +517,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                           datesController.selectedRange = null;
                           notOptController.clear();
                         },
-                        color: MaterialStatePropertyAll(
+                        backgroundColor: MaterialStatePropertyAll(
                             Colors.deepPurpleAccent.shade200),
                         child: const Text(
                           'Proceed',
@@ -541,7 +554,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           print(dates);
                           Provider.of<UserDataProvider>(context, listen: false)
@@ -565,7 +578,8 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                           datesController.selectedRange = null;
                           Navigator.pop(context);
                         },
-                        color: const MaterialStatePropertyAll(Colors.white),
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
                         child: const Text(
                           'Yes',
                           style: TextStyle(color: Colors.black),
@@ -574,14 +588,14 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       const SizedBox(
                         width: 5,
                       ),
-                      CustomElevatedButton(
+                      CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                           datesController.selectedDate = null;
                           datesController.selectedDates = null;
                           datesController.selectedRange = null;
                         },
-                        color: MaterialStatePropertyAll(
+                        backgroundColor: MaterialStatePropertyAll(
                             Colors.deepPurpleAccent.shade200),
                         child: const Text(
                           'No',

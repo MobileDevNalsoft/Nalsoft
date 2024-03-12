@@ -101,25 +101,22 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
                 "Check Availability",
                 style: TextStyle(color: Colors.black),
               ),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      18.0), // Adjust the value for desired border radius
-                )),
-                minimumSize: MaterialStateProperty.all(
-                    Size(size.width * 0.3, size.height * 0.05)),
-                foregroundColor: MaterialStateProperty.all(Colors.black),
-                backgroundColor: MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return Colors.blueGrey.shade100;
-                  } else if (states.contains(MaterialState.hovered)) {
-                    return Colors.blueGrey.shade400;
-                  }
-                  // Default color
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                    18.0), // Adjust the value for desired border radius
+              )),
+              minimumSize: MaterialStateProperty.all(
+                  Size(size.width * 0.3, size.height * 0.05)),
+              backgroundColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return Colors.blueGrey.shade100;
+                } else if (states.contains(MaterialState.hovered)) {
                   return Colors.blueGrey.shade400;
-                }),
-              ),
+                }
+                // Default color
+                return Colors.blueGrey.shade400;
+              }),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -149,19 +146,17 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
                                       _floorPageController
                                           .jumpToPage(e.keys.first);
                                     },
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            6.0), // Adjust the value for desired border radius
-                                      )),
-                                      backgroundColor: MaterialStateProperty.all(
-                                          provider.getCheckAvailabilityCurrentFloorPage ==
-                                                  e.keys.first
-                                              ? Colors.blueGrey.shade500
-                                              : Colors.blueGrey.shade200),
-                                    ),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          6.0), // Adjust the value for desired border radius
+                                    )),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        provider.getCheckAvailabilityCurrentFloorPage ==
+                                                e.keys.first
+                                            ? Colors.blueGrey.shade500
+                                            : Colors.blueGrey.shade200),
                                     child: Text(
                                       'Floor ${e.values.first}',
                                       style: TextStyle(

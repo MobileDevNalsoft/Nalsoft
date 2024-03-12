@@ -191,22 +191,18 @@ class _HomeView extends State<HomeView> {
                                             _floorPageController
                                                 .jumpToPage(e.keys.first);
                                           },
-                                          style: ButtonStyle(
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  6.0), // Adjust the value for desired border radius
-                                            )),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    provider.getCurrentFloorPage ==
-                                                            e.keys.first
-                                                        ? Colors
-                                                            .blueGrey.shade500
-                                                        : Colors
-                                                            .blueGrey.shade200),
-                                          ),
+                                          shape: MaterialStateProperty.all<
+                                                  RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                6.0), // Adjust the value for desired border radius
+                                          )),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(provider
+                                                          .getCurrentFloorPage ==
+                                                      e.keys.first
+                                                  ? Colors.blueGrey.shade500
+                                                  : Colors.blueGrey.shade200),
                                           child: Text(
                                             'Floor ${e.values.first}',
                                             style: TextStyle(

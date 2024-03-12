@@ -2,7 +2,6 @@ import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/firebase_provider.dart';
-import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
@@ -74,19 +73,19 @@ class _GenerateNotificationState extends State<GenerateNotification>
                 ),
                 SizedBox(
                   width: size.width * 0.35,
-                  child: CustomElevatedButton(
-                      color: MaterialStatePropertyAll(Colors.grey.shade300),
+                  child: CustomWidgets.CustomElevatedButton(
+                      backgroundColor:
+                          MaterialStatePropertyAll(Colors.grey.shade300),
                       onPressed: () async {
                         if (isConnected()) {
                           FocusScope.of(context).requestFocus(focusNode);
                           if (titleController.text.isEmpty) {
                             CustomSnackBar.showSnackBar(
                                 context, "Title cannot be empty", Colors.red);
-                          } else if(descriptionController.text.isEmpty){
-                            CustomSnackBar.showSnackBar(
-                                context, "Description cannot be empty", Colors.red);
-                          }
-                          else {
+                          } else if (descriptionController.text.isEmpty) {
+                            CustomSnackBar.showSnackBar(context,
+                                "Description cannot be empty", Colors.red);
+                          } else {
                             bool result = await Provider.of<FirebaseProvider>(
                                     context,
                                     listen: false)

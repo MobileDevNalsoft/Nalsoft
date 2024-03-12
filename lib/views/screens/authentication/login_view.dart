@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/auth_provider.dart';
-import 'package:meals_management/views/custom_widgets/custom_button.dart';
 import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +111,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CustomElevatedButton(
+                                    CustomWidgets.CustomElevatedButton(
                                       onPressed: () {
                                         FocusScopeNode currentFocus =
                                             FocusScope.of(context);
@@ -163,7 +162,7 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                           }
                                         }
                                       },
-                                      color: MaterialStatePropertyAll(
+                                      backgroundColor: MaterialStatePropertyAll(
                                           Colors.grey.shade300),
                                       child: const Text(
                                         'Login',
