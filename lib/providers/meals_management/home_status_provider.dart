@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class HomeStatusProvider extends ChangeNotifier {
-
   List<Map<String, Map<String, dynamic>>> _floorDetails = [];
   bool _reasonStatusEmpty = false;
   String _selectedReason = 'Single day';
@@ -26,8 +25,6 @@ class HomeStatusProvider extends ChangeNotifier {
     _employeeCount = _employeeCount! + 1;
     notifyListeners();
   }
-
-
 
   bool get getReasonStatusEmpty => _reasonStatusEmpty;
   String get getReason => _selectedReason;

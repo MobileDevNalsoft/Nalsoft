@@ -66,6 +66,7 @@ dependencies:
   flutter_windowmanager: ^0.2.0
   badges: ^3.1.2
   tutorial_coach_mark: ^1.2.11
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:
@@ -82,7 +83,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/nalsoft_icon.jpeg"
+  image_path: "assets/images/nalsoft_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

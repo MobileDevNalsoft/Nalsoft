@@ -15,6 +15,7 @@ import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:tutorial_coach_mark/tutorial_coach_mark.dart";
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 // ignore: must_be_immutable
 class UpdateLunchStatus extends StatefulWidget {
@@ -26,7 +27,7 @@ class UpdateLunchStatus extends StatefulWidget {
 }
 
 class _UpdateLunchStatusState extends State<UpdateLunchStatus>
-    with ConnectivityMixin {
+    with ConnectivityMixin, SingleTickerProviderStateMixin {
   // used to work with the selected dates in SfDateRangePicker
   DateRangePickerController datesController = DateRangePickerController();
 
@@ -124,37 +125,83 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       'Select Category   :     ',
                       style: TextStyle(fontSize: 13),
                     ),
-                    CustomWidgets.CustomDropDown(
-                        buttonHeight: 30,
-                        buttonWidth: 160,
-                        key: dropDownKey,
-                        hintText: Provider.of<HomeStatusProvider>(context,
-                                listen: true)
-                            .getReason,
-                        onChanged: (String? newValue) {
-                          Provider.of<HomeStatusProvider>(context,
-                                  listen: false)
-                              .setReason(newValue!);
-                        },
-                        items: ['Single day', 'Multiple days'])
-                    // DropdownButton<String>(
-                    //   key: dropDownKey,
-                    //   value:
-                    //       Provider.of<HomeStatusProvider>(context, listen: true)
-                    //           .getReason,
-                    //   onChanged: (String? newValue) {
-                    //     Provider.of<HomeStatusProvider>(context, listen: false)
-                    //         .setReason(newValue!);
-                    //   },
-                    //   items: <String>['Single day', 'Multiple days']
-                    //       .map<DropdownMenuItem<String>>(
-                    //         (String value) => DropdownMenuItem<String>(
-                    //           value: value,
-                    //           child: Text(value),
-                    //         ),
-                    //       )
-                    //       .toList(),
-                    // ),
+                    Consumer<UserDataProvider>(
+                      builder: (context, provider, child) {
+                        return DropdownButtonHideUnderline(
+                          key: dropDownKey,
+                          child: DropdownButton2<String>(
+                            onMenuStateChange: (isOpen) {
+                              provider.isOpen = isOpen;
+                              print(isOpen);
+                            },
+                            isExpanded: true,
+                            items: ['Single day', 'Multiple days']
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ))
+                                .toList(),
+                            value: Provider.of<HomeStatusProvider>(context,
+                                    listen: true)
+                                .getReason,
+                            onChanged: (String? value) {
+                              Provider.of<HomeStatusProvider>(context,
+                                      listen: false)
+                                  .setReason(value!);
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 35,
+                              width: 140,
+                              padding:
+                                  const EdgeInsets.only(left: 14, right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.black26,
+                                ),
+                                color: Colors.white,
+                              ),
+                              elevation: 2,
+                            ),
+                            iconStyleData: IconStyleData(
+                              icon: Icon(provider.isOpen
+                                  ? Icons.keyboard_arrow_down_rounded
+                                  : Icons.keyboard_arrow_up_rounded),
+                              iconSize: 14,
+                              iconEnabledColor: Colors.black,
+                              iconDisabledColor: Colors.black,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 150,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: Colors.white,
+                              ),
+                              offset: const Offset(0, 0),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(40),
+                                thickness: MaterialStateProperty.all<double>(6),
+                                thumbVisibility:
+                                    MaterialStateProperty.all<bool>(true),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 30,
+                              padding: EdgeInsets.only(left: 14, right: 14),
+                            ),
+                          ),
+                        );
+                      },
+                    )
                   ],
                 ),
                 SizedBox(

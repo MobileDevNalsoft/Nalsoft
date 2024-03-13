@@ -29,6 +29,7 @@ class UserDataProvider extends ChangeNotifier {
   bool eventsPresent = false;
   bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
+  bool _isOpen = false;
   List<dynamic>? notifications = [];
   Stream<DocumentSnapshot> stream = FirebaseFirestore.instance
       .collection('notifications')
@@ -43,6 +44,7 @@ class UserDataProvider extends ChangeNotifier {
   List<Dates> get getNotOpted => _notOptedDates;
   bool get getIsAlreadyScanned => _isAlreadyScanned;
   bool get getConnected => _connected;
+  bool get isOpen => _isOpen;
   int? length;
   // Stream<bool> get isDataPresentStream => _isDataPresentController.stream;
 
@@ -51,12 +53,17 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  set isOpen(value) {
+    _isOpen = value;
+    notifyListeners();
+  }
+
   void setConnected(value) {
     _connected = value;
     notifyListeners();
   }
 
-  set setUnseen(value){
+  set setUnseen(value) {
     sharedPreferences!.setBool('unseen', value);
     notifyListeners();
   }
@@ -164,17 +171,15 @@ class UserDataProvider extends ChangeNotifier {
 
   Future<void> getNotifications() async {
     try {
-
       _streamSubscription = stream.listen((snapshot) {
-
         print("snapshot ${snapshot.data()}");
-        var data = snapshot.data() ?? {'message':[]} as Map<String,dynamic>;
-        notifications=(data as Map<String,dynamic>)['message'].reversed.toList();
-        if(length != notifications!.length){
+        var data = snapshot.data() ?? {'message': []} as Map<String, dynamic>;
+        notifications =
+            (data as Map<String, dynamic>)['message'].reversed.toList();
+        if (length != notifications!.length) {
           sharedPreferences!.setBool('unseen', true);
           notifyListeners();
         }
-        
       });
     } catch (e) {
       print(e);
