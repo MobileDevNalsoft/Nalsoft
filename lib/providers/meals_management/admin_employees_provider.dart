@@ -66,7 +66,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   Future<void> getSearchData(String searchText) async {
     _isSearching = true;
     notifyListeners();
-    ApiResponse apiResponse = await userRepo!.getSearchData(searchText);
+    ApiResponse apiResponse = await userRepo.getSearchData(searchText);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       _alluserSearchList = apiResponse.response!.data['data']

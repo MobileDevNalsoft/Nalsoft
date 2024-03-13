@@ -20,8 +20,8 @@ class DioClient2 {
     dio = dioC ?? Dio();
     dio
       ..options.baseUrl = baseUrl
-      ..options.connectTimeout = Duration(seconds: 15)
-      ..options.receiveTimeout = Duration(seconds: 15)
+      ..options.connectTimeout = const Duration(seconds: 15)
+      ..options.receiveTimeout = const Duration(seconds: 15)
       ..options.maxRedirects = 5
       ..httpClientAdapter
       ..options.headers = {};
@@ -47,9 +47,9 @@ class DioClient2 {
     } on SocketException catch (e) {
       throw SocketException(e.toString());
     } on FormatException catch (_) {
-      throw FormatException("Unable to process the data");
+      throw const FormatException("Unable to process the data");
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -74,9 +74,9 @@ class DioClient2 {
       );
       return response;
     } on FormatException catch (_) {
-      throw FormatException("Unable to process the data");
+      throw const FormatException("Unable to process the data");
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -101,9 +101,9 @@ class DioClient2 {
       );
       return response;
     } on FormatException catch (_) {
-      throw FormatException("Unable to process the data");
+      throw const FormatException("Unable to process the data");
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -124,9 +124,9 @@ class DioClient2 {
       );
       return response;
     } on FormatException catch (_) {
-      throw FormatException("Unable to process the data");
+      throw const FormatException("Unable to process the data");
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

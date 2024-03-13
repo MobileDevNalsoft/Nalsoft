@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:custom_widgets/src.dart';
-import 'package:intl/intl.dart';
 import 'package:meals_management/providers/meeting_rooms_management/home_view_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
 import 'package:provider/provider.dart';
 
 class CheckAvailabilty extends StatefulWidget {
+  const CheckAvailabilty({super.key});
+
   @override
   State<CheckAvailabilty> createState() => _CheckAvailabiltyState();
 }
@@ -28,7 +29,7 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
             SizedBox(
               height: size.height * 0.024,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Today, 28th Feb 2024",
@@ -48,7 +49,7 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -66,25 +67,25 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
                     )
                   ],
                 ),
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [Text(":"), Text(":"), Text(":")],
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "12:30",
                       style: TextStyle(fontSize: 18),
                     ),
                     InkWell(
                       onTap: () {},
-                      child: Text(
+                      child: const Text(
                         "13:30",
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
-                    Text(
+                    const Text(
                       "6",
                       style: TextStyle(fontSize: 16),
                     )
@@ -97,7 +98,7 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
             ),
             CustomWidgets.CustomElevatedButton(
               onPressed: () {},
-              child: Text(
+              child: const Text(
                 "Check Availability",
                 style: TextStyle(color: Colors.black),
               ),
@@ -118,8 +119,8 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
                 return Colors.blueGrey.shade400;
               }),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+            const Padding(
+              padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
               child: Text(
                 "Rooms Available",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
@@ -171,7 +172,7 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
                                 ),
                               ))
                           .toList()),
-                  Text("Room's Status"),
+                  const Text("Room's Status"),
                   SizedBox(
                       height: size.height * 0.56,
                       width: size.width * 0.9,
@@ -195,12 +196,20 @@ class _CheckAvailabiltyState extends State<CheckAvailabilty> {
   }
 }
 
+// ignore: must_be_immutable
 class FloorPage extends StatelessWidget {
+  // ignore: prefer_typing_uninitialized_variables
   var floor;
+  // ignore: prefer_typing_uninitialized_variables
   var provider;
+  // ignore: prefer_typing_uninitialized_variables
   var size;
 
-  FloorPage({required this.floor, required this.provider, required this.size});
+  FloorPage(
+      {super.key,
+      required this.floor,
+      required this.provider,
+      required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +225,8 @@ class FloorPage extends StatelessWidget {
             child: Card(
               child: Container(
                 height: size.height * 0.09,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -248,7 +258,7 @@ class FloorPage extends StatelessWidget {
                                     .isAfter(element.duration.start) &&
                                 DateTime.now().isBefore(element.duration.end)))
                             .isNotEmpty)
-                          Text('available'),
+                          const Text('available'),
                       ],
                     ),
                     CircleAvatar(
@@ -276,7 +286,8 @@ class FloorPage extends StatelessWidget {
             child: Card(
               child: Container(
                 height: size.height * 0.09,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -285,10 +296,10 @@ class FloorPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('${provider.getRoomsList[index].roomName}'),
-                        Text('available'),
+                        const Text('available'),
                       ],
                     ),
-                    CircleAvatar(
+                    const CircleAvatar(
                       maxRadius: 7,
                       backgroundColor: Colors.green,
                     )
@@ -298,7 +309,7 @@ class FloorPage extends StatelessWidget {
             ),
           );
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       },
     );

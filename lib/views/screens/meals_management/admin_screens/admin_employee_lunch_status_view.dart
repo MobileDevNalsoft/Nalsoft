@@ -8,7 +8,6 @@ import "package:meals_management/providers/meals_management/admin_employees_prov
 import "package:meals_management/providers/meals_management/user_data_provider.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
-import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:meals_management/views/in_app_tour.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
@@ -59,7 +58,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
   void _showInAppTour() {
     Future.delayed(
-      Duration(milliseconds: 500),
+      const Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
         sharedPreferences.setBool('hasSeenTutorial6', true);
@@ -80,16 +79,14 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
   }
 
   Future<void> intiData() async {
-    print(_isLoading);
     Provider.of<AdminEmployeesProvider>(context, listen: false)
         .isAdminEmployeeDataPresent = false;
     try {
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getUserinfo(widget.userName);
+      // ignore: use_build_context_synchronously
       await Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getUserEventsData(empID: widget.empID);
-      print(
-          "isdatapresent${Provider.of<AdminEmployeesProvider>(context, listen: false).isAdminEmployeeDataPresent}");
     } finally {
       setState(() {
         _isLoading = false;
@@ -132,7 +129,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
               width: 10,
             )
           ],
-          backgroundColor: Color.fromARGB(100, 179, 110, 234),
+          backgroundColor: const Color.fromARGB(100, 179, 110, 234),
           elevation: 4,
           shape: const ContinuousRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -296,7 +293,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                       height: size.height * 0.37,
                                       child: Center(
                                         child: IconButton(
-                                          icon: Icon(Icons.refresh),
+                                          icon: const Icon(Icons.refresh),
                                           onPressed: () {
                                             Provider.of<UserDataProvider>(
                                                     context,
@@ -306,7 +303,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                                     context,
                                                     listen: false)
                                                 .getConnected) {
-                                              CustomSnackBar.showSnackBar(
+                                              CustomWidgets.CustomSnackBar(
                                                   context,
                                                   'No Internet Connection',
                                                   Colors.red);
@@ -341,13 +338,10 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                               selectibleDayPredicate: (date) {
                                 return false;
                               },
-
-                              //TODO
                               onSubmit: (p0) => isConnected()
                                   ? sendMail(context)
-                                  : CustomSnackBar.showSnackBar(
+                                  : CustomWidgets.CustomSnackBar(
                                       context, "No internet", Colors.red),
-
                               onCancel: () {
                                 datesController.selectedDate = null;
                               },
@@ -398,11 +392,13 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
     //   // Set the worksheet name
     sheet.name =
+        // ignore: use_build_context_synchronously
         '${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}'
         's Meals data';
 
     //   // Append headers
     sheet.getRangeByIndex(1, 1).setText(
+        // ignore: use_build_context_synchronously
         '${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.userName}(${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empId})');
 
     sheet.getRangeByIndex(3, 1).setText('Date');
@@ -419,6 +415,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     int rowIndex = 4;
 
     for (var date in rangeDates) {
+      // ignore: use_build_context_synchronously
       if (Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getOpted
           .any((element) => date.toString().substring(0, 10) == element.date)) {
@@ -426,12 +423,14 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .getRangeByIndex(rowIndex, 1)
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
+        // ignore: use_build_context_synchronously
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getOpted
             .where(
                 (element) => date.toString().substring(0, 10) == element.date)
             .first
             .info = DateTime.fromMillisecondsSinceEpoch(int.parse(
+                // ignore: use_build_context_synchronously
                 Provider.of<AdminEmployeesProvider>(context, listen: false)
                     .getOpted
                     .where((element) =>
@@ -441,6 +440,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .toString()
             .substring(11, 19);
         sheet.getRangeByIndex(rowIndex, 3).setText(
+            // ignore: use_build_context_synchronously
             Provider.of<AdminEmployeesProvider>(context, listen: false)
                 .getOpted
                 .where((element) =>
@@ -448,6 +448,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                 .first
                 .info);
         rowIndex++;
+        // ignore: use_build_context_synchronously
       } else if (Provider.of<AdminEmployeesProvider>(context, listen: false)
           .getNotOpted
           .any((element) => date.toString().substring(0, 10) == element.date)) {
@@ -456,6 +457,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
         sheet.getRangeByIndex(rowIndex, 3).setText(
+            // ignore: use_build_context_synchronously
             Provider.of<AdminEmployeesProvider>(context, listen: false)
                 .getNotOpted
                 .where((element) =>
@@ -472,6 +474,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       }
     }
 
+    // ignore: use_build_context_synchronously
     for (var date in Provider.of<AdminEmployeesProvider>(context, listen: false)
         .getNotOpted) {
       if ((DateTime.parse(date.date!).day > now.day &&
@@ -493,7 +496,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       final List<int> bytes = workbook.saveAsStream();
 
       final path =
-          '${dir!.path}/${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
+          // ignore: use_build_context_synchronously
+          '${dir.path}/${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 
@@ -514,7 +518,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
-      //     // ignore: use_build_context_synchronously
+      // ignore: use_build_context_synchronously
       Provider.of<AdminEmployeesProvider>(context, listen: false)
           .isMailLoading = false;
       //     // Send email

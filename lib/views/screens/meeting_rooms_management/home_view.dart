@@ -1,14 +1,16 @@
+import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/meeting_rooms_management/user_model.dart';
 import 'package:meals_management/providers/meeting_rooms_management/home_view_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/views/custom_widgets/expanded_fab.dart';
 import 'package:provider/provider.dart';
-import 'package:custom_widgets/src.dart';
 import 'package:intl/intl.dart';
 
 class HomeView extends StatefulWidget {
+  const HomeView({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _HomeView createState() => _HomeView();
 }
 
@@ -18,7 +20,6 @@ class _HomeView extends State<HomeView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Provider.of<HomeViewProvider>(context, listen: false).setUser =
         MRUserModel(username: 'Madhan', userID: '00633', myBookings: [
@@ -28,35 +29,35 @@ class _HomeView extends State<HomeView> {
           size: 4,
           duration: DateTimeRange(
               start: DateTime.now(),
-              end: DateTime.now().add(Duration(hours: 1)))),
+              end: DateTime.now().add(const Duration(hours: 1)))),
       SpecificMeetingRoomModel(
           roomName: 'Meeting Room 5',
           floor: 8,
           size: 8,
           duration: DateTimeRange(
-              start: DateTime.now().add(Duration(minutes: 1)),
-              end: DateTime.now().add(Duration(hours: 2)))),
+              start: DateTime.now().add(const Duration(minutes: 1)),
+              end: DateTime.now().add(const Duration(hours: 2)))),
       SpecificMeetingRoomModel(
           roomName: 'Meeting Room 1',
           floor: 1,
           size: 5,
           duration: DateTimeRange(
-              start: DateTime.now().add(Duration(minutes: 2)),
-              end: DateTime.now().add(Duration(hours: 3)))),
+              start: DateTime.now().add(const Duration(minutes: 2)),
+              end: DateTime.now().add(const Duration(hours: 3)))),
       SpecificMeetingRoomModel(
           roomName: 'Meeting Room 3',
           floor: 1,
           size: 8,
           duration: DateTimeRange(
-              start: DateTime.now().add(Duration(minutes: 3)),
-              end: DateTime.now().add(Duration(hours: 1)))),
+              start: DateTime.now().add(const Duration(minutes: 3)),
+              end: DateTime.now().add(const Duration(hours: 1)))),
       SpecificMeetingRoomModel(
           roomName: 'Meeting Room 3',
           floor: 9,
           size: 8,
           duration: DateTimeRange(
-              start: DateTime.now().add(Duration(minutes: 4)),
-              end: DateTime.now().add(Duration(hours: 1)))),
+              start: DateTime.now().add(const Duration(minutes: 4)),
+              end: DateTime.now().add(const Duration(hours: 1)))),
     ]);
   }
 
@@ -69,7 +70,7 @@ class _HomeView extends State<HomeView> {
         aspectRatio: size.height / size.width,
         child: Scaffold(
             appBar: AppBar(
-              title: Text('Dashboard'),
+              title: const Text('Dashboard'),
               centerTitle: true,
               backgroundColor: Colors.blueGrey.shade400,
             ),
@@ -86,7 +87,7 @@ class _HomeView extends State<HomeView> {
                     return Column(
                       children: [
                         if (provider.getUser.myBookings!.isNotEmpty)
-                          Text('Upcoming Meetings'),
+                          const Text('Upcoming Meetings'),
                         if (provider.getUser.myBookings!.isNotEmpty)
                           SizedBox(
                             height: size.height * 0.1,
@@ -120,12 +121,12 @@ class _HomeView extends State<HomeView> {
                                                             'EEEE, MMM dd yyyy')
                                                         .format(
                                                             e.duration.start),
-                                                    style:
-                                                        TextStyle(fontSize: 13),
+                                                    style: const TextStyle(
+                                                        fontSize: 13),
                                                   ),
                                                   Text(
                                                       '${DateFormat.Hm().format(e.duration.start)} to ${DateFormat.Hm().format(e.duration.end)}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 13))
                                                 ],
                                               ),
@@ -134,11 +135,11 @@ class _HomeView extends State<HomeView> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  Text('${e.roomName}',
-                                                      style: TextStyle(
+                                                  Text(e.roomName,
+                                                      style: const TextStyle(
                                                           fontSize: 13)),
                                                   Text('Floor ${e.floor}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 13))
                                                 ],
                                               ),
@@ -217,7 +218,7 @@ class _HomeView extends State<HomeView> {
                                       ),
                                     ))
                                 .toList()),
-                        Text("Room's Status"),
+                        const Text("Room's Status"),
                         SizedBox(
                             height: size.height * 0.6,
                             width: size.width * 0.9,
@@ -238,21 +239,21 @@ class _HomeView extends State<HomeView> {
               ],
             ),
             floatingActionButton: Padding(
-              padding: EdgeInsets.only(right: 15, bottom: 30),
-              child: ExpandableFAB(
+              padding: const EdgeInsets.only(right: 15, bottom: 30),
+              child: CustomWidgets.CustomExpandableFAB(
                 distance: 55,
                 children: [
-                  ActionButton(
+                  CustomWidgets.CustomActionButton(
                     onPressed: () {
                       Navigator.pushNamed(
                           context, RouteManagement.upcomingMeetingsView);
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.event_sharp,
                       color: Colors.white60,
                     ),
                   ),
-                  ActionButton(
+                  CustomWidgets.CustomActionButton(
                       onPressed: () {
                         Navigator.pushNamed(context,
                             RouteManagement.checkavalabilityStatusView);
@@ -260,7 +261,7 @@ class _HomeView extends State<HomeView> {
                         Provider.of<HomeViewProvider>(context, listen: false)
                             .setCheckAvailabilityCurrentFloorPage = 0;
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.add_circle_outline_rounded,
                         color: Colors.white60,
                       ))
@@ -272,12 +273,20 @@ class _HomeView extends State<HomeView> {
   }
 }
 
+// ignore: must_be_immutable
 class FloorPage extends StatelessWidget {
+  // ignore: prefer_typing_uninitialized_variables
   var floor;
+  // ignore: prefer_typing_uninitialized_variables
   var provider;
+  // ignore: prefer_typing_uninitialized_variables
   var size;
 
-  FloorPage({required this.floor, required this.provider, required this.size});
+  FloorPage(
+      {super.key,
+      required this.floor,
+      required this.provider,
+      required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +302,8 @@ class FloorPage extends StatelessWidget {
             child: Card(
               child: Container(
                 height: size.height * 0.09,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -325,7 +335,7 @@ class FloorPage extends StatelessWidget {
                                     .isAfter(element.duration.start) &&
                                 DateTime.now().isBefore(element.duration.end)))
                             .isNotEmpty)
-                          Text('available'),
+                          const Text('available'),
                       ],
                     ),
                     CircleAvatar(
@@ -353,7 +363,8 @@ class FloorPage extends StatelessWidget {
             child: Card(
               child: Container(
                 height: size.height * 0.09,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -362,10 +373,10 @@ class FloorPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('${provider.getRoomsList[index].roomName}'),
-                        Text('available'),
+                        const Text('available'),
                       ],
                     ),
-                    CircleAvatar(
+                    const CircleAvatar(
                       maxRadius: 7,
                       backgroundColor: Colors.green,
                     )
@@ -375,7 +386,7 @@ class FloorPage extends StatelessWidget {
             ),
           );
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       },
     );

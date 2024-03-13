@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/inits/di_container.dart';
-import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/in_app_tour.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/data_loader_page.dart';
 import 'package:meals_management/views/screens/meeting_rooms_management/home_view.dart';
@@ -8,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class AppNavigation extends StatefulWidget {
+  const AppNavigation({super.key});
+
   @override
   State<AppNavigation> createState() => _AppNavigationState();
 }
@@ -39,7 +40,7 @@ class _AppNavigationState extends State<AppNavigation> {
 
   void _showInAppTour() {
     Future.delayed(
-      Duration(milliseconds: 500),
+      const Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
         sharedPreferences.setBool('hasSeenTutorial1', true);
@@ -49,7 +50,6 @@ class _AppNavigationState extends State<AppNavigation> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (!sharedPreferences.containsKey('hasSeenTutorial1')) {
       _initAddSiteInAppTour();
@@ -88,7 +88,7 @@ class _AppNavigationState extends State<AppNavigation> {
                     SizedBox(
                       height: size.height * 0.01,
                     ),
-                    Text(
+                    const Text(
                       'Explore Our Services',
                       style: TextStyle(fontSize: 16, color: Colors.black54),
                     ),
@@ -100,15 +100,16 @@ class _AppNavigationState extends State<AppNavigation> {
                       image_path: 'assets/images/meals.png',
                       size: size,
                       context: context,
-                      color: Color.fromRGBO(234, 221, 255, 1),
+                      color: const Color.fromRGBO(234, 221, 255, 1),
                       onTap: () {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 400),
+                            transitionDuration:
+                                const Duration(milliseconds: 400),
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    DataLoader(),
+                                    const DataLoader(),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
                               const begin = Offset(1, 0.0);
@@ -132,12 +133,13 @@ class _AppNavigationState extends State<AppNavigation> {
                       image_path: 'assets/images/meetings.png',
                       size: size,
                       context: context,
-                      color: Color.fromARGB(255, 187, 196, 199),
+                      color: const Color.fromARGB(255, 187, 196, 199),
                       onTap: () {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 400),
+                            transitionDuration:
+                                const Duration(milliseconds: 400),
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
                                     HomeView(),
@@ -162,6 +164,7 @@ class _AppNavigationState extends State<AppNavigation> {
 
   Widget buildService(
       {required GlobalKey key,
+      // ignore: non_constant_identifier_names
       required String image_path,
       required Size size,
       required BuildContext context,
@@ -169,6 +172,7 @@ class _AppNavigationState extends State<AppNavigation> {
       required void Function()? onTap}) {
     return InkWell(
         borderRadius: BorderRadius.circular(25),
+        onTap: onTap,
         child: Container(
           key: key,
           height: size.height * 0.18,
@@ -177,7 +181,6 @@ class _AppNavigationState extends State<AppNavigation> {
               border: Border.all(color: color, width: 10),
               borderRadius: BorderRadius.circular(25)),
           child: Image.asset(image_path, fit: BoxFit.fill),
-        ),
-        onTap: onTap);
+        ));
   }
 }

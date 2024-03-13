@@ -1,10 +1,9 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_svg/svg.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/auth_provider.dart';
-import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/custom_widgets/custom_textformfield.dart';
 import 'package:provider/provider.dart';
 
@@ -119,19 +118,19 @@ class _LoginViewState extends State<LoginView> with ConnectivityMixin {
                                           currentFocus.unfocus();
                                         }
                                         if (_emailController.text.isEmpty) {
-                                          CustomSnackBar.showSnackBar(
+                                          CustomWidgets.CustomSnackBar(
                                               context,
                                               'Email cannot be empty',
                                               Colors.red);
                                         } else if (!_emailController.text
                                             .contains('@nalsoft.net')) {
-                                          CustomSnackBar.showSnackBar(
+                                          CustomWidgets.CustomSnackBar(
                                               context,
                                               'Email must contain @nalsoft.net',
                                               Colors.red);
                                         } else if (_passwordController
                                             .text.isEmpty) {
-                                          CustomSnackBar.showSnackBar(
+                                          CustomWidgets.CustomSnackBar(
                                               context,
                                               'Password cannot be empty',
                                               Colors.red);

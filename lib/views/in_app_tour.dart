@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:meals_management/inits/di_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -22,7 +20,7 @@ List<TargetFocus> addAppNavigationSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -49,7 +47,7 @@ List<TargetFocus> addAppNavigationSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -93,7 +91,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 alignment: Alignment.center,
-                child: Column(
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -121,7 +119,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -148,7 +146,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -175,7 +173,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -191,7 +189,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
         )
       ]));
 
-  if (sharedPreferences.getString('user_type') == 'A')
+  if (sharedPreferences.getString('user_type') == 'A') {
     targets.add(TargetFocus(
         keyTarget: toggleKey,
         alignSkip: Alignment.bottomRight,
@@ -203,7 +201,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
             builder: (context, controller) {
               return Container(
                 alignment: Alignment.center,
-                child: Column(
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -218,6 +216,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
             },
           )
         ]));
+  }
 
   targets.add(TargetFocus(
       keyTarget: logoutKey,
@@ -230,7 +229,7 @@ List<TargetFocus> addEmployeeHomeSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -266,7 +265,7 @@ List<TargetFocus> addUpdateUpcomingLunchStatusSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -293,7 +292,7 @@ List<TargetFocus> addUpdateUpcomingLunchStatusSiteTargets({
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -329,7 +328,7 @@ List<TargetFocus> addAdminHomeSiteTargets(
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -356,7 +355,7 @@ List<TargetFocus> addAdminHomeSiteTargets(
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -383,7 +382,7 @@ List<TargetFocus> addAdminHomeSiteTargets(
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -417,7 +416,7 @@ List<TargetFocus> addSearchEmployeeSiteTargets(
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -451,7 +450,7 @@ List<TargetFocus> addEmployeeLunchStatusSiteTargets(
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

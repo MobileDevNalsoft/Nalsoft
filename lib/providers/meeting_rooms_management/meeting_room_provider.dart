@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meals_management/models/meeting_rooms_management/meeting_room_model.dart';
 import 'package:meals_management/models/meeting_rooms_management/user_model.dart';
-import 'package:meals_management/models/user_model.dart';
 
 class MeetingRoomProvider extends ChangeNotifier {
   late DateTime _selectedStartTime;

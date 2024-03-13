@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
-import 'package:meals_management/providers/meals_management/firebase_provider.dart';
 import 'package:meals_management/providers/meals_management/home_status_provider.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/views/screens/meals_management/emp_screens/employee_home_view.dart';
@@ -32,8 +31,9 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
   }
 
   Future<void> initData() async {
-    if (!sharedPreferences.containsKey('unseen'))
+    if (!sharedPreferences.containsKey('unseen')) {
       sharedPreferences.setBool('unseen', false);
+    }
 
     Provider.of<UserDataProvider>(context, listen: false).isLoading = true;
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
@@ -42,19 +42,25 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
         .get();
     var data =
         documentSnapshot.data() ?? {'message': []} as Map<String, dynamic>;
+    // ignore: use_build_context_synchronously
     Provider.of<UserDataProvider>(context, listen: false).length =
         ((data as Map<String, dynamic>)['message'] as List<dynamic>).length;
+    // ignore: use_build_context_synchronously
     await Provider.of<UserDataProvider>(context, listen: false)
         .getNotifications();
 
     if (!sharedPreferences.containsKey('employee_name')) {
+      // ignore: use_build_context_synchronously
       await Provider.of<UserDataProvider>(context, listen: false)
           .getUserEventsData();
+      // ignore: use_build_context_synchronously
       await Provider.of<UserDataProvider>(context, listen: false).getHolidays();
     } else {
       if (sharedPreferences.getString('user_type') != 'V') {
+        // ignore: use_build_context_synchronously
         await Provider.of<UserDataProvider>(context, listen: false)
             .getUserEventsData();
+        // ignore: use_build_context_synchronously
         await Provider.of<UserDataProvider>(context, listen: false)
             .getHolidays();
       }
@@ -65,28 +71,32 @@ class _DataLoader extends State<DataLoader> with ConnectivityMixin {
         if (!sharedPreferences.containsKey('lastResetDate')) {
           sharedPreferences.setString('lastResetDate', now.toString());
           sharedPreferences.setInt('employeeCount', 0);
+          // ignore: use_build_context_synchronously
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else if (now.day != lastResetDate.day) {
           sharedPreferences.setString('lastResetDate', now.toString());
           sharedPreferences.setInt('employeeCount', 0);
+          // ignore: use_build_context_synchronously
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         } else {
+          // ignore: use_build_context_synchronously
           Provider.of<HomeStatusProvider>(context, listen: false)
               .setEmployeeCount(sharedPreferences.getInt('employeeCount') ?? 0);
         }
       }
     }
 
+    // ignore: use_build_context_synchronously
     Provider.of<UserDataProvider>(context, listen: false)
         .setConnected(isConnected());
+    // ignore: use_build_context_synchronously
     Provider.of<UserDataProvider>(context, listen: false).isLoading = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    print(sharedPreferences.getKeys());
     return sharedPreferences.getString('user_type') == 'E' ||
             sharedPreferences.getString('user_type') == 'A'
         ? UpgradeAlert(

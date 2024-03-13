@@ -2,10 +2,11 @@ import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/firebase_provider.dart';
-import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class GenerateNotification extends StatefulWidget {
+  const GenerateNotification({super.key});
+
   @override
   State<GenerateNotification> createState() => _GenerateNotificationState();
 }
@@ -34,7 +35,7 @@ class _GenerateNotificationState extends State<GenerateNotification>
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: Text("Send notification"),
+            title: const Text("Send notification"),
             centerTitle: true,
             leading: IconButton(
                 onPressed: () => Navigator.pop(context),
@@ -80,10 +81,10 @@ class _GenerateNotificationState extends State<GenerateNotification>
                         if (isConnected()) {
                           FocusScope.of(context).requestFocus(focusNode);
                           if (titleController.text.isEmpty) {
-                            CustomSnackBar.showSnackBar(
+                            CustomWidgets.CustomSnackBar(
                                 context, "Title cannot be empty", Colors.red);
                           } else if (descriptionController.text.isEmpty) {
-                            CustomSnackBar.showSnackBar(context,
+                            CustomWidgets.CustomSnackBar(context,
                                 "Description cannot be empty", Colors.red);
                           } else {
                             bool result = await Provider.of<FirebaseProvider>(
@@ -92,18 +93,23 @@ class _GenerateNotificationState extends State<GenerateNotification>
                                 .sendNotification(titleController.text,
                                     descriptionController.text);
                             if (result) {
-                              CustomSnackBar.showSnackBar(
-                                  context, "Successfully sent", Colors.green);
+                              CustomWidgets.CustomSnackBar(
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  "Successfully sent",
+                                  Colors.green);
                               titleController.clear();
                               descriptionController.clear();
                             } else {
-                              CustomSnackBar.showSnackBar(context,
+                              // ignore: use_build_context_synchronously
+                              CustomWidgets.CustomSnackBar(context,
                                   "Could not send notification", Colors.red);
                             }
                           }
-                        } else
-                          CustomSnackBar.showSnackBar(
+                        } else {
+                          CustomWidgets.CustomSnackBar(
                               context, "No internet connection", Colors.red);
+                        }
                       },
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,

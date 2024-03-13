@@ -9,7 +9,6 @@ import 'package:meals_management/providers/meals_management/home_status_provider
 import "package:meals_management/providers/meals_management/user_data_provider.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
-import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:meals_management/views/in_app_tour.dart";
 import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -59,7 +58,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
 
   void _showInAppTour() {
     Future.delayed(
-      Duration(milliseconds: 500),
+      const Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
         sharedPreferences.setBool('hasSeenTutorial3', true);
@@ -69,7 +68,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (!sharedPreferences.containsKey('hasSeenTutorial3')) {
       _initAddSiteInAppTour();
@@ -132,7 +130,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                           child: DropdownButton2<String>(
                             onMenuStateChange: (isOpen) {
                               provider.isOpen = isOpen;
-                              print(isOpen);
                             },
                             isExpanded: true,
                             items: ['Single day', 'Multiple days']
@@ -285,7 +282,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                       DateTime.saturday ||
                                   DateTime.parse(dates.toString()).weekday ==
                                       DateTime.sunday) {
-                                CustomSnackBar.showSnackBar(
+                                CustomWidgets.CustomSnackBar(
                                     context,
                                     'remove weekoffs from selection',
                                     Colors.red);
@@ -368,7 +365,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                 height: size.height * 0.37,
                                 child: Center(
                                   child: IconButton(
-                                    icon: Icon(Icons.refresh),
+                                    icon: const Icon(Icons.refresh),
                                     onPressed: () {
                                       Provider.of<UserDataProvider>(context,
                                               listen: false)
@@ -377,7 +374,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                               context,
                                               listen: false)
                                           .getConnected) {
-                                        CustomSnackBar.showSnackBar(
+                                        CustomWidgets.CustomSnackBar(
                                             context,
                                             'No Internet Connection',
                                             Colors.red);
@@ -478,7 +475,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                       CustomWidgets.CustomElevatedButton(
                         onPressed: () {
                           if (notOptController.text.isEmpty) {
-                            CustomSnackBar.showSnackBar(
+                            CustomWidgets.CustomSnackBar(
                                 context, 'reason cannot be empty', Colors.red);
                           } else {
                             if (Provider.of<HomeStatusProvider>(context,
@@ -489,7 +486,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                       DateTime.saturday ||
                                   DateTime.parse(dates.toString()).weekday ==
                                       DateTime.sunday) {
-                                CustomSnackBar.showSnackBar(
+                                CustomWidgets.CustomSnackBar(
                                     context,
                                     'remove weekoffs from selection',
                                     Colors.red);
@@ -511,7 +508,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                         .toJson()
                                   ], false, null);
                                 } else {
-                                  CustomSnackBar.showSnackBar(
+                                  CustomWidgets.CustomSnackBar(
                                       context, "No internet", Colors.red);
                                 }
                               }
@@ -526,7 +523,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                       .map((e) => e.weekday)
                                       .toList()
                                       .contains(7)) {
-                                CustomSnackBar.showSnackBar(
+                                CustomWidgets.CustomSnackBar(
                                     context,
                                     'remove weekoffs from selection',
                                     Colors.red);
@@ -552,7 +549,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                           false,
                                           null);
                                 } else {
-                                  CustomSnackBar.showSnackBar(
+                                  CustomWidgets.CustomSnackBar(
                                       context, "No internet", Colors.red);
                                 }
                               }
@@ -594,7 +591,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Do you want to remove from \nNotOpted ?'),
+                  const Text('Do you want to remove from \nNotOpted ?'),
                   const SizedBox(
                     height: 12,
                   ),
@@ -603,7 +600,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                     children: [
                       CustomWidgets.CustomElevatedButton(
                         onPressed: () {
-                          print(dates);
                           Provider.of<UserDataProvider>(context, listen: false)
                               .setConnected(isConnected());
                           if (Provider.of<UserDataProvider>(context,
@@ -616,7 +612,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                                         {"date": e.toString().substring(0, 10)})
                                     .toList());
                           } else {
-                            CustomSnackBar.showSnackBar(
+                            CustomWidgets.CustomSnackBar(
                                 context, "No internet", Colors.red);
                           }
 

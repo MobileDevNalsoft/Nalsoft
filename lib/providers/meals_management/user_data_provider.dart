@@ -23,7 +23,6 @@ class UserDataProvider extends ChangeNotifier {
   List<dynamic> _holidays = [];
   UserEventsModel? _userEventsModel;
   bool _isAlreadyScanned = false;
-  List<UserModel> _alluserSearchList = [];
   bool _isSearching = false;
   bool _connected = true;
   bool eventsPresent = false;
@@ -35,7 +34,6 @@ class UserDataProvider extends ChangeNotifier {
       .collection('notifications')
       .doc(DateTime.now().toString().substring(0, 10))
       .snapshots();
-  StreamSubscription<DocumentSnapshot>? _streamSubscription;
   // getters
   List<dynamic> get holidays => _holidays;
   bool get isSearching => _isSearching;
@@ -170,18 +168,7 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> getNotifications() async {
-    try {
-      _streamSubscription = stream.listen((snapshot) {
-        print("snapshot ${snapshot.data()}");
-        var data = snapshot.data() ?? {'message': []} as Map<String, dynamic>;
-        notifications =
-            (data as Map<String, dynamic>)['message'].reversed.toList();
-        if (length != notifications!.length) {
-          sharedPreferences!.setBool('unseen', true);
-          notifyListeners();
-        }
-      });
-    } catch (e) {
+    try {} catch (e) {
       print(e);
     }
   }

@@ -4,14 +4,11 @@ import 'package:intl/intl.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
-import 'package:meals_management/providers/meals_management/firebase_provider.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/repositories/user_repo.dart';
-import 'package:meals_management/route_management/route_management.dart';
 import 'package:meals_management/views/app_navigation.dart';
 import 'package:meals_management/views/custom_widgets/custom_calendar_card.dart';
 import 'package:meals_management/views/custom_widgets/custom_legend.dart';
-import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:meals_management/views/in_app_tour.dart';
 import 'package:meals_management/views/screens/authentication/login_view.dart';
 import 'package:meals_management/views/screens/meals_management/admin_screens/admin_home_view.dart';
@@ -76,7 +73,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
 
   void _showInAppTour() {
     Future.delayed(
-      Duration(milliseconds: 500),
+      const Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
         sharedPreferences.setBool('hasSeenTutorial2', true);
@@ -86,7 +83,6 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _stream = FirebaseFirestore.instance
         .collection('notifications')
@@ -154,7 +150,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               children: [
                                 IconButton(
                                   key: notificationsKey,
-                                  icon: Icon(Icons.notifications),
+                                  icon: const Icon(Icons.notifications),
                                   onPressed: () {
                                     // Handle notification button press
                                     provider.setUnseen = false;
@@ -163,7 +159,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                       context,
                                       PageRouteBuilder(
                                         transitionDuration:
-                                            Duration(milliseconds: 200),
+                                            const Duration(milliseconds: 200),
                                         pageBuilder: (context, animation,
                                                 secondaryAnimation) =>
                                             NotificationsView(stream: _stream),
@@ -185,14 +181,14 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                   },
                                 ),
                                 sharedPreferences.getBool('unseen')!
-                                    ? Positioned(
+                                    ? const Positioned(
                                         right: 13,
                                         top: 14,
                                         child: CircleAvatar(
                                           backgroundColor: Colors.red,
                                           maxRadius: 4.5,
                                         ))
-                                    : SizedBox(),
+                                    : const SizedBox(),
                               ],
                             );
                           },
@@ -207,7 +203,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                               secondaryAnimation) =>
-                                          AdminHomePage(),
+                                          const AdminHomePage(),
                                       transitionsBuilder: (context, animation,
                                           secondaryAnimation, child) {
                                         return FadeTransition(
@@ -232,7 +228,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                 PopupMenuItem(
                                     value: 'Log Out',
                                     height: 10,
-                                    padding: EdgeInsets.only(left: 25),
+                                    padding: const EdgeInsets.only(left: 25),
                                     onTap: () {
                                       init();
                                       sharedPreferences.remove('employee_name');
@@ -244,7 +240,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                         context,
                                         PageRouteBuilder(
                                           transitionDuration:
-                                              Duration(milliseconds: 400),
+                                              const Duration(milliseconds: 400),
                                           pageBuilder: (context, animation,
                                                   secondaryAnimation) =>
                                               LoginView(),
@@ -269,17 +265,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     child: const Text('Log Out')),
                                 PopupMenuItem(
                                     value: 'Main Menu',
-                                    padding: EdgeInsets.only(left: 25),
+                                    padding: const EdgeInsets.only(left: 25),
                                     height: 10,
                                     onTap: () {
                                       Navigator.pushReplacement(
                                         context,
                                         PageRouteBuilder(
                                           transitionDuration:
-                                              Duration(milliseconds: 400),
+                                              const Duration(milliseconds: 400),
                                           pageBuilder: (context, animation,
                                                   secondaryAnimation) =>
-                                              AppNavigation(),
+                                              const AppNavigation(),
                                           transitionsBuilder: (context,
                                               animation,
                                               secondaryAnimation,
@@ -377,17 +373,17 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                       },
                       onSubmit: (date) {
                         if (date == null) {
-                          CustomSnackBar.showSnackBar(
+                          CustomWidgets.CustomSnackBar(
                               context,
                               'Please select today'
                               's date',
                               Colors.red);
                         } else if ((now.hour >= 15)) {
-                          CustomSnackBar.showSnackBar(
+                          CustomWidgets.CustomSnackBar(
                               context, "QR is disabled after 3pm", Colors.red);
                         } else if ((now.hour < 12 ||
                             (now.hour == 12 && now.minute < 30))) {
-                          CustomSnackBar.showSnackBar(context,
+                          CustomWidgets.CustomSnackBar(context,
                               "Wait till 12.30pm to get QR", Colors.red);
                         } else {
                           Navigator.push(
@@ -444,7 +440,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               height: size.height * 0.37,
                               child: Center(
                                 child: IconButton(
-                                  icon: Icon(Icons.refresh),
+                                  icon: const Icon(Icons.refresh),
                                   onPressed: () {
                                     Provider.of<UserDataProvider>(context,
                                             listen: false)
@@ -452,7 +448,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                                     if (!Provider.of<UserDataProvider>(context,
                                             listen: false)
                                         .getConnected) {
-                                      CustomSnackBar.showSnackBar(context,
+                                      CustomWidgets.CustomSnackBar(context,
                                           'No Internet Connection', Colors.red);
                                     } else {
                                       setState(() {
@@ -484,7 +480,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                 width: size.width * 0.73,
                 child: Card(
                   key: updateUpcomingLunchStatusKey,
-                  color: Color.fromRGBO(241, 232, 255, 1),
+                  color: const Color.fromRGBO(241, 232, 255, 1),
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30))),
                   elevation: 5,
@@ -494,7 +490,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          transitionDuration: Duration(milliseconds: 200),
+                          transitionDuration: const Duration(milliseconds: 200),
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
                                   UpdateLunchStatus(),
@@ -524,7 +520,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                               color: Colors.black,
                               fontWeight: FontWeight.normal),
                         ),
-                        Icon(Icons.keyboard_arrow_right_rounded)
+                        const Icon(Icons.keyboard_arrow_right_rounded)
                       ],
                     ),
                   ),

@@ -8,7 +8,6 @@ import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/home_status_provider.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
 import 'package:meals_management/route_management/route_management.dart';
-import 'package:meals_management/views/custom_widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -143,7 +142,7 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                                     setState(() {
                                       _showQR = false;
                                       _hasShownSnackbar = true;
-                                      CustomSnackBar.showSnackBar(context,
+                                      CustomWidgets.CustomSnackBar(context,
                                           'QR already scanned', Colors.red);
                                     });
 
@@ -182,14 +181,14 @@ class _VendorHomeView extends State<VendorHomeView> with ConnectivityMixin {
                                 setState(() {
                                   _showQR = false;
                                   _hasShownSnackbar = true;
-                                  CustomSnackBar.showSnackBar(
+                                  CustomWidgets.CustomSnackBar(
                                       context, 'Invalid QR', Colors.red);
                                 });
                                 controller.pauseCamera();
                               }
                             }
                           } else {
-                            CustomSnackBar.showSnackBar(
+                            CustomWidgets.CustomSnackBar(
                                 context, 'No Internet', Colors.red);
                           }
                         });

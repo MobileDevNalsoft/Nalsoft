@@ -15,7 +15,6 @@ import "package:flutter_email_sender/flutter_email_sender.dart";
 import "package:meals_management/providers/meals_management/admin_employees_provider.dart";
 import "package:meals_management/providers/meals_management/user_data_provider.dart";
 import "package:meals_management/route_management/route_management.dart";
-import "package:meals_management/views/custom_widgets/custom_snackbar.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
@@ -64,7 +63,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
 
   void _showInAppTour() {
     Future.delayed(
-      Duration(milliseconds: 500),
+      const Duration(milliseconds: 500),
       () {
         tutorialCoachMark.show(context: context);
         sharedPreferences.setBool('hasSeenTutorial4', true);
@@ -158,7 +157,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                     PopupMenuItem(
                                         value: 'Log Out',
                                         height: 10,
-                                        padding: EdgeInsets.only(left: 25),
+                                        padding:
+                                            const EdgeInsets.only(left: 25),
                                         onTap: () {
                                           init();
                                           sharedPreferences
@@ -203,11 +203,12 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             .setConnected(isConnected());
                         if (Provider.of<UserDataProvider>(context,
                                 listen: false)
-                            .getConnected)
+                            .getConnected) {
                           Navigator.push(
                             context,
                             PageRouteBuilder(
-                              transitionDuration: Duration(milliseconds: 200),
+                              transitionDuration:
+                                  const Duration(milliseconds: 200),
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
                                       EmployeeSearch(),
@@ -224,8 +225,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                               },
                             ),
                           );
-                        else {
-                          CustomSnackBar.showSnackBar(
+                        } else {
+                          CustomWidgets.CustomSnackBar(
                               context, "No internet", Colors.red);
                         }
                       },
@@ -270,10 +271,10 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         date = date as DateTime;
                         isConnected()
                             ? sendMail(date, context)
-                            : CustomSnackBar.showSnackBar(
+                            : CustomWidgets.CustomSnackBar(
                                 context, "No internet", Colors.red);
                       } else {
-                        CustomSnackBar.showSnackBar(
+                        CustomWidgets.CustomSnackBar(
                             context, 'please select a date', Colors.red);
                       }
                     },
@@ -295,10 +296,11 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         Navigator.push(
                           context,
                           PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 200),
+                            transitionDuration:
+                                const Duration(milliseconds: 200),
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    GenerateNotification(),
+                                    const GenerateNotification(),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
                               const begin = Offset(1, 0.0);
@@ -346,6 +348,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
         .getAllUsers(date.toString().substring(0, 10));
 
     List<dynamic> empData =
+        // ignore: use_build_context_synchronously
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllUserList!;
 
@@ -402,7 +405,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       // Save the workbook to external storage
       final List<int> bytes = workbook.saveAsStream();
 
-      final path = '${dir!.path}/mess_data_$now.xlsx';
+      final path = '${dir.path}/mess_data_$now.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 
@@ -427,6 +430,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
         recipients: [recipientEmail],
         attachmentPaths: [path],
       );
+      // ignore: use_build_context_synchronously
       Provider.of<AdminEmployeesProvider>(context, listen: false)
           .isMailLoading = false;
 
