@@ -169,7 +169,7 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                               elevation: 2,
                             ),
                             iconStyleData: IconStyleData(
-                              icon: Icon(provider.isOpen
+                              icon: Icon(!provider.isOpen
                                   ? Icons.keyboard_arrow_down_rounded
                                   : Icons.keyboard_arrow_up_rounded),
                               iconSize: 14,
