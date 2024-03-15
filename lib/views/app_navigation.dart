@@ -128,36 +128,36 @@ class _AppNavigationState extends State<AppNavigation> {
                     SizedBox(
                       height: size.height * 0.02,
                     ),
-                    buildService(
-                      key: meetingsAppkey,
-                      image_path: 'assets/images/meetings.png',
-                      size: size,
-                      context: context,
-                      color: const Color.fromARGB(255, 187, 196, 199),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 400),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    HomeView(),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(1, 0.0);
-                              const end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end);
-                              final offsetAnimation = animation.drive(tween);
-                              return SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    )
+                    // buildService(
+                    //   key: meetingsAppkey,
+                    //   image_path: 'assets/images/meetings.png',
+                    //   size: size,
+                    //   context: context,
+                    //   color: const Color.fromARGB(255, 187, 196, 199),
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       PageRouteBuilder(
+                    //         transitionDuration:
+                    //             const Duration(milliseconds: 400),
+                    //         pageBuilder:
+                    //             (context, animation, secondaryAnimation) =>
+                    //                 HomeView(),
+                    //         transitionsBuilder: (context, animation,
+                    //             secondaryAnimation, child) {
+                    //           const begin = Offset(1, 0.0);
+                    //           const end = Offset.zero;
+                    //           final tween = Tween(begin: begin, end: end);
+                    //           final offsetAnimation = animation.drive(tween);
+                    //           return SlideTransition(
+                    //             position: offsetAnimation,
+                    //             child: child,
+                    //           );
+                    //         },
+                    //       ),
+                    //     );
+                    //   },
+                    // )
                   ]),
             ))));
   }
