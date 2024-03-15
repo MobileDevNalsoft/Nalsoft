@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class CustomTextFormField extends StatelessWidget{
-
+class CustomTextFormField extends StatelessWidget {
   TextEditingController? cont;
   String? hntTxt;
   Icon? prfxIcon;
@@ -11,7 +9,14 @@ class CustomTextFormField extends StatelessWidget{
   String? obscChar;
   bool? obscText;
 
-  CustomTextFormField({super.key, required hintText, prefixIcon, suffixIcon, controller, obscureText, obscureChar}){
+  CustomTextFormField(
+      {super.key,
+      required hintText,
+      prefixIcon,
+      suffixIcon,
+      controller,
+      obscureText,
+      obscureChar}) {
     hntTxt = hintText;
     prfxIcon = prefixIcon;
     sffxIcon = suffixIcon;
@@ -21,33 +26,30 @@ class CustomTextFormField extends StatelessWidget{
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           boxShadow: const [
             BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, 5),
-                blurRadius: 5
-            ),
+                color: Color.fromARGB(255, 175, 175, 175),
+                offset: Offset(0, 4),
+                blurRadius: 5),
             BoxShadow(
               color: Colors.white,
             ),
-          ]
-      ),
+          ]),
       child: TextFormField(
         controller: cont,
         decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15)
-          ),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15)
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+          enabledBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          focusedBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
           hintStyle: const TextStyle(color: Colors.black38),
-          hintText : hntTxt,
+          hintText: hntTxt,
           prefixIcon: prfxIcon,
           suffixIcon: sffxIcon,
         ),
