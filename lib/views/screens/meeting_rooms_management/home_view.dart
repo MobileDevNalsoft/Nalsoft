@@ -241,9 +241,11 @@ class _HomeView extends State<HomeView> {
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(right: 15, bottom: 30),
               child: CustomWidgets.CustomExpandableFAB(
+                color: Colors.blueGrey.shade200,
                 distance: 55,
                 children: [
                   CustomWidgets.CustomActionButton(
+                    color: Colors.blueGrey.shade500,
                     onPressed: () {
                       Navigator.pushNamed(
                           context, RouteManagement.upcomingMeetingsView);
@@ -254,6 +256,7 @@ class _HomeView extends State<HomeView> {
                     ),
                   ),
                   CustomWidgets.CustomActionButton(
+                      color: Colors.blueGrey.shade500,
                       onPressed: () {
                         Navigator.pushNamed(context,
                             RouteManagement.checkavalabilityStatusView);
