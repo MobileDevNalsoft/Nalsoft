@@ -319,7 +319,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         "Notify",
                         style: TextStyle(color: Colors.black),
                       )),
-                  Image.asset("assets/images/food.png")
+                  Expanded(child: Image.asset("assets/images/food.png",fit: BoxFit.fitWidth,))
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)

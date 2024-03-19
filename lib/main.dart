@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,12 @@ void main() async {
   await di.init();
 
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
+      options: Platform.isIOS?FirebaseOptions(
+          apiKey: "AIzaSyBGj3Z6ZH_eGbZszCJRjlZh8GKUPssqwYk",
+          appId: "1:1066586839679:ios:40e6823def19ddf3dd7d4a",
+          messagingSenderId: "1066586839679",
+          projectId: "meals-management-app-37e6a")
+          : FirebaseOptions(
           apiKey: "AIzaSyBgn6YsKh5YqVgFCV6NzMbfqfROqI29BUE",
           appId: "1:1066586839679:android:8f9eea5ae77f7472dd7d4a",
           messagingSenderId: "1066586839679",
