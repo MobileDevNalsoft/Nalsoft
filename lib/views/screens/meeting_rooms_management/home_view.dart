@@ -244,30 +244,38 @@ class _HomeView extends State<HomeView> {
                 color: Colors.blueGrey.shade200,
                 distance: 55,
                 children: [
-                  CustomWidgets.CustomActionButton(
+                  Material(
+                    shape: const CircleBorder(),
+                    clipBehavior: Clip.antiAlias,
                     color: Colors.blueGrey.shade500,
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, RouteManagement.upcomingMeetingsView);
-                    },
-                    icon: const Icon(
-                      Icons.event_sharp,
-                      color: Colors.white60,
+                    elevation: 4,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            context, RouteManagement.upcomingMeetingsView);
+                      },
+                      icon: const Icon(
+                        Icons.event_sharp,
+                        color: Colors.white60,
+                      ),
                     ),
                   ),
-                  CustomWidgets.CustomActionButton(
-                      color: Colors.blueGrey.shade500,
+                  Material(
+                    shape: const CircleBorder(),
+                    clipBehavior: Clip.antiAlias,
+                    color: Colors.blueGrey.shade500,
+                    elevation: 4,
+                    child: IconButton(
                       onPressed: () {
-                        Navigator.pushNamed(context,
-                            RouteManagement.checkavalabilityStatusView);
-
-                        Provider.of<HomeViewProvider>(context, listen: false)
-                            .setCheckAvailabilityCurrentFloorPage = 0;
+                        Navigator.pushNamed(
+                            context, RouteManagement.upcomingMeetingsView);
                       },
                       icon: const Icon(
                         Icons.add_circle_outline_rounded,
                         color: Colors.white60,
-                      ))
+                      ),
+                    ),
+                  ),
                 ],
               ),
             )),
