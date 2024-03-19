@@ -21,6 +21,7 @@ import "package:provider/provider.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:tutorial_coach_mark/tutorial_coach_mark.dart";
+import 'package:share_plus/share_plus.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -419,23 +420,28 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       }
 
       // Permission granted, proceed with sending email
-      String recipientEmail =
-          sharedPreferences.getString(AppConstants.USERNAME).toString();
-      const subject = 'Excel Data';
-      const body = 'Please find the attached Excel file with the data.';
+      // String recipientEmail =
+      //     sharedPreferences.getString(AppConstants.USERNAME).toString();
+      // const subject = 'Excel Data';
+      // const body = 'Please find the attached Excel file with the data.';
 
-      final email = Email(
-        body: body,
-        subject: subject,
-        recipients: [recipientEmail],
-        attachmentPaths: [path],
-      );
+      // final email = Email(
+      //   body: body,
+      //   subject: subject,
+      //   recipients: [recipientEmail],
+      //   attachmentPaths: [path],
+      // );
       // ignore: use_build_context_synchronously
+      await Share.shareXFiles(
+        [XFile(path)],
+        text: path,
+        subject: path,
+      );
       Provider.of<AdminEmployeesProvider>(context, listen: false)
           .isMailLoading = false;
 
       // Send email
-      await FlutterEmailSender.send(email);
+      // await FlutterEmailSender.send(email);
     } catch (error) {
       // Handle the error
       print('Error sending email: $error');
