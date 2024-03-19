@@ -168,7 +168,18 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<void> getNotifications() async {
-    try {} catch (e) {
+    try {
+      stream.listen((snapshot) {
+        print("snapshot ${snapshot.data()}");
+        var data = snapshot.data() ?? {'message': []} as Map<String, dynamic>;
+        notifications =
+            (data as Map<String, dynamic>)['message'].reversed.toList();
+        if (length != notifications!.length) {
+          sharedPreferences!.setBool('unseen', true);
+          notifyListeners();
+        }
+      });
+    } catch (e) {
       print(e);
     }
   }
