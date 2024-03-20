@@ -18,7 +18,7 @@ class NotificationsView extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text('Notifications'),
+            title: const Text('Notifications',style: TextStyle(fontSize: 18)),
             backgroundColor: const Color.fromARGB(100, 179, 110, 234),
             shape: const ContinuousRectangleBorder(
                 borderRadius: BorderRadius.only(

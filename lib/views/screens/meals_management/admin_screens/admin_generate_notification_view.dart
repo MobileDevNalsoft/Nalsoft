@@ -35,7 +35,7 @@ class _GenerateNotificationState extends State<GenerateNotification>
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: const Text("Send notification"),
+            title: const Text("Send notification",style: TextStyle(fontSize: 18)),
             centerTitle: true,
             leading: IconButton(
                 onPressed: () => Navigator.pop(context),
