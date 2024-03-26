@@ -4,6 +4,7 @@ import "package:get_it/get_it.dart";
 import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
+import "package:meals_management/providers/meals_management/firebase_provider.dart";
 import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/in_app_tour.dart";
@@ -42,7 +43,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   final calendarKey = GlobalKey();
   final searchEmployeeKey = GlobalKey();
   final notifyKey = GlobalKey();
-
+  final sizedBoxKey = GlobalKey();
   late TutorialCoachMark tutorialCoachMark;
 
   void _initAddSiteInAppTour() {
@@ -75,6 +76,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   @override
   void initState() {
     super.initState();
+    Provider.of<FirebaseProvider>(context, listen: false).getToken();
     sharedPreferences = GetIt.instance.get<SharedPreferences>();
     Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllUserList();
@@ -93,6 +95,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    
 
     return SafeArea(
       child: AspectRatio(
@@ -320,7 +323,13 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         "Notify",
                         style: TextStyle(color: Colors.black),
                       )),
-                  Expanded(child: Image.asset("assets/images/food.png",fit: BoxFit.fitWidth,))
+                //  Expanded(
+                  
+                //    child: SizedBox(
+                      
+                //     ),
+                //  ),
+                  Expanded(child: Image.asset("assets/images/food.png",fit: BoxFit.fitWidth,),key: sizedBoxKey,)
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)
@@ -406,7 +415,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       // Save the workbook to external storage
       final List<int> bytes = workbook.saveAsStream();
 
-      final path = '${dir.path}/mess_data_$now.xlsx';
+      final path = '${dir.path}/mess_data_${date.toString().substring(0, 10)}.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 

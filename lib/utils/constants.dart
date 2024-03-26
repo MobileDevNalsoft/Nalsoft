@@ -27,4 +27,7 @@ class AppConstants {
 
   static const String SEARCH_DETAILS_API =
       "/SEARCH_DETAILS_API/1.0/GetUserInfo";
+
+  static String PUSH_NOTIFICATIONS_ACCESS_TOKEN = "";
+  static late DateTime tokenReceivedTime ;
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:meals_management/repositories/firebase_repo.dart';
+import 'package:meals_management/utils/constants.dart';
 
 class FirebaseProvider extends ChangeNotifier {
   FirebaseRepo? firebaseRepo;
@@ -66,6 +67,10 @@ class FirebaseProvider extends ChangeNotifier {
       print("Error sending notification: $e");
       return false;
     }
+  }
+
+  Future<void> getToken()async{
+    AppConstants.PUSH_NOTIFICATIONS_ACCESS_TOKEN= await firebaseRepo!.getToken();
   }
 
   // Future<void> getNotifications() async {

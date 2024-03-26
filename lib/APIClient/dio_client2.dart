@@ -8,7 +8,7 @@ class DioClient2 {
   final String baseUrl;
   final LoggingInterceptor? loggingInterceptor;
   final SharedPreferences? sharedPreferences;
-
+  final int? timeoutDurationInSec;
   Dio dio = Dio();
 
   DioClient2(
@@ -16,6 +16,7 @@ class DioClient2 {
     Dio? dioC, {
     this.loggingInterceptor,
     this.sharedPreferences,
+    this.timeoutDurationInSec
   }) {
     dio = dioC ?? Dio();
     dio
