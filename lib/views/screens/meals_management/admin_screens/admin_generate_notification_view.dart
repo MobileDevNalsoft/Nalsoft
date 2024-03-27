@@ -16,7 +16,6 @@ class GenerateNotification extends StatefulWidget {
 
 class _GenerateNotificationState extends State<GenerateNotification>
     with ConnectivityMixin {
-  
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
@@ -25,7 +24,6 @@ class _GenerateNotificationState extends State<GenerateNotification>
     super.initState();
     Provider.of<FirebaseProvider>(context, listen: false).getToken();
   }
-
 
   @override
   void dispose() {
@@ -45,12 +43,22 @@ class _GenerateNotificationState extends State<GenerateNotification>
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: const Text("Send Notification",style: TextStyle(fontSize: 18)),
-            centerTitle: true,
             leading: IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 icon: const Icon(Icons.arrow_back)),
+            title: const Text(
+              "Send Notification",
+              style: TextStyle(fontSize: 18),
+            ),
+            centerTitle: true,
             backgroundColor: const Color.fromARGB(100, 179, 110, 234),
+            elevation: 4,
+            shape: const ContinuousRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(50),
+                    bottomRight: Radius.circular(50))),
           ),
           body: Stack(children: [
             Column(

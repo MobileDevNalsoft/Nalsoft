@@ -36,12 +36,22 @@ class _GenerateQrState extends State<GenerateQr> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: const Text("Generate QR", style: TextStyle(fontSize: 18)),
-            centerTitle: true,
             leading: IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 icon: const Icon(Icons.arrow_back)),
+            title: const Text(
+              "Generate QR",
+              style: TextStyle(fontSize: 18),
+            ),
+            centerTitle: true,
             backgroundColor: const Color.fromARGB(100, 179, 110, 234),
+            elevation: 4,
+            shape: const ContinuousRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(50),
+                    bottomRight: Radius.circular(50))),
           ),
           body: Stack(children: [
             Column(
@@ -50,22 +60,19 @@ class _GenerateQrState extends State<GenerateQr> {
                   elevation: 1,
                   margin: const EdgeInsets.all(16),
                   child: TextField(
-                    
-                      controller: qrNameController,
-                      decoration: const InputDecoration(
-                        label: Text("Name"),
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          isQrGenerated=false;
-                        });
-                      },
-                      
-                      ),
-                      
+                    controller: qrNameController,
+                    decoration: const InputDecoration(
+                      label: Text("Name"),
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        isQrGenerated = false;
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: size.width * 0.35,
@@ -73,7 +80,7 @@ class _GenerateQrState extends State<GenerateQr> {
                       backgroundColor:
                           MaterialStatePropertyAll(Colors.grey.shade300),
                       onPressed: () {
-                          FocusScope.of(context).requestFocus(focusNode);
+                        FocusScope.of(context).requestFocus(focusNode);
                         qrNameController.text.isEmpty
                             ? CustomWidgets.CustomSnackBar(
                                 context, "Please enter the name", Colors.red)
@@ -117,7 +124,8 @@ class _GenerateQrState extends State<GenerateQr> {
 
                         await Share.shareXFiles(
                           [XFile(path)],
-                          text: '${qrNameController.text}_${DateTime.now().toString().substring(0, 10)}_QR',
+                          text:
+                              '${qrNameController.text}_${DateTime.now().toString().substring(0, 10)}_QR',
                         );
                       },
                       icon: Icon(Icons.share_rounded))
