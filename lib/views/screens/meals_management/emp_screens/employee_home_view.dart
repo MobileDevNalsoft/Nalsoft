@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// ignore: depend_on_referenced_packages
 import 'package:meals_management/inits/di_container.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/user_data_provider.dart';
@@ -21,7 +20,6 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:custom_widgets/src.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-// ignore: must_be_immutable
 class EmployeeHomeView extends StatefulWidget {
   late Function? initData;
   EmployeeHomeView({super.key, this.initData});

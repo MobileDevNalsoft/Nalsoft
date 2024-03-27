@@ -10,6 +10,7 @@ import "package:meals_management/views/custom_widgets/custom_calendar_card.dart"
 import "package:meals_management/views/in_app_tour.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_generate_notification_view.dart";
+import "package:meals_management/views/screens/meals_management/admin_screens/admin_generate_qr_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
@@ -289,47 +290,82 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     confirmText: 'Send Mail',
                     cancelText: 'Clear Selection',
                   ),
-                  SizedBox(
-                    height: size.height * 0.01,
+                  // SizedBox(
+                  //   height: size.height * 0.01,
+                  // ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      CustomWidgets.CustomElevatedButton(
+                          
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.grey.shade300),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 200),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const GenerateQr(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  const begin = Offset(1, 0.0);
+                                  const end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Generate QR",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                    
+                      CustomWidgets.CustomElevatedButton( 
+                          key: notifyKey,
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.grey.shade300),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 200),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const GenerateNotification(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  const begin = Offset(1, 0.0);
+                                  const end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Notify",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                     ],
                   ),
-                  CustomWidgets.CustomElevatedButton(
-                      key: notifyKey,
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.grey.shade300),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 200),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    const GenerateNotification(),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(1, 0.0);
-                              const end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end);
-                              final offsetAnimation = animation.drive(tween);
-                              return SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        "Notify",
-                        style: TextStyle(color: Colors.black),
-                      )),
-                //  Expanded(
-                  
-                //    child: SizedBox(
+                
+                  // SizedBox(
                       
-                //     ),
-                //  ),
-                  Expanded(child: Image.asset("assets/images/food.png",fit: BoxFit.fitWidth,),key: sizedBoxKey,)
+                  //   ),
+                 
+                   Image.asset("assets/images/food.png",fit: BoxFit.fill,),
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)

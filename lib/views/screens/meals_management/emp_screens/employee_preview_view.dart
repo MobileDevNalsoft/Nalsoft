@@ -53,7 +53,7 @@ class _PreviewState extends State<Preview> {
               backgroundColor: const Color.fromARGB(255, 247, 242, 250),
               toolbarHeight: 80,
               leading: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back,
                 ),
                 onPressed: () {
