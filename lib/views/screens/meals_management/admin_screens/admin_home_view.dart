@@ -95,7 +95,6 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    
 
     return SafeArea(
       child: AspectRatio(
@@ -261,7 +260,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     selectibleDayPredicate: (date) {
                       return ((date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
-                                  date.day <= now.day &&
+                                  date.day <= now.day + 1 &&
                                   date.month == now.month) ||
                               (date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
@@ -286,7 +285,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                       datesController.selectedDate = null;
                       datesController.selectedDates = null;
                     },
-                    confirmText: 'Send Mail',
+                    confirmText: 'Send',
                     cancelText: 'Clear Selection',
                   ),
                   SizedBox(
@@ -323,13 +322,19 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                         "Notify",
                         style: TextStyle(color: Colors.black),
                       )),
-                //  Expanded(
-                  
-                //    child: SizedBox(
-                      
-                //     ),
-                //  ),
-                  Expanded(child: Image.asset("assets/images/food.png",fit: BoxFit.fitWidth,),key: sizedBoxKey,)
+                  //  Expanded(
+
+                  //    child: SizedBox(
+
+                  //     ),
+                  //  ),
+                  Expanded(
+                    child: Image.asset(
+                      "assets/images/food.png",
+                      fit: BoxFit.fitWidth,
+                    ),
+                    key: sizedBoxKey,
+                  )
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)
@@ -356,11 +361,18 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
 
     await Provider.of<AdminEmployeesProvider>(context, listen: false)
         .getAllUsers(date.toString().substring(0, 10));
+    await Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .getAllEmployeesData();
 
     List<dynamic> empData =
         // ignore: use_build_context_synchronously
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllUserList!;
+
+    List<dynamic> allEmployeesIdName =
+        // ignore: use_build_context_synchronously
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+            .getAllEmployeesIdName;
 
     final dir = await getTemporaryDirectory();
 
@@ -380,14 +392,15 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
     sheet.getRangeByIndex(2, 4).builtInStyle = excel.BuiltInStyles.heading4;
 
     // Set the worksheet name
-    sheet.name = 'Today\'s Meals opted employees';
+    sheet.name =
+        '${date.day == now.day ? 'Today\'s' : date.toString().substring(0, 10)} Employees Meal Status';
 
     // Append headers
     sheet.getRangeByIndex(1, 3).setText(date.toString().substring(0, 10));
     sheet.getRangeByIndex(2, 1).setText('Employee ID');
     sheet.getRangeByIndex(2, 2).setText('Employee Name');
     sheet.getRangeByIndex(2, 3).setText("Status");
-    sheet.getRangeByIndex(2, 4).setText('Remarks');
+    sheet.getRangeByIndex(2, 4).setText('Info');
 
     // Append data
     int rowIndex = 3;
@@ -395,15 +408,85 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       Data userdata = data;
       sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
       sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
-      sheet.getRangeByIndex(rowIndex, 3).setText(userdata.status);
-      if (userdata.status == '1') {
-        userdata.info =
-            DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!))
-                .toString()
-                .substring(11, 19);
+      if ((date.isBefore(now)) ||
+          (date.toString().substring(0, 10) ==
+                  now.toString().substring(0, 10) &&
+              now.hour >= 15)) {
+        sheet
+            .getRangeByIndex(rowIndex, 3)
+            .setText(userdata.status == '0' ? 'Not Opted' : 'Opted');
+        if (userdata.status == '1') {
+          userdata.info =
+              DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!))
+                  .toString()
+                  .substring(11, 19);
+        }
+        sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
+      } else {
+        sheet.getRangeByIndex(rowIndex, 3).setText('Not Opted');
+        sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
       }
-      sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
+
       rowIndex++;
+    }
+
+    if ((date.isAfter(now)) ||
+        (date.toString().substring(0, 10) == now.toString().substring(0, 10) &&
+            now.hour < 15)) {
+      for (var data in allEmployeesIdName) {
+        Data userdata = data;
+        if (!empData
+            .any((element) => (element as Data).empId == userdata.empId)) {
+          sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
+          sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
+          sheet.getRangeByIndex(rowIndex, 3).setText('Opted');
+          rowIndex++;
+        }
+      }
+      sheet.getRangeByIndex(rowIndex + 2, 2).setText('Opted Count');
+      sheet
+          .getRangeByIndex(rowIndex + 2, 3)
+          .setText((allEmployeesIdName.length - empData.length).toString());
+      sheet.getRangeByIndex(rowIndex + 3, 2).setText('Not Opted Count');
+      sheet.getRangeByIndex(rowIndex + 3, 3).setText(empData
+          .map((e) => (e as Data).status == '0' ? true : null)
+          .toList()
+          .nonNulls
+          .length
+          .toString());
+    } else {
+      for (var data in allEmployeesIdName) {
+        Data userdata = data;
+        if (!empData
+            .any((element) => (element as Data).empId == userdata.empId)) {
+          sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
+          sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
+          sheet.getRangeByIndex(rowIndex, 3).setText('No Status');
+          rowIndex++;
+        }
+      }
+
+      sheet.getRangeByIndex(rowIndex + 2, 2).setText('Opted Count');
+      sheet.getRangeByIndex(rowIndex + 2, 3).setText(empData
+          .map((e) => (e as Data).status == '1' ? true : null)
+          .toList()
+          .nonNulls
+          .length
+          .toString());
+      sheet.getRangeByIndex(rowIndex + 3, 2).setText('Not Opted Count');
+      sheet.getRangeByIndex(rowIndex + 3, 3).setText(empData
+          .map((e) => (e as Data).status == '0' ? true : null)
+          .toList()
+          .nonNulls
+          .length
+          .toString());
+      sheet.getRangeByIndex(rowIndex + 4, 2).setText('No Status Count');
+      sheet.getRangeByIndex(rowIndex + 4, 3).setText(allEmployeesIdName
+          .map((e) => (e as Data).empId)
+          .toSet()
+          .difference(empData.map((e) => (e as Data).empId).toSet())
+          .length
+          .toString());
     }
 
     sheet.autoFitColumn(1);
@@ -415,7 +498,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       // Save the workbook to external storage
       final List<int> bytes = workbook.saveAsStream();
 
-      final path = '${dir.path}/mess_data_${date.toString().substring(0, 10)}.xlsx';
+      final path =
+          '${dir.path}/meals_data_${date.toString().substring(0, 10)}.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 

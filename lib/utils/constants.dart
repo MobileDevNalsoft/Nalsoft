@@ -18,6 +18,7 @@ class AppConstants {
   static const String APIPASSWORD = 'Nalsoft@123456';
   static const String GETUSEREVENTSDATA =
       "/GETUSEREVENTSDATA/1.0/GetUserEventData";
+  static const String GETALLEMPLOYEESDATA = '/GETALLEMPDATA/1.0/getAllEmpData';
   static const String UPDATEUSEREVENTS =
       "/UPDATEUSEREVENTS/1.0/UpdateUserEventData";
   static const String DELETEUSEREVENTS =
@@ -29,5 +30,5 @@ class AppConstants {
       "/SEARCH_DETAILS_API/1.0/GetUserInfo";
 
   static String PUSH_NOTIFICATIONS_ACCESS_TOKEN = "";
-  static late DateTime tokenReceivedTime ;
+  static late DateTime tokenReceivedTime;
 }

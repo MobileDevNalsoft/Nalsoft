@@ -15,6 +15,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
 
   final UserRepo userRepo = UserRepo(dioClient2: sl());
   List<Map<String, dynamic>> _empData = [];
+  List<dynamic> _allEmployeesData = [];
   List<dynamic> _alluserSearchList = [];
   bool _isSearching = false;
   UserModel? _user = UserModel();
@@ -27,6 +28,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   bool isLoading = false;
 
   List<Map<String, dynamic>> get getAllEmpData => _empData;
+  List<dynamic> get getAllEmployeesIdName => _allEmployeesData;
   List<dynamic> get alluserSearchList => _alluserSearchList;
   bool get isSearching => _isSearching;
   bool get isMailLoading => _isMailLoading;
@@ -58,6 +60,16 @@ class AdminEmployeesProvider extends ChangeNotifier {
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       _alluserList = apiResponse.response!.data['data']
+          .map((userdata) => Data.fromJson(userdata))
+          .toList();
+    }
+  }
+
+  Future<void> getAllEmployeesData() async {
+    ApiResponse apiResponse = await userRepo.getAllEmpData();
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      _allEmployeesData = apiResponse.response!.data['data']
           .map((userdata) => Data.fromJson(userdata))
           .toList();
     }
