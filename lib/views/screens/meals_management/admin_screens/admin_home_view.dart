@@ -281,12 +281,9 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             context, 'please select a date', Colors.red);
                       }
                     },
-                    onCancel: () {
-                      datesController.selectedDate = null;
-                      datesController.selectedDates = null;
-                    },
+                    onCancel: () {},
                     confirmText: 'Send',
-                    cancelText: 'Clear Selection',
+                    cancelText: '',
                   ),
                   SizedBox(
                     height: size.height * 0.01,

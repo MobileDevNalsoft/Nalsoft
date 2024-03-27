@@ -403,11 +403,9 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
                           );
                         }
                       },
-                      onCancel: () {
-                        datesController.selectedDate = null;
-                      },
+                      onCancel: () {},
                       confirmText: 'Ok',
-                      cancelText: 'Cancel',
+                      cancelText: '',
                     );
                   } else {
                     return SizedBox(
