@@ -525,7 +525,7 @@ class _EmployeeHomeViewState extends State<EmployeeHomeView>
               SizedBox(
                 height: size.height * 0.01,
               ),
-              Image.asset('assets/images/food.png'),
+           Image.asset("assets/images/food.png",fit: BoxFit.cover,height: size.height*0.13,width: size.width,),
             ],
           ),
         ),
