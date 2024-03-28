@@ -128,4 +128,22 @@ class AdminEmployeesProvider extends ChangeNotifier {
     print(_user);
     notifyListeners();
   }
+
+  Future<void> deleteUserEvents(String empno, List dates) async {
+    isLoading = true;
+    print(_notOptedDates);
+    ApiResponse apiResponse = await userEventsRepo!
+        .deleteUserEvents(empno, dates);
+    print(apiResponse.response!.data);
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      print(apiResponse.response!.data);
+      dates.forEach((element) {
+        _notOptedDates.removeWhere((date) => date.date == element["date"]);
+      });
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
 }
