@@ -267,8 +267,8 @@ class _HomeView extends State<HomeView> {
                     elevation: 4,
                     child: IconButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                            context, RouteManagement.upcomingMeetingsView);
+                        Navigator.pushNamed(context,
+                            RouteManagement.checkavalabilityStatusView);
                       },
                       icon: const Icon(
                         Icons.add_circle_outline_rounded,
