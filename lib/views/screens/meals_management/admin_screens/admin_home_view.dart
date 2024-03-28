@@ -4,11 +4,13 @@ import "package:get_it/get_it.dart";
 import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/models/user_model.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
+import "package:meals_management/providers/meals_management/firebase_provider.dart";
 import "package:meals_management/utils/constants.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/in_app_tour.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_employees_view.dart";
 import "package:meals_management/views/screens/meals_management/admin_screens/admin_generate_notification_view.dart";
+import "package:meals_management/views/screens/meals_management/admin_screens/admin_generate_qr_view.dart";
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as excel;
 import "package:flutter/material.dart";
 import "package:flutter_email_sender/flutter_email_sender.dart";
@@ -42,7 +44,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   final calendarKey = GlobalKey();
   final searchEmployeeKey = GlobalKey();
   final notifyKey = GlobalKey();
-
+  final sizedBoxKey = GlobalKey();
   late TutorialCoachMark tutorialCoachMark;
 
   void _initAddSiteInAppTour() {
@@ -75,6 +77,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
   @override
   void initState() {
     super.initState();
+    Provider.of<FirebaseProvider>(context, listen: false).getToken();
     sharedPreferences = GetIt.instance.get<SharedPreferences>();
     Provider.of<AdminEmployeesProvider>(context, listen: false)
         .setAllUserList();
@@ -258,7 +261,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     selectibleDayPredicate: (date) {
                       return ((date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
-                                  date.day <= now.day &&
+                                  date.day <= now.day + 1 &&
                                   date.month == now.month) ||
                               (date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
@@ -279,48 +282,86 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             context, 'please select a date', Colors.red);
                       }
                     },
-                    onCancel: () {
-                      datesController.selectedDate = null;
-                      datesController.selectedDates = null;
-                    },
-                    confirmText: 'Send Mail',
-                    cancelText: 'Clear Selection',
+                    onCancel: () {},
+                    confirmText: 'Send',
+                    cancelText: '',
                   ),
-                  SizedBox(
-                    height: size.height * 0.01,
+                  // SizedBox(
+                  //   height: size.height * 0.01,
+                  // ),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      CustomWidgets.CustomElevatedButton(
+                          
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.grey.shade300),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 200),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const GenerateQr(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  const begin = Offset(1, 0.0);
+                                  const end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Generate QR",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                    
+                      CustomWidgets.CustomElevatedButton( 
+                          key: notifyKey,
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.grey.shade300),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 200),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const GenerateNotification(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  const begin = Offset(1, 0.0);
+                                  const end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end);
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Notify",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                     ],
                   ),
-                  CustomWidgets.CustomElevatedButton(
-                      key: notifyKey,
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.grey.shade300),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 200),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    const GenerateNotification(),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(1, 0.0);
-                              const end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end);
-                              final offsetAnimation = animation.drive(tween);
-                              return SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        "Notify",
-                        style: TextStyle(color: Colors.black),
-                      )),
-                  Expanded(child: Image.asset("assets/images/food.png",fit: BoxFit.fitWidth,))
+                
+                  // SizedBox(
+                      
+                  //   ),
+                 
+                   Image.asset("assets/images/food.png",fit: BoxFit.fill,),
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)
@@ -347,11 +388,18 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
 
     await Provider.of<AdminEmployeesProvider>(context, listen: false)
         .getAllUsers(date.toString().substring(0, 10));
+    await Provider.of<AdminEmployeesProvider>(context, listen: false)
+        .getAllEmployeesData();
 
     List<dynamic> empData =
         // ignore: use_build_context_synchronously
         Provider.of<AdminEmployeesProvider>(context, listen: false)
             .getAllUserList!;
+
+    List<dynamic> allEmployeesIdName =
+        // ignore: use_build_context_synchronously
+        Provider.of<AdminEmployeesProvider>(context, listen: false)
+            .getAllEmployeesIdName;
 
     final dir = await getTemporaryDirectory();
 
@@ -371,14 +419,15 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
     sheet.getRangeByIndex(2, 4).builtInStyle = excel.BuiltInStyles.heading4;
 
     // Set the worksheet name
-    sheet.name = 'Today\'s Meals opted employees';
+    sheet.name =
+        '${date.day == now.day ? 'Today\'s' : date.toString().substring(0, 10)} Employees Meal Status';
 
     // Append headers
     sheet.getRangeByIndex(1, 3).setText(date.toString().substring(0, 10));
     sheet.getRangeByIndex(2, 1).setText('Employee ID');
     sheet.getRangeByIndex(2, 2).setText('Employee Name');
     sheet.getRangeByIndex(2, 3).setText("Status");
-    sheet.getRangeByIndex(2, 4).setText('Remarks');
+    sheet.getRangeByIndex(2, 4).setText('Info');
 
     // Append data
     int rowIndex = 3;
@@ -386,15 +435,85 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       Data userdata = data;
       sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
       sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
-      sheet.getRangeByIndex(rowIndex, 3).setText(userdata.status);
-      if (userdata.status == '1') {
-        userdata.info =
-            DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!))
-                .toString()
-                .substring(11, 19);
+      if ((date.isBefore(now)) ||
+          (date.toString().substring(0, 10) ==
+                  now.toString().substring(0, 10) &&
+              now.hour >= 15)) {
+        sheet
+            .getRangeByIndex(rowIndex, 3)
+            .setText(userdata.status == '0' ? 'Not Opted' : 'Opted');
+        if (userdata.status == '1') {
+          userdata.info =
+              DateTime.fromMillisecondsSinceEpoch(int.parse(userdata.info!))
+                  .toString()
+                  .substring(11, 19);
+        }
+        sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
+      } else {
+        sheet.getRangeByIndex(rowIndex, 3).setText('Not Opted');
+        sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
       }
-      sheet.getRangeByIndex(rowIndex, 4).setText(userdata.info);
+
       rowIndex++;
+    }
+
+    if ((date.isAfter(now)) ||
+        (date.toString().substring(0, 10) == now.toString().substring(0, 10) &&
+            now.hour < 15)) {
+      for (var data in allEmployeesIdName) {
+        Data userdata = data;
+        if (!empData
+            .any((element) => (element as Data).empId == userdata.empId)) {
+          sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
+          sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
+          sheet.getRangeByIndex(rowIndex, 3).setText('Opted');
+          rowIndex++;
+        }
+      }
+      sheet.getRangeByIndex(rowIndex + 2, 2).setText('Opted Count');
+      sheet
+          .getRangeByIndex(rowIndex + 2, 3)
+          .setText((allEmployeesIdName.length - empData.length).toString());
+      sheet.getRangeByIndex(rowIndex + 3, 2).setText('Not Opted Count');
+      sheet.getRangeByIndex(rowIndex + 3, 3).setText(empData
+          .map((e) => (e as Data).status == '0' ? true : null)
+          .toList()
+          .nonNulls
+          .length
+          .toString());
+    } else {
+      for (var data in allEmployeesIdName) {
+        Data userdata = data;
+        if (!empData
+            .any((element) => (element as Data).empId == userdata.empId)) {
+          sheet.getRangeByIndex(rowIndex, 1).setText(userdata.empId);
+          sheet.getRangeByIndex(rowIndex, 2).setText(userdata.empName);
+          sheet.getRangeByIndex(rowIndex, 3).setText('No Status');
+          rowIndex++;
+        }
+      }
+
+      sheet.getRangeByIndex(rowIndex + 2, 2).setText('Opted Count');
+      sheet.getRangeByIndex(rowIndex + 2, 3).setText(empData
+          .map((e) => (e as Data).status == '1' ? true : null)
+          .toList()
+          .nonNulls
+          .length
+          .toString());
+      sheet.getRangeByIndex(rowIndex + 3, 2).setText('Not Opted Count');
+      sheet.getRangeByIndex(rowIndex + 3, 3).setText(empData
+          .map((e) => (e as Data).status == '0' ? true : null)
+          .toList()
+          .nonNulls
+          .length
+          .toString());
+      sheet.getRangeByIndex(rowIndex + 4, 2).setText('No Status Count');
+      sheet.getRangeByIndex(rowIndex + 4, 3).setText(allEmployeesIdName
+          .map((e) => (e as Data).empId)
+          .toSet()
+          .difference(empData.map((e) => (e as Data).empId).toSet())
+          .length
+          .toString());
     }
 
     sheet.autoFitColumn(1);
@@ -406,7 +525,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       // Save the workbook to external storage
       final List<int> bytes = workbook.saveAsStream();
 
-      final path = '${dir.path}/mess_data_$now.xlsx';
+      final path =
+          '${dir.path}/meals_data_${date.toString().substring(0, 10)}.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 

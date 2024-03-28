@@ -5,6 +5,7 @@ import "package:intl/intl.dart";
 import "package:meals_management/inits/di_container.dart";
 import "package:meals_management/network_handler_mixin/network_handler.dart";
 import "package:meals_management/providers/meals_management/admin_employees_provider.dart";
+import "package:meals_management/providers/meals_management/home_status_provider.dart";
 import "package:meals_management/providers/meals_management/user_data_provider.dart";
 import "package:meals_management/views/custom_widgets/custom_calendar_card.dart";
 import "package:meals_management/views/custom_widgets/custom_legend.dart";
@@ -336,17 +337,34 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                               selectionMode:
                                   DateRangePickerSelectionMode.single,
                               selectibleDayPredicate: (date) {
+                                if (date.isAfter(DateTime.now()
+                                    ) || date.toString().substring(0,10)== now.toString().substring(0,10)) {
+                                  return true;
+                                }
                                 return false;
                               },
-                              onSubmit: (p0) => isConnected()
+                              onSubmit: (date) {
+                              
+                                if (Provider.of<AdminEmployeesProvider>(context,
+                                        listen: false)
+                                    .getNotOpted
+                                    .map((e) => e.date)
+                                    .toList()
+                                    .contains(
+                                        date.toString().substring(0, 10))) {
+                                  removeDialog(
+                                      context, size, [date as DateTime]);
+                                } 
+                              },
+                              onCancel: () {
+                                      isConnected()
                                   ? sendMail(context)
                                   : CustomWidgets.CustomSnackBar(
-                                      context, "No internet", Colors.red),
-                              onCancel: () {
-                                datesController.selectedDate = null;
+                                      context, "No internet", Colors.red);
                               },
-                              confirmText: 'Send Mail',
-                              cancelText: 'Clear Selection',
+                              confirmText: 'Update',
+                              cancelText: 'Send',
+
                             );
                           }
                         },
@@ -371,6 +389,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       ),
     ));
   }
+
 
   Future<void> sendMail(BuildContext context) async {
     Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
@@ -528,4 +547,82 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       print('Error sending email: $error');
     }
   }
+
+  void removeDialog(context, size, List<DateTime> dates) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(content: Consumer<HomeStatusProvider>(
+          builder: (context, dialogProvider, child) {
+            return SizedBox(
+              width: size.width * 0.6,
+              height: size.height * 0.13,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text('Do you want to remove from \nNotOpted ?'),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CustomWidgets.CustomElevatedButton(
+                        onPressed: () {
+                        if( isConnected()) {
+                            Provider.of<AdminEmployeesProvider>(context,
+                                    listen: false)
+                                .deleteUserEvents(Provider.of<AdminEmployeesProvider>(context,
+                                    listen: false).getUserData.data!.empId!,dates
+                                    .map((e) =>
+                                        {"date": e.toString().substring(0, 10)})
+                                    .toList());
+                          } else {
+                            CustomWidgets.CustomSnackBar(
+                                context, "No internet", Colors.red);
+                          }
+
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                          Navigator.pop(context);
+                        },
+                        backgroundColor:
+                            const MaterialStatePropertyAll(Colors.white),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      CustomWidgets.CustomElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          datesController.selectedDate = null;
+                          datesController.selectedDates = null;
+                          datesController.selectedRange = null;
+                        },
+                        backgroundColor: MaterialStatePropertyAll(
+                            Colors.deepPurpleAccent.shade200),
+                        child: const Text(
+                          'No',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+        ));
+      },
+    );
+  }
+
+
+
 }
+

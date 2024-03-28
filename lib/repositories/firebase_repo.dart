@@ -29,7 +29,7 @@ class FirebaseRepo {
       return json.decode(response.toString())['access_token'];
     } catch (e) {
       print(e);
-      return "";
+      return getToken();
     }
   }
 

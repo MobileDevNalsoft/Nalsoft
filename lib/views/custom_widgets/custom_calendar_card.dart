@@ -67,6 +67,7 @@ class CustomCalendarCard extends StatelessWidget {
               Consumer<UserDataProvider>(
                 builder: (context, provider, child) {
                   return SfDateRangePicker(
+                    toggleDaySelection: true,
                     controller: controller,
                     minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
                     maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),
@@ -149,6 +150,7 @@ class CustomCalendarCard extends StatelessWidget {
               Consumer<AdminEmployeesProvider>(
                 builder: (context, provider, child) {
                   return SfDateRangePicker(
+                    toggleDaySelection: true,
                     controller: controller,
                     minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),
                     maxDate: DateTime(now.year, 12, 31, 23, 59, 0, 0, 0),

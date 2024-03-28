@@ -1,7 +1,10 @@
 import 'package:custom_widgets/src.dart';
 import 'package:flutter/material.dart';
+import 'package:meals_management/APIClient/dio_client2.dart';
 import 'package:meals_management/network_handler_mixin/network_handler.dart';
 import 'package:meals_management/providers/meals_management/firebase_provider.dart';
+import 'package:meals_management/repositories/firebase_repo.dart';
+import 'package:meals_management/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 class GenerateNotification extends StatefulWidget {
@@ -13,9 +16,16 @@ class GenerateNotification extends StatefulWidget {
 
 class _GenerateNotificationState extends State<GenerateNotification>
     with ConnectivityMixin {
+  
   TextEditingController titleController = TextEditingController();
-
   TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<FirebaseProvider>(context, listen: false).getToken();
+  }
+
 
   @override
   void dispose() {
@@ -35,7 +45,7 @@ class _GenerateNotificationState extends State<GenerateNotification>
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: const Text("Send notification",style: TextStyle(fontSize: 18)),
+            title: const Text("Send Notification",style: TextStyle(fontSize: 18)),
             centerTitle: true,
             leading: IconButton(
                 onPressed: () => Navigator.pop(context),

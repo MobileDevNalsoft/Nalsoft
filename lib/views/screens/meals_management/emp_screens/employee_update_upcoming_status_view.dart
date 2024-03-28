@@ -326,13 +326,9 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
                             }
                           }
                         },
-                        onCancel: () {
-                          datesController.selectedDate = null;
-                          datesController.selectedDates = null;
-                          datesController.selectedRange = null;
-                        },
+                        onCancel: () {},
                         confirmText: 'Ok',
-                        cancelText: 'Cancel',
+                        cancelText: '',
                       );
                     } else {
                       return SizedBox(
@@ -655,4 +651,6 @@ class _UpdateLunchStatusState extends State<UpdateLunchStatus>
       },
     );
   }
+
+
 }
