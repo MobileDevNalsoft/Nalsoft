@@ -343,21 +343,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                 }
                                 return false;
                               },
-                              onSubmit: (date) {if (date.toString().substring(0, 10) !=
-                                now.toString().substring(0, 10)) {
-                              if (DateTime.parse(date.toString()).weekday ==
-                                      DateTime.saturday ||
-                                  DateTime.parse(date.toString()).weekday ==
-                                      DateTime.sunday) {
-                                CustomWidgets.CustomSnackBar(
-                                    context,
-                                    'remove weekoffs from selection',
-                                    Colors.red);
-                              } else {
-                                Provider.of<UserDataProvider>(context,
-                                        listen: false)
-                                    .getNotOpted.forEach((element) {print(element.date);});
-                                    print(date.toString());
+                              onSubmit: (date) {
+                              
                                 if (Provider.of<AdminEmployeesProvider>(context,
                                         listen: false)
                                     .getNotOpted
@@ -368,9 +355,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                                   removeDialog(
                                       context, size, [date as DateTime]);
                                 } 
-                              }
-                            }
-                            },
+                              },
                               onCancel: () {
                                       isConnected()
                                   ? sendMail(context)
@@ -584,14 +569,11 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                     children: [
                       CustomWidgets.CustomElevatedButton(
                         onPressed: () {
-                          Provider.of<UserDataProvider>(context, listen: false)
-                              .setConnected(isConnected());
-                          if (Provider.of<UserDataProvider>(context,
-                                  listen: false)
-                              .getConnected) {
-                            Provider.of<UserDataProvider>(context,
+                        if( isConnected()) {
+                            Provider.of<AdminEmployeesProvider>(context,
                                     listen: false)
-                                .deleteUserEvents(dates
+                                .deleteUserEvents(Provider.of<AdminEmployeesProvider>(context,
+                                    listen: false).getUserData.data!.empId!,dates
                                     .map((e) =>
                                         {"date": e.toString().substring(0, 10)})
                                     .toList());

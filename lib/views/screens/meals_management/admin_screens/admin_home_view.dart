@@ -261,7 +261,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     selectibleDayPredicate: (date) {
                       return ((date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
-                                  date.day <= now.day + 1 &&
+                                  date.day <= now.day + 7 &&
                                   date.month == now.month) ||
                               (date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
@@ -361,7 +361,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                       
                   //   ),
                  
-                   Image.asset("assets/images/food.png",fit: BoxFit.fill,),
+                 
+                   Image.asset("assets/images/food.png",fit: BoxFit.cover,height: size.height*0.13,width: size.width,),
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)

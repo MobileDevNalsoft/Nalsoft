@@ -53,95 +53,87 @@ class _GenerateQrState extends State<GenerateQr> {
                     bottomLeft: Radius.circular(50),
                     bottomRight: Radius.circular(50))),
           ),
-          body: Stack(children: [
-            Column(
-              children: [
-                Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.all(16),
-                  child: TextField(
-                    controller: qrNameController,
-                    decoration: const InputDecoration(
-                      label: Text("Name"),
-                      border: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        isQrGenerated = false;
-                      });
-                    },
+          body: Column(
+            children: [
+              Card(
+                elevation: 1,
+                margin: const EdgeInsets.all(16),
+                child: TextField(
+                  controller: qrNameController,
+                  decoration: const InputDecoration(
+                    label: Text("Name"),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      isQrGenerated = false;
+                    });
+                  },
                 ),
-                SizedBox(
-                  width: size.width * 0.35,
-                  child: CustomWidgets.CustomElevatedButton(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.grey.shade300),
-                      onPressed: () {
-                        FocusScope.of(context).requestFocus(focusNode);
-                        qrNameController.text.isEmpty
-                            ? CustomWidgets.CustomSnackBar(
-                                context, "Please enter the name", Colors.red)
-                            : setState(() {
-                                isQrGenerated = true;
-                              });
-                      },
-                      child: Text(
-                        "Generate",
-                        style: TextStyle(color: Colors.black),
-                      )),
-                ),
-                SizedBox(
-                  height: size.height * 0.08,
-                ),
-                isQrGenerated && qrNameController.text.isNotEmpty
-                    ? WidgetsToImage(
-                        key: qrImageKey,
-                        controller: widgetsToImageController,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.white),
-                          child: QrImageView(
-                            data:
-                                '{"uid":"${qrNameController.text}","date":"${DateTime.now().toString().substring(0, 10)}"}', //${DateTime.now().toString().substring(0, 10)}
-                            size: 250,
-                          ),
+              ),
+              SizedBox(
+                width: size.width * 0.35,
+                child: CustomWidgets.CustomElevatedButton(
+                    backgroundColor:
+                        MaterialStatePropertyAll(Colors.grey.shade300),
+                    onPressed: () {
+                      FocusScope.of(context).requestFocus(focusNode);
+                      qrNameController.text.isEmpty
+                          ? CustomWidgets.CustomSnackBar(
+                              context, "Please enter the name", Colors.red)
+                          : setState(() {
+                              isQrGenerated = true;
+                            });
+                    },
+                    child: const Text(
+                      "Generate",
+                      style: TextStyle(color: Colors.black),
+                    )),
+              ),
+              SizedBox(
+                height: size.height * 0.08,
+              ),
+              isQrGenerated && qrNameController.text.isNotEmpty
+                  ? WidgetsToImage(
+                      key: qrImageKey,
+                      controller: widgetsToImageController,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white),
+                        child: QrImageView(
+                          data:
+                              '{"uid":"${qrNameController.text}","date":"${DateTime.now().toString().substring(0, 10)}"}', //${DateTime.now().toString().substring(0, 10)}
+                          size: 250,
                         ),
-                      )
-                    : SizedBox(),
-                if (isQrGenerated && qrNameController.text.isNotEmpty)
-                  IconButton(
-                      onPressed: () async {
-                        final bytes = await widgetsToImageController.capture();
-                        final dir = await getTemporaryDirectory();
-                        final path =
-                            '${dir.path}/QrCodes${qrNameController.text}.png';
-                        final File file = File(path);
-                        await file.writeAsBytes(bytes as List<int>);
+                      ),
+                    )
+                  : const SizedBox(),
+              SizedBox(height: size.height * 0.035),
+              if (isQrGenerated && qrNameController.text.isNotEmpty)
+                IconButton(
+                    onPressed: () async {
+                      final bytes = await widgetsToImageController.capture();
+                      final dir = await getTemporaryDirectory();
+                      final path =
+                          '${dir.path}/QrCodes${qrNameController.text}.png';
+                      final File file = File(path);
+                      await file.writeAsBytes(bytes as List<int>);
 
-                        await Share.shareXFiles(
-                          [XFile(path)],
-                          text:
-                              '${qrNameController.text}_${DateTime.now().toString().substring(0, 10)}_QR',
-                        );
-                      },
-                      icon: Icon(Icons.share_rounded))
-              ],
-            ),
-            // if (Provider.of<FirebaseProvider>(context, listen: true).isLoading)
-            //   Positioned(
-            //     top: 0,
-            //     left: 0,
-            //     right: 0,
-            //     bottom: 0,
-            //     child: Container(
-            //         color: Colors.black38,
-            //         child: CustomWidgets.CustomCircularLoader()),
-            //   ),
-          ]),
+                      await Share.shareXFiles(
+                        [XFile(path)],
+                        text:
+                            '${qrNameController.text}_${DateTime.now().toString().substring(0, 10)}_QR',
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.share_rounded,
+                      size: 40,
+                    )),
+            ],
+          ),
         ),
       ),
     );
