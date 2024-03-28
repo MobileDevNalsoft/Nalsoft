@@ -5,6 +5,7 @@ import 'package:meals_management/models/meals_management/api_response_model.dart
 import 'package:meals_management/models/user_model.dart';
 import 'package:meals_management/repositories/user_events_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../models/meals_management/user_events_model.dart';
 
 class AdminEmployeesProvider extends ChangeNotifier {
@@ -26,6 +27,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   bool eventsPresent = false;
   bool isAdminEmployeeDataPresent = false;
   bool isLoading = false;
+  DateRangePickerSelectionChangedArgs? _dates;
 
   List<Map<String, dynamic>> get getAllEmpData => _empData;
   List<dynamic> get getAllEmployeesIdName => _allEmployeesData;
@@ -40,6 +42,7 @@ class AdminEmployeesProvider extends ChangeNotifier {
   UserModel get getUserData => _user!;
   List<Dates> get getOpted => _optedDates;
   List<Dates> get getNotOpted => _notOptedDates;
+  DateRangePickerSelectionChangedArgs? get getDates => _dates;
 
   void setAllUserList() {
     _alluserList = [];
@@ -52,6 +55,11 @@ class AdminEmployeesProvider extends ChangeNotifier {
 
   set isMailLoading(value) {
     _isMailLoading = value;
+    notifyListeners();
+  }
+
+  set setDates(value) {
+    _dates = value;
     notifyListeners();
   }
 
@@ -132,8 +140,8 @@ class AdminEmployeesProvider extends ChangeNotifier {
   Future<void> deleteUserEvents(String empno, List dates) async {
     isLoading = true;
     print(_notOptedDates);
-    ApiResponse apiResponse = await userEventsRepo!
-        .deleteUserEvents(empno, dates);
+    ApiResponse apiResponse =
+        await userEventsRepo!.deleteUserEvents(empno, dates);
     print(apiResponse.response!.data);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
@@ -145,5 +153,4 @@ class AdminEmployeesProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 }

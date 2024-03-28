@@ -150,6 +150,7 @@ class CustomCalendarCard extends StatelessWidget {
               Consumer<AdminEmployeesProvider>(
                 builder: (context, provider, child) {
                   return SfDateRangePicker(
+                    onSelectionChanged: onSelectionChanged,
                     toggleDaySelection: true,
                     controller: controller,
                     minDate: DateTime(now.year, 1, 1, 0, 0, 0, 0, 0),

@@ -261,8 +261,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                     selectibleDayPredicate: (date) {
                       return ((date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
-                                  date.day <= now.day + 7 &&
-                                  date.month == now.month) ||
+                                  date.isBefore(now.add(Duration(days: 7)))) ||
                               (date.weekday != DateTime.saturday &&
                                   date.weekday != DateTime.sunday &&
                                   date.month < now.month)) &&
@@ -289,10 +288,10 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                   // SizedBox(
                   //   height: size.height * 0.01,
                   // ),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       CustomWidgets.CustomElevatedButton(
-                          
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.grey.shade300),
                           onPressed: () {
@@ -309,7 +308,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                   const begin = Offset(1, 0.0);
                                   const end = Offset.zero;
                                   final tween = Tween(begin: begin, end: end);
-                                  final offsetAnimation = animation.drive(tween);
+                                  final offsetAnimation =
+                                      animation.drive(tween);
                                   return SlideTransition(
                                     position: offsetAnimation,
                                     child: child,
@@ -322,8 +322,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             "Generate QR",
                             style: TextStyle(color: Colors.black),
                           )),
-                    
-                      CustomWidgets.CustomElevatedButton( 
+                      CustomWidgets.CustomElevatedButton(
                           key: notifyKey,
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.grey.shade300),
@@ -341,7 +340,8 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                                   const begin = Offset(1, 0.0);
                                   const end = Offset.zero;
                                   final tween = Tween(begin: begin, end: end);
-                                  final offsetAnimation = animation.drive(tween);
+                                  final offsetAnimation =
+                                      animation.drive(tween);
                                   return SlideTransition(
                                     position: offsetAnimation,
                                     child: child,
@@ -354,15 +354,19 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
                             "Notify",
                             style: TextStyle(color: Colors.black),
                           )),
-                     ],
+                    ],
                   ),
-                
+
                   // SizedBox(
-                      
+
                   //   ),
-                 
-                 
-                   Image.asset("assets/images/food.png",fit: BoxFit.cover,height: size.height*0.13,width: size.width,),
+
+                  Image.asset(
+                    "assets/images/food.png",
+                    fit: BoxFit.cover,
+                    height: size.height * 0.13,
+                    width: size.width,
+                  ),
                 ],
               ),
               if (Provider.of<AdminEmployeesProvider>(context, listen: true)
@@ -556,7 +560,7 @@ class _AdminHomePageState extends State<AdminHomePage> with ConnectivityMixin {
       await Share.shareXFiles(
         [XFile(path)],
         text: path,
-        subject: path,
+        // subject: path,
       );
       Provider.of<AdminEmployeesProvider>(context, listen: false)
           .isMailLoading = false;

@@ -13,6 +13,7 @@ import "package:meals_management/views/in_app_tour.dart";
 import "package:path_provider/path_provider.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:provider/provider.dart";
+import "package:share_plus/share_plus.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:syncfusion_flutter_datepicker/datepicker.dart";
 import "package:syncfusion_flutter_xlsio/xlsio.dart" as excel;
@@ -334,37 +335,53 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                             return CustomCalendarCard(
                               isUDP: false,
                               forAdmin: false,
-                              selectionMode:
-                                  DateRangePickerSelectionMode.single,
+                              selectionMode: DateRangePickerSelectionMode.range,
                               selectibleDayPredicate: (date) {
-                                if (date.isAfter(DateTime.now()
-                                    ) || date.toString().substring(0,10)== now.toString().substring(0,10)) {
-                                  return true;
-                                }
-                                return false;
+                                return true;
                               },
-                              onSubmit: (date) {
-                              
-                                if (Provider.of<AdminEmployeesProvider>(context,
-                                        listen: false)
-                                    .getNotOpted
-                                    .map((e) => e.date)
-                                    .toList()
-                                    .contains(
-                                        date.toString().substring(0, 10))) {
-                                  removeDialog(
-                                      context, size, [date as DateTime]);
-                                } 
+                              onSubmit: (dates) {
+                                if ((dates as PickerDateRange).endDate ==
+                                        null &&
+                                    (dates.startDate!.isAfter(
+                                        now.subtract(Duration(days: 1))))) {
+                                  if (Provider.of<AdminEmployeesProvider>(
+                                          context,
+                                          listen: false)
+                                      .getNotOpted
+                                      .map((e) => e.date)
+                                      .toList()
+                                      .contains(dates.startDate
+                                          .toString()
+                                          .substring(0, 10))) {
+                                    removeDialog(context, size,
+                                        [dates.startDate as DateTime]);
+                                  } else {
+                                    CustomWidgets.CustomSnackBar(
+                                        context,
+                                        'Please select single future not opted date',
+                                        Colors.red);
+                                  }
+                                } else {
+                                  CustomWidgets.CustomSnackBar(
+                                      context,
+                                      'Please select single future not opted date',
+                                      Colors.red);
+                                }
+                              },
+                              onSelectionChanged: (p0) {
+                                provider.setDates = p0;
                               },
                               onCancel: () {
-                                      isConnected()
-                                  ? sendMail(context)
-                                  : CustomWidgets.CustomSnackBar(
-                                      context, "No internet", Colors.red);
+                                provider.getDates == null
+                                    ? CustomWidgets.CustomSnackBar(context,
+                                        'Please select any date', Colors.red)
+                                    : isConnected()
+                                        ? sendMail(context, provider.getDates!)
+                                        : CustomWidgets.CustomSnackBar(
+                                            context, "No internet", Colors.red);
                               },
                               confirmText: 'Update',
                               cancelText: 'Send',
-
                             );
                           }
                         },
@@ -390,8 +407,8 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     ));
   }
 
-
-  Future<void> sendMail(BuildContext context) async {
+  Future<void> sendMail(
+      BuildContext context, DateRangePickerSelectionChangedArgs dates) async {
     Provider.of<AdminEmployeesProvider>(context, listen: false).isMailLoading =
         true;
 
@@ -427,9 +444,12 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
     sheet.getRangeByIndex(3, 2).builtInStyle = excel.BuiltInStyles.heading4;
     sheet.getRangeByIndex(3, 3).builtInStyle = excel.BuiltInStyles.heading4;
 
+    DateTime startDate = (dates.value as PickerDateRange).startDate!;
+    DateTime endDate = (dates.value as PickerDateRange).endDate ??
+        (dates.value as PickerDateRange).startDate!;
     List<DateTime> rangeDates = List.generate(
-        now.difference(DateTime(now.year, now.month, 1)).inDays + 1,
-        (index) => DateTime(now.year, now.month, 1).add(Duration(days: index)));
+        endDate.difference(startDate).inDays + 1,
+        (index) => startDate.add(Duration(days: index)));
 
     int rowIndex = 4;
 
@@ -443,21 +463,37 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
             .setText(date.toString().substring(0, 10));
         sheet.getRangeByIndex(rowIndex, 2).setText('Opted');
         // ignore: use_build_context_synchronously
-        Provider.of<AdminEmployeesProvider>(context, listen: false)
-            .getOpted
-            .where(
-                (element) => date.toString().substring(0, 10) == element.date)
-            .first
-            .info = DateTime.fromMillisecondsSinceEpoch(int.parse(
-                // ignore: use_build_context_synchronously
-                Provider.of<AdminEmployeesProvider>(context, listen: false)
-                    .getOpted
-                    .where((element) =>
-                        date.toString().substring(0, 10) == element.date)
-                    .first
-                    .info!))
-            .toString()
-            .substring(11, 19);
+        try {
+          Provider.of<AdminEmployeesProvider>(context, listen: false)
+              .getOpted
+              .where(
+                  (element) => date.toString().substring(0, 10) == element.date)
+              .first
+              .info = DateTime.fromMillisecondsSinceEpoch(int.parse(
+                  // ignore: use_build_context_synchronously
+                  Provider.of<AdminEmployeesProvider>(context, listen: false)
+                      .getOpted
+                      .where((element) =>
+                          date.toString().substring(0, 10) == element.date)
+                      .first
+                      .info!))
+              .toString()
+              .substring(11, 19);
+        } catch (e) {
+          Provider.of<AdminEmployeesProvider>(context, listen: false)
+                  .getOpted
+                  .where((element) =>
+                      date.toString().substring(0, 10) == element.date)
+                  .first
+                  .info = // ignore: use_build_context_synchronously
+              Provider.of<AdminEmployeesProvider>(context, listen: false)
+                  .getOpted
+                  .where((element) =>
+                      date.toString().substring(0, 10) == element.date)
+                  .first
+                  .info!;
+        }
+
         sheet.getRangeByIndex(rowIndex, 3).setText(
             // ignore: use_build_context_synchronously
             Provider.of<AdminEmployeesProvider>(context, listen: false)
@@ -493,19 +529,6 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       }
     }
 
-    // ignore: use_build_context_synchronously
-    for (var date in Provider.of<AdminEmployeesProvider>(context, listen: false)
-        .getNotOpted) {
-      if ((DateTime.parse(date.date!).day > now.day &&
-              DateTime.parse(date.date!).month == now.month) ||
-          DateTime.parse(date.date!).month > now.month) {
-        sheet.getRangeByIndex(rowIndex, 1).setText(date.date!);
-        sheet.getRangeByIndex(rowIndex, 2).setText('NotOpted');
-        sheet.getRangeByIndex(rowIndex, 3).setText(date.info);
-        rowIndex++;
-      }
-    }
-
     sheet.autoFitColumn(1);
     sheet.autoFitColumn(2);
     sheet.autoFitColumn(3);
@@ -516,7 +539,7 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
 
       final path =
           // ignore: use_build_context_synchronously
-          '${dir.path}/${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}_mess_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
+          '${dir.path}/${Provider.of<AdminEmployeesProvider>(context, listen: false).getUserData.data!.empName}_meals_data_${DateTime.now().toString().substring(0, 10)}.xlsx';
       final File file = File(path);
       await file.writeAsBytes(bytes);
 
@@ -527,21 +550,26 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       }
 
       // Permission granted, proceed with sending email
-      const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
-      const subject = 'Excel Data';
-      const body = 'Please find the attached Excel file with the data.';
+      // const recipientEmail = 'chiluverimadhankumarnetha@gmail.com';
+      // const subject = 'Excel Data';
+      // const body = 'Please find the attached Excel file with the data.';
 
-      final email = Email(
-        body: body,
-        subject: subject,
-        recipients: [recipientEmail],
-        attachmentPaths: [path],
-      );
+      // final email = Email(
+      //   body: body,
+      //   subject: subject,
+      //   recipients: [recipientEmail],
+      //   attachmentPaths: [path],
+      // );
       // ignore: use_build_context_synchronously
+      await Share.shareXFiles(
+        [XFile(path)],
+        text: path,
+        // subject: path
+      );
       Provider.of<AdminEmployeesProvider>(context, listen: false)
           .isMailLoading = false;
       //     // Send email
-      await FlutterEmailSender.send(email);
+      // await FlutterEmailSender.send(email);
     } catch (error) {
       // Handle the error
       print('Error sending email: $error');
@@ -569,14 +597,21 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
                     children: [
                       CustomWidgets.CustomElevatedButton(
                         onPressed: () {
-                        if( isConnected()) {
+                          if (isConnected()) {
                             Provider.of<AdminEmployeesProvider>(context,
                                     listen: false)
-                                .deleteUserEvents(Provider.of<AdminEmployeesProvider>(context,
-                                    listen: false).getUserData.data!.empId!,dates
-                                    .map((e) =>
-                                        {"date": e.toString().substring(0, 10)})
-                                    .toList());
+                                .deleteUserEvents(
+                                    Provider.of<AdminEmployeesProvider>(context,
+                                            listen: false)
+                                        .getUserData
+                                        .data!
+                                        .empId!,
+                                    dates
+                                        .map((e) => {
+                                              "date":
+                                                  e.toString().substring(0, 10)
+                                            })
+                                        .toList());
                           } else {
                             CustomWidgets.CustomSnackBar(
                                 context, "No internet", Colors.red);
@@ -621,8 +656,4 @@ class _EmployeeLunchStatusState extends State<EmployeeLunchStatus>
       },
     );
   }
-
-
-
 }
-
